@@ -1,5 +1,3 @@
-"use client";
-
 import { AlertCircleIcon, ImageIcon, UploadIcon, XIcon } from "lucide-react";
 import { useEffect } from "react";
 
