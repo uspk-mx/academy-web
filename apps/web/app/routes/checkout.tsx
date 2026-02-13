@@ -5,7 +5,7 @@ import { CheckoutProvider } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { LockIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useLoaderData, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 const stripe = loadStripe(import.meta.env.STRIPE_KEY || "", {
   locale: "es",

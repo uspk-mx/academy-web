@@ -34,7 +34,7 @@ export const CourseHeader = ({
     <div className="bg-background p-4 border-b hidden md:block">
       <div className="flex flex-row items-center gap-4">
         <Button variant="ghost" size="icon" type="button" asChild>
-          <Link to="/dashboard/courses" className="flex min-[969px]:hidden">
+          <Link to="/courses" className="flex min-[969px]:hidden">
             <ArrowLeft className="size-5" />
           </Link>
         </Button>
@@ -91,7 +91,7 @@ export const CourseHeader = ({
             className="rounded-full"
             asChild
           >
-            <Link to="/dashboard/courses">
+            <Link to="/courses">
               <XIcon className="size-5" />
             </Link>
           </Button>
