@@ -16,7 +16,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate, useRevalidator, useRoutes } from "react-router";
+import { useNavigate, useRevalidator } from "react-router";
 import { Button } from "ui/components/button";
 import {
   DropdownMenu,
