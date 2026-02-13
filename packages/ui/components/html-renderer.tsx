@@ -1,5 +1,5 @@
 import parse from "html-react-parser";
-import DOMPurify from "dompurify";
+import DOMPurify from "isomorphic-dompurify";
 import { type JSX, useEffect, useRef, useState } from "react";
 import { cn } from "ui/lib/utils";
 import Markdown, { MarkdownHooks } from "react-markdown";
@@ -12,8 +12,8 @@ import rehypeRemark from "rehype-remark";
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 const RenderHTMLContent = ({ htmlContent }: { htmlContent: any }) => {
-  // Sanitize the HTML content (client-only, DOMPurify needs window)
-  const sanitizedHTML = typeof window !== 'undefined' ? DOMPurify.sanitize(htmlContent) : htmlContent;
+  // Sanitize the HTML content
+  const sanitizedHTML = DOMPurify.sanitize(htmlContent);
 
   // Function to handle specific tags during parsing
   const replaceOptions = {
