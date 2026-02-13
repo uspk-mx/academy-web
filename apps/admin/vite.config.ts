@@ -7,16 +7,19 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   envDir: path.resolve(__dirname, "../.."),
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
-  build: {
-    rollupOptions: {
-      external: ["jsdom", "cssstyle", /^jsdom\//, /^cssstyle\//],
-    },
-  },
   optimizeDeps: {
     exclude: ["jsdom", "cssstyle", "../../packages/graphql/generated"],
   },
   ssr: {
-    noExternal: true,
+    // deja noExternal
+    noExternal: ["@mixmark-io/domino", "turndown"],
+    // y mueve external aquí
+    external: [
+      "jsdom",
+      "cssstyle",
+      "jsdom/",
+      "cssstyle/"
+    ],
   },
   resolve: {
     alias: [

@@ -20,8 +20,6 @@ import type {
   CreateEnrollmentMutationVariables,
   User,
 } from "gql-generated/generated/types";
-
-import TurndownService from "turndown";
 import {
   Select,
   SelectContent,
@@ -29,7 +27,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "ui/components/select";
+import type TurndownServiceType from "turndown";
 
+let td: TurndownServiceType | null = null;
 interface AddEnrollmentDialogProps {
   open: boolean;
   onOpenChange: (value: boolean) => void;
@@ -38,7 +38,17 @@ interface AddEnrollmentDialogProps {
   courses: Pick<Course, "id" | "title" | "description" | "status">[];
 }
 
-const turndownService = new TurndownService();
+async function turndown(input: string) {
+  if (!input) return "";
+  if (typeof window === "undefined") return input.replace(/<[^>]*>/g, "");
+
+  if (!td) {
+    const mod = await import("turndown");
+    const TurndownService = mod.default;
+    td = new TurndownService();
+  }
+  return td.turndown(input);
+}
 
 export const AddEnrollmentDialog = ({
   open,
@@ -136,7 +146,7 @@ export const AddEnrollmentDialog = ({
                       <SelectValue placeholder="Selecciona un estudiante" />
                     </SelectTrigger>
                     <SelectContent className="[&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8 [&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2">
-                      {students.map((student) => (
+                      {students.map(async (student) => (
                         <SelectItem
                           value={student.id}
                           key={student.id}
@@ -147,7 +157,7 @@ export const AddEnrollmentDialog = ({
                             className="text-muted-foreground mt-1 block text-xs"
                             data-desc
                           >
-                            {turndownService.turndown(student.email ?? "")}
+                            {await turndown(student.email ?? "")}
                           </span>
                         </SelectItem>
                       ))}
@@ -171,14 +181,14 @@ export const AddEnrollmentDialog = ({
                       <SelectValue placeholder="Selecciona un curso" />
                     </SelectTrigger>
                     <SelectContent className="[&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8 [&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2">
-                      {courses.map((course) => (
+                      {courses.map(async (course) => (
                         <SelectItem value={course.id} key={course.id}>
                           {course.title}
                           <span
                             className="text-muted-foreground mt-1 block text-xs"
                             data-desc
                           >
-                            {turndownService.turndown(course.description ?? "")}
+                            {await turndown(course.description ?? "")}
                           </span>
                         </SelectItem>
                       ))}
