@@ -7,13 +7,8 @@ import path from "path";
 export default defineConfig({
   envDir: path.resolve(__dirname, "../.."),
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
-  build: {
-    rollupOptions: {
-      external: ["jsdom", "cssstyle", /^jsdom\//, /^cssstyle\//],
-    },
-  },
   optimizeDeps: {
-    exclude: ["jsdom", "cssstyle", "../../packages/graphql/generated"],
+    exclude: ["../../packages/graphql/generated"],
   },
   resolve: {
     alias: [
