@@ -15,6 +15,9 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ["jsdom", "cssstyle", "../../packages/graphql/generated"],
   },
+  ssr: {
+    noExternal: ['turndown', '@mixmark-io/domino'],
+  },
   resolve: {
     alias: [
       {
