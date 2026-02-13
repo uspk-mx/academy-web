@@ -155,7 +155,7 @@ import { formatDate } from "ui/lib/utils";
 
                 {/* Quick Actions */}
                 <div className="flex gap-2">
-                  <Button type="button" variant="outline" size="sm">
+                  <Button type="button" variant="neutral" size="sm">
                     <Receipt className="h-4 w-4" />
                     Recibo
                   </Button>
@@ -268,10 +268,10 @@ import { formatDate } from "ui/lib/utils";
                       <CreditCard className="h-5 w-5 shrink-0" />
                       <div>
                         <p className="font-bold">{order.paymentMethod}</p>
-                        {order.cardLast4 && (
+                        {order.paymentMethod === "American Express" && 'cardLast4' in order && order.cardLast4 && (
                           <p className="text-sm">****{order.cardLast4}</p>
                         )}
-                        {order.paypalEmail && (
+                        {order.paymentMethod === "PayPal" && 'paypalEmail' in order && order.paypalEmail && (
                           <p className="text-sm">{order.paypalEmail}</p>
                         )}
                       </div>

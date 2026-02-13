@@ -48,7 +48,7 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof signInSchema>>({
     mode: "onSubmit",
-    resolver: zodResolver<z.output<typeof signInSchema>>(signInSchema),
+    resolver: zodResolver(signInSchema),
   });
 
   // TODO: test google integration

@@ -50,7 +50,7 @@ export default function ResetPasswordPage() {
   } = useForm({
     mode: "onSubmit",
     resolver:
-      zodResolver<z.output<typeof resetPasswordSchema>>(resetPasswordSchema),
+      zodResolver(resetPasswordSchema),
   });
 
   const onLoginAction = async (data: z.infer<typeof resetPasswordSchema>) => {

@@ -199,7 +199,7 @@ export default function ImprovedWishlistPage() {
                 className="flex items-center gap-3 rounded-xl border-4 border-black bg-card p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
               >
                 <div
-                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border-2 border-black ${stat.color}`}
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-2 border-black ${stat.color}`}
                 >
                   <stat.icon className="h-5 w-5" strokeWidth={2.5} />
                 </div>
@@ -236,7 +236,7 @@ export default function ImprovedWishlistPage() {
             <div className="flex gap-2">
               <Button
                 type="button"
-                variant="outline"
+                variant="neutral"
                 size="sm"
                 className="border-2"
               >
@@ -246,7 +246,7 @@ export default function ImprovedWishlistPage() {
               <Button
                 onClick={handleClearWishlist}
                 type="button"
-                variant="destructive"
+                variant="reverse"
                 size="sm"
               >
                 <Trash2 className="h-4 w-4" />
@@ -428,7 +428,7 @@ export default function ImprovedWishlistPage() {
                           key={index}
                           className="flex items-start gap-2 text-sm"
                         >
-                          <span className="mt-1 h-2 w-2 flex-shrink-0 rounded-full border-2 border-black bg-main" />
+                          <span className="mt-1 h-2 w-2 shrink-0 rounded-full border-2 border-black bg-main" />
                           <span className="font-medium">{course}</span>
                         </div>
                       ))}

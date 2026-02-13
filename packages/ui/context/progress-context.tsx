@@ -1,3 +1,4 @@
+//@ts-ignore
 import confetti from "canvas-confetti";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "sonner";

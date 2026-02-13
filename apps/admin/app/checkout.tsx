@@ -1,7 +1,9 @@
 import BillingAddress from "ui/components/stripe-elements/billing-address-select";
 import { CheckoutForm } from "ui/components/stripe-elements/checkout-form";
 import PayButton from "ui/components/stripe-elements/pay-button";
+// @ts-ignore
 import { CheckoutProvider } from "@stripe/react-stripe-js";
+// @ts-ignore
 import { loadStripe } from "@stripe/stripe-js";
 import { LockIcon } from "lucide-react";
 import { useEffect, useState } from "react";

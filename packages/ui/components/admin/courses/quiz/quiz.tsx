@@ -12,6 +12,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+//@ts-ignore
 import confetti from "canvas-confetti";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useMutation } from "urql";

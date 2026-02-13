@@ -48,8 +48,7 @@ export default function ChangePasswordPage() {
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof changePasswordSchema>>({
     mode: "onSubmit",
-    resolver:
-      zodResolver<z.output<typeof changePasswordSchema>>(changePasswordSchema),
+    resolver: zodResolver(changePasswordSchema),
   });
 
   const onChangePasswordAction = async (data: z.infer<typeof changePasswordSchema>) => {

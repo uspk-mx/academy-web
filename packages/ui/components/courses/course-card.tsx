@@ -204,9 +204,11 @@ function getCourseUrl(course: Course) {
 
   topics.forEach((topic) => {
     (topic?.lessons ?? []).forEach((lesson) => {
+      //@ts-ignore
       if (lesson) items.push({ type: "lesson", ...lesson });
     });
     (topic?.quizzes ?? []).forEach((quiz) => {
+      //@ts-ignore
       if (quiz) items.push({ type: "quiz", ...quiz });
     });
   });

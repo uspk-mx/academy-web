@@ -129,7 +129,7 @@ export default function DashboardPage() {
         >
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="flex items-start gap-4">
-              <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border-4 border-black bg-white">
+              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border-4 border-black bg-white">
                 <img
                   src={lastCourse.featuredImage}
                   alt={lastCourse.title || "Course"}
@@ -236,14 +236,14 @@ export default function DashboardPage() {
           <Link
             key={stat.label}
             to={stat.href || "#"}
-            className="group relative flex flex-col justify-between rounded-xl border-4 border-black bg-card p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1))]"
+            className="group relative flex flex-col justify-between rounded-xl border-4 border-black bg-card p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
           >
             {/* Icon in top-right corner */}
             <div className="flex justify-between items-start mb-3">
               <span className="text-xs font-bold text-muted-foreground">
                 {stat.label}
               </span>
-              <div className="flex-shrink-0 rounded-lg border-2 border-black bg-main p-1.5">
+              <div className="shrink-0 rounded-lg border-2 border-black bg-main p-1.5">
                 <stat.icon className="h-4 w-4" strokeWidth={2.5} />
               </div>
             </div>
@@ -272,22 +272,22 @@ export default function DashboardPage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {inProgressCourses.slice(1, 4).map((course) => (
               <Link
-                key={course.id}
-                to={`/courses/${course.id}`}
+                key={course?.id}
+                to={`/courses/${course?.id}`}
                 className="group relative overflow-hidden rounded-xl border-4 border-black bg-card shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
               >
                 <div className="aspect-video overflow-hidden border-b-4 border-black bg-muted">
                   <img
-                    src={course.featuredImage}
-                    alt={course.title || "Course"}
+                    src={course?.featuredImage}
+                    alt={course?.title || "Course"}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
                 <div className="space-y-3 p-4">
                   <h3 className="line-clamp-2 font-bold leading-tight">
-                    {course.title || "Curso sin título"}
+                    {course?.title || "Curso sin título"}
                   </h3>
-                  {course.progress?.progressPercentage !== undefined && (
+                  {course?.progress?.progressPercentage !== undefined && (
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs font-bold">
                         <span className="text-muted-foreground">Progreso</span>

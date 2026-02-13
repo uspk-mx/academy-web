@@ -38,6 +38,7 @@ const mockQuizAttempts = [
     earnedMarks: 1,
     earnedPercentage: 33,
     result: "Fail",
+    attemptTime: "5 min",
   },
   {
     id: 2,
@@ -52,6 +53,7 @@ const mockQuizAttempts = [
     earnedMarks: 0,
     earnedPercentage: 0,
     result: "Fail",
+    attemptTime: "7 min",
   },
   {
     id: 3,
@@ -66,6 +68,7 @@ const mockQuizAttempts = [
     earnedMarks: 1,
     earnedPercentage: 100,
     result: "Pass",
+    attemptTime: "2 min",
   },
   {
     id: 4,
@@ -80,6 +83,7 @@ const mockQuizAttempts = [
     earnedMarks: 1,
     earnedPercentage: 50,
     result: "Fail",
+    attemptTime: "4 min",
   },
 ];
 
@@ -214,7 +218,7 @@ export default function QuizAttemptsPage() {
                 className="flex items-center gap-3 rounded-xl border-4 border-black bg-card p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
               >
                 <div
-                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border-2 border-black ${stat.color}`}
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-2 border-black ${stat.color}`}
                 >
                   <stat.icon className="h-5 w-5" strokeWidth={2.5} />
                 </div>
@@ -309,7 +313,7 @@ export default function QuizAttemptsPage() {
                   <div className="flex-1">
                     <h3 className="text-lg font-black">{attempt.title}</h3>
                     <Link
-                      to={`/courses/${attempt.courseId}`}
+                      to={`/courses/${attempt.courseTitle.replace(/\s+/g, "-").toLowerCase()}`}
                       className="text-sm text-muted-foreground hover:underline"
                     >
                       {attempt.courseTitle}

@@ -46,7 +46,7 @@ export default function ProfilePage() {
 
   const { register, reset, handleSubmit, setValue } = useForm({
     mode: "onSubmit",
-    resolver: zodResolver<z.output<typeof editProfileFormSchema>>(
+    resolver: zodResolver(
       editProfileFormSchema
     ),
     defaultValues: {
@@ -177,7 +177,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#FDFAEE]">
-      <Header userData={{ ...userData }} />
+      <Header userData={userData} />
       <div className="mx-auto max-w-7xl p-6 2xl:px-0">
         {/* Header with back button */}
         <div className="mb-8 flex items-center justify-between">

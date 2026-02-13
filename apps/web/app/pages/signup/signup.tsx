@@ -21,16 +21,13 @@ import type {
 } from "gql-generated/gql/graphql";
 import useStep from "ui/hooks/use-step";
 import { cn } from "ui/lib/utils";
-// import backgroundImage from "../../utils/background.png";
 
 
 const signUpSchema = z.object({
   fullName: z
     .string({ error: "El nombre completo es un campo obligatorio" })
     .min(2, "El nombre completo es un campo obligatorio"),
-  email: z
-    .string({ error: "El correo electronico es un campo requerido." })
-    .email("Correo electronico invalido"),
+  email: z.email({ error: "El correo electronico es un campo requerido." }),
   password: z
     .string({ error: "La contraseña es un campo requerido" })
     .min(1, { message: "Tu contaseña debe de tener al menos un caracter." }),
@@ -43,7 +40,6 @@ export default function SignUpPage() {
   >(LoginDocument);
   const navigate = useNavigate();
   const [transition, startTransition] = useTransition();
-  const data: any = useLoaderData<typeof loader>();
   const [isLoading, setIsLoading] = useState(false);
   const [serverErrors, setServerErrors] = useState<GraphQLError[]>([]);
 
@@ -64,7 +60,7 @@ export default function SignUpPage() {
     formState: { errors, isSubmitting },
   } = useForm({
     mode: "onSubmit",
-    resolver: zodResolver<z.output<typeof signUpSchema>>(signUpSchema),
+    resolver: zodResolver(signUpSchema),
   });
 
   const handleGoogleLogin = () => {

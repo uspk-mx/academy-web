@@ -1,5 +1,5 @@
 import SignUpPage from "../pages/signup/signup";
-import type { Route } from "./+types/home";
+import type { Route } from "./+types/signup";
 
 import { redirect } from "react-router";
 
