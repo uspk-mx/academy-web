@@ -1,0 +1,203 @@
+mutation CreateSubscriptionPlan($input: CreateSubscriptionPlanInput!) {
+  createSubscriptionPlan(input: $input) {
+    id
+    planName
+    planDescription
+    price
+    duration
+    category {
+      name
+      id
+      description
+      createdAt
+      updatedAt
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdateSubscriptionPlan($input: UpdateSubscriptionPlanInput!) {
+  updateSubscriptionPlan(input: $input) {
+    id
+    planName
+    planDescription
+    price
+    duration
+    category {
+      id
+      name
+      description
+      createdAt
+      updatedAt
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+mutation DeleteSubscriptionPlan($id: ID!) {
+  deleteSubscriptionPlan(id: $id)
+}
+
+query SubscriptionPlans {
+  subscriptionPlans {
+    id
+    planName
+    planDescription
+    stripePricePlanID
+    price
+    duration
+    category {
+      id
+      name
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+query CompanySubscriptions($companyId: ID!) {
+  companySubscriptions(companyId: $companyId) {
+    id
+    quantity
+    status
+    stripeSubscriptionId
+    createdAt
+    updatedAt
+    plan {
+      id
+      planName
+      duration
+      price
+    }
+    company {
+      id
+      name
+      email
+    }
+  }
+}
+
+query SubscriptionReport($companyId: ID!, $companySubscriptionId: String!) {
+  subscriptionReport(
+    companyId: $companyId
+    companySubscriptionId: $companySubscriptionId
+  ) {
+    companySubscriptionId
+    totalSubscriptions
+    redeemedSubscriptions
+    unredeemedSubscriptions
+    activeSubscriptions
+  }
+}
+
+query CompanyInvites($companySubscriptionId: ID!) {
+  companyInvites(companySubscriptionId: $companySubscriptionId) {
+    id
+    email
+    type
+    codeId
+    companyId
+    companySubscriptionId
+    createdAt
+    expiresAt
+    status
+    redeemedByUserId
+  }
+}
+
+mutation RequestSubscriptionCodes(
+  $planId: ID!
+  $companyId: ID!
+  $quantity: Int!
+) {
+  requestSubscriptionCodes(
+    planId: $planId
+    companyId: $companyId
+    quantity: $quantity
+  ) {
+    id
+    status
+    quantity
+    createdAt
+    plan {
+      id
+      planName
+      price
+      duration
+    }
+    company {
+      id
+      name
+      email
+    }
+  }
+}
+
+mutation InviteEmployees($input: InviteEmployeesInput!) {
+  inviteEmployees(input: $input) {
+    companySubscriptionId
+    invited
+    skipped
+    errors
+    invites {
+      email
+      codeId
+      status
+    }
+  }
+}
+
+mutation ResendInvite($companySubscriptionId: ID!, $email: String!) {
+  resendInvite(companySubscriptionId: $companySubscriptionId, email: $email)
+}
+
+mutation PayCompanySubscription(
+  $companySubscriptionId: ID!
+  $paymentMethodId: String
+) {
+  payCompanySubscription(
+    companySubscriptionId: $companySubscriptionId
+    paymentMethodId: $paymentMethodId
+  ) {
+    __typename
+    ... on CompanySubscription {
+      id
+      status
+      stripeSubscriptionId
+      updatedAt
+    }
+    ... on SetupIntentRequired {
+      clientSecret
+    }
+  }
+}
+
+
+mutation ActivateCompanySubscription($token: String!) {
+  activateCompanySubscription(token: $token) {
+    id
+    user {
+      id
+      fullName
+      email
+    }
+    plan {
+      id
+      planName
+    }
+    company {
+      id
+      name
+    }
+    companySubscription {
+      id
+      status
+    }
+    stripeSubscriptionId
+    startDate
+    endDate
+    isActive
+  }
+}

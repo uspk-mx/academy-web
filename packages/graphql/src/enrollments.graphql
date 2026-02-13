@@ -1,0 +1,209 @@
+query GetEnrollments {
+  getEnrollments {
+    id
+    user {
+      id
+      fullName
+      email
+      isActive
+      profilePicture
+      occupation
+      phoneNumber
+    }
+    course {
+      id
+      title
+      description
+      status
+      price
+    }
+    enrolledAt
+    status
+  }
+}
+
+query GetEnrollmentById($enrollmentId: ID!) {
+  getEnrollmentById(enrollmentId: $enrollmentId) {
+  id
+    user {
+      id
+      fullName
+      email
+      isActive
+      profilePicture
+      occupation
+      phoneNumber
+    }
+    course {
+      id
+      title
+      description
+      status
+      price
+    }
+    enrolledAt
+    status
+  }
+}
+
+mutation CreateEnrollment($userId: ID!, $courseId: ID!) {
+  createEnrollment(userId: $userId, courseId: $courseId) {
+    id
+    user {
+      id
+      fullName
+      email
+      isActive
+      profilePicture
+      occupation
+      phoneNumber
+    }
+    course {
+      id
+      title
+      description
+      status
+      price
+    }
+    enrolledAt
+    status
+  }
+}
+
+query GetUserEnrollments {
+  getUserEnrollments {
+    id
+    course {
+      id
+      title
+      description
+          shortDescription
+      metadata {
+        id
+        learnings
+        benefits
+        targetAudience
+        materialsIncluded
+        requirements
+      }
+      video {
+        id
+        videoURL
+        source
+        type
+        duration
+        description
+        tags
+        width
+        height
+        format
+        createdAt
+        updatedAt
+      }
+      tags
+      featuredImage
+      price
+      discountedPrice
+      promotionDuration
+      level {
+        id
+        name
+        description
+        createdAt
+        updatedAt
+      }
+      duration
+      requirements
+      status
+      creatorID
+      topics {
+        id
+        title
+        description
+        lessons {
+          id
+          title
+          video {
+            id
+            videoURL
+            source
+            type
+            duration
+            description
+            tags
+            width
+            height
+            format
+            createdAt
+            updatedAt
+          }
+          showPreview
+          featuredImage
+          content
+          createdAt
+          attachments
+          position
+          updatedAt
+        }
+        quizzes {
+          id
+          title
+        }
+      }
+      progress {
+        id
+        completedLessons
+        completedQuizzes
+        totalLessons
+        totalQuizzes
+        totalAssignments
+        progressPercentage
+        startedAt
+        completed
+        completedAt
+        averageCompletionTime
+        averageScore
+        createdAt
+        updatedAt
+      }
+      reviews {
+        id
+        comment
+        rating
+        likes
+        createdAt
+        updatedAt
+      }
+      certificates {
+        id
+        issuedAt
+        template {
+          name
+          logoUrl
+          id
+          content
+          background
+        }
+      }
+      maxEnrollments
+      extraSettings {
+        key
+        value
+      }
+      visibility
+      scheduledPublishAt
+      publishedAt
+      createdAt
+      updatedAt
+      instructors {
+        id
+        fullName
+        email
+        isActive
+        userName
+      }
+    }
+    enrolledAt
+    status
+  }
+}

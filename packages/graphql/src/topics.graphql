@@ -1,0 +1,264 @@
+mutation CreateTopic($input: CreateTopicInput!) {
+  createTopic(input: $input) {
+    id
+    position
+    title
+    description
+    createdAt
+    updatedAt
+  }
+}
+
+
+query Topic($topicId: ID!) {
+  topic(id: $topicId) {
+    id
+    course {
+      id
+      title
+    }
+    title
+    description
+    position
+    lessons {
+      id
+      title
+      position
+      featuredImage
+      content
+      attachments
+      video {
+        id
+        source
+        videoURL
+        type
+        tags
+        width
+        height
+        format
+        duration
+        description
+      }
+    }
+    quizzes {
+      id
+      title
+      content
+      timer
+      timeUnit
+      passingGrade
+      position
+      maxAttempts
+      questions {
+        id
+        mark
+        order
+        title
+        type
+        settings {
+          questionMark
+          questionType
+          answerRequired
+          showQuestionMark
+          randomizeQuestion
+          sortableItems
+          correctAnswers
+          matrixMatches {
+            columnA
+            columnB
+          }
+        }
+        description
+        answerExplanation
+      }
+    }
+    createdAt
+    updatedAt
+  }
+}   
+
+
+query TopicsByCourse($courseId: ID!) {
+  topicsByCourseId(courseId: $courseId) {
+    id
+    course {
+      id
+      title
+    }
+    title
+    description
+    position
+   lessons {
+      id
+      title
+      content
+      position
+      createdAt
+      updatedAt
+      featuredImage
+      attachments
+      showPreview
+      video {
+        id
+        videoURL
+        source
+        type
+        duration
+        description
+        tags
+        width
+        height
+        format
+        createdAt
+        updatedAt
+      }
+      progress {
+        id
+        completed
+        startedAt
+        completedAt
+        createdAt
+        updatedAt
+      }
+    }
+    quizzes {
+      id
+      title
+      content
+      timer
+      timeUnit
+      passingGrade
+      position
+      maxAttempts
+          progress {
+        id
+        score
+        completed
+        startedAt
+        completedAt
+      }
+    questions {
+        id
+        title
+        description
+        media
+        type
+        mark
+        settings {
+          questionMark
+          questionType
+          answerRequired
+          showQuestionMark
+          randomizeQuestion
+          sortableItems
+          correctAnswers
+          matrixMatches {
+            columnA
+            columnB
+          }
+        }
+        order
+        answerExplanation
+        answers {
+          id
+          type
+          title
+          isCorrect
+          image
+          gapMatch
+          viewFormat
+          settings
+          order
+          correctAnswers
+          createdAt
+          updatedAt
+        }
+        createdAt
+        updatedAt
+      }
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+query Topics {
+  topics {
+    id
+    course {
+      id
+      title
+    }
+    title
+    description
+    position
+    lessons {
+      id
+      title
+      position
+      featuredImage
+      content
+      attachments
+      video {
+        id
+        source
+        videoURL
+        type
+        tags
+        width
+        height
+        format
+        duration
+        description
+      }
+    }
+    quizzes {
+      id
+      title
+      content
+      timer
+      timeUnit
+      passingGrade
+      position
+      maxAttempts
+      questions {
+        id
+        mark
+        order
+        title
+        type
+        settings {
+          questionMark
+          questionType
+          answerRequired
+          showQuestionMark
+          randomizeQuestion
+          sortableItems
+          correctAnswers
+          matrixMatches {
+            columnA
+            columnB
+          }
+        }
+        description
+        answerExplanation
+      }
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdateTopic($topicId: ID!, $input: UpdateTopicInput) {
+  updateTopic(id: $topicId, input: $input) {
+    id
+    description
+    title
+    position
+    updatedAt
+  }
+}
+
+mutation DeleteTopic($topicId: ID!) {
+  deleteTopic(id: $topicId)
+}

@@ -1,0 +1,219 @@
+import type { DocumentNode } from "graphql";
+import { type ReactNode, createContext, useContext, useRef } from "react";
+import {
+  type AnyVariables,
+  type Client,
+  type Exchange,
+  type OperationResult,
+  type TypedDocumentNode,
+  composeExchanges,
+  makeResult,
+  ssrExchange,
+  useClient,
+} from "urql";
+
+import { filter, fromPromise, merge, mergeMap, pipe, tap } from "wonka";
+
+type Promises = Set<Promise<void>>;
+const DATA_NAME = "__NEXT_DATA_PROMISE__";
+export const isServerSide = typeof window === "undefined";
+
+/**
+ * Collecting data from HTML
+ */
+export const getInitialState = () => {
+  if (typeof window !== "undefined") {
+    const node = document.getElementById(DATA_NAME);
+    if (node) return JSON.parse(node.innerHTML);
+  }
+  return undefined;
+};
+
+/**
+ * Wait until end of Query and output collected data at render time
+ */
+const DataRender = ({ client: c }: { client?: Client }) => {
+  const ssrContext = useContext(NextSSRContext);
+  const client = c ?? useClient();
+  if (isServerSide) {
+    const extractData = client.readQuery("query{extractData}", {})?.data
+      .extractData;
+    if (!extractData) {
+      throw client.query("query{extractData}", {}).toPromise();
+    }
+    ssrContext.finished = true;
+    ssrContext.resolve();
+    return (
+      <script
+        id={DATA_NAME}
+        type="application/json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(extractData).replace(/</g, "\\u003c"),
+        }}
+      />
+    );
+  }
+  return null;
+};
+
+export const NextSSRWait = ({ children }: { children: ReactNode }) => {
+  const ssrContext = useContext(NextSSRContext);
+  if (isServerSide) {
+    if (!ssrContext.finished) {
+      throw ssrContext.promise;
+    }
+  }
+  return children;
+};
+
+const NextSSRContext = createContext<{
+  finished: boolean;
+  resolve: () => void;
+  promise: Promise<void>;
+}>(undefined as never);
+
+/**
+ * For SSR data insertion
+ */
+export const NextSSRProvider = ({
+  client,
+  children,
+}: {
+  client?: Client;
+  children: ReactNode;
+}) => {
+  let resolve: () => void = () => {};
+  const promise = new Promise<void>((r) => {
+    resolve = r;
+  });
+  return (
+    <NextSSRContext.Provider value={{ finished: false, resolve, promise }}>
+      {children}
+      <DataRender client={client} />
+    </NextSSRContext.Provider>
+  );
+};
+
+/**
+ * Get name from first field
+ */
+const getFieldSelectionName = (
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  query: DocumentNode | TypedDocumentNode<any, AnyVariables>
+) => {
+  const definition = query.definitions[0];
+  if (definition?.kind === "OperationDefinition") {
+    const selection = definition.selectionSet.selections[0];
+    if (selection?.kind === "Field") {
+      return selection.name.value;
+    }
+  }
+  return undefined;
+};
+
+/**
+ * local query function
+ */
+const createLocalValueExchange = <T extends object>(
+  key: string,
+  callback: () => Promise<T>
+) => {
+  const localValueExchange: Exchange = ({ forward }) => {
+    return (ops$) => {
+      const filterOps$ = pipe(
+        ops$,
+        filter(({ query }) => {
+          const selectionName = getFieldSelectionName(query);
+          return key !== selectionName;
+        }),
+        forward
+      );
+      const valueOps$ = pipe(
+        ops$,
+        filter(({ query }) => {
+          const selectionName = getFieldSelectionName(query);
+          return key === selectionName;
+        }),
+        mergeMap((op) => {
+          return fromPromise(
+            // eslint-disable-next-line no-async-promise-executor
+            // biome-ignore lint/suspicious/noAsyncPromiseExecutor: <explanation>
+            new Promise<OperationResult>(async (resolve) => {
+              resolve(makeResult(op, { data: { [key]: await callback() } }));
+            })
+          );
+        })
+      );
+      return merge([filterOps$, valueOps$]);
+    };
+  };
+  return localValueExchange;
+};
+
+/**
+ * Query standby extensions
+ */
+export const createNextSSRExchange = () => {
+  const promises: Promises = new Set();
+
+  const _ssrExchange = ssrExchange({
+    isClient: !isServerSide,
+    // Set up initial data required for SSR
+    initialState: getInitialState(),
+  });
+  const _nextExchange: Exchange = ({ forward }) => {
+    return (ops$) => {
+      if (!isServerSide) {
+        return forward(ops$);
+        // biome-ignore lint/style/noUselessElse: <explanation>
+      } else {
+        return pipe(
+          ops$,
+          tap(({ kind, context }) => {
+            if (kind === "query") {
+              const promise = new Promise<void>((resolve) => {
+                context.resolve = resolve;
+              });
+              promises.add(promise);
+              promise.then(() => {
+                promises.delete(promise);
+              });
+            }
+          }),
+          forward,
+          tap(({ operation }) => {
+            if (operation.kind === "query") {
+              operation.context.resolve();
+            }
+          })
+        );
+      }
+    };
+  };
+  return composeExchanges(
+    [
+      _ssrExchange,
+      isServerSide &&
+        createLocalValueExchange("extractData", async () => {
+          while (promises.size) {
+            await Promise.allSettled(promises);
+            await new Promise((resolve) => setTimeout(resolve, 0));
+          }
+          return _ssrExchange.extractData();
+        }),
+      _nextExchange,
+    ].filter((v): v is Exchange => v !== false)
+  );
+};
+
+/**
+ * Get exchange for Next.js
+ */
+export const useCreateNextSSRExchange = () => {
+  const refExchange = useRef<Exchange | undefined>(undefined);
+  if (!refExchange.current) {
+    refExchange.current = createNextSSRExchange();
+  }
+  return refExchange.current;
+};

@@ -1,0 +1,43 @@
+query GetLevels {
+  getLevels {
+    id
+    name
+    description
+    createdAt
+    updatedAt
+  }
+}
+
+query GetLevel($getLevelId: ID) {
+  getLevel(id: $getLevelId) {
+    id
+    name
+    description
+    createdAt
+    updatedAt
+  }
+}
+
+mutation CreateLevel($input: CreateLevelOrCategoryInput!) {
+  createLevel(input: $input) {
+    id
+    name
+    description
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdateLevel($updateLevelId: ID!, $input: UpdateLevelOrCategoryInput!) {
+  updateLevel(id: $updateLevelId, input: $input) {
+    id
+    name
+    description
+    updatedAt
+    createdAt
+  }
+}
+
+mutation DeleteLevel($deleteLevelId: ID!) {
+  deleteLevel(id: $deleteLevelId)
+}

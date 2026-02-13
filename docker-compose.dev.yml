@@ -1,0 +1,96 @@
+# =============================================================================
+# Docker Compose — Local development with hot reload
+#
+# Prerequisites: Docker Desktop (no Node/pnpm needed on host)
+#
+# Usage:
+#   docker compose -f docker-compose.dev.yml up             # All apps
+#   docker compose -f docker-compose.dev.yml up web          # Just web
+#   docker compose -f docker-compose.dev.yml up web admin    # web + admin
+#   docker compose -f docker-compose.dev.yml down            # Stop
+#   docker compose -f docker-compose.dev.yml down -v         # Stop + wipe deps
+#
+# First run installs dependencies automatically (~60s).
+# Subsequent starts reuse cached node_modules and are near-instant.
+#
+# Access:
+#   http://localhost:3000  → web
+#   http://localhost:3001  → admin
+#   http://localhost:3002  → business
+#
+# Adding a new dependency:
+#   docker compose -f docker-compose.dev.yml run --rm setup pnpm add <pkg> --filter <app>
+#   Then restart the affected service.
+# =============================================================================
+
+x-common: &common
+  build:
+    context: .
+    dockerfile: Dockerfile.dev
+  volumes:
+    # Source code (synced from host → container)
+    - .:/app
+    # Named volumes for node_modules — keeps them inside the container
+    # for performance and avoids host/container platform mismatches
+    - root_node_modules:/app/node_modules
+    - web_node_modules:/app/apps/web/node_modules
+    - admin_node_modules:/app/apps/admin/node_modules
+    - business_node_modules:/app/apps/business/node_modules
+    - ui_node_modules:/app/packages/ui/node_modules
+    - graphql_node_modules:/app/packages/graphql/node_modules
+  environment:
+    # Override API target so containers reach the host machine
+    - VITE_API_TARGET=${VITE_API_TARGET:-http://host.docker.internal:4000}
+    - VITE_STRIPE_KEY=${VITE_STRIPE_KEY:-}
+
+services:
+  # ---------------------------------------------------------------------------
+  # Setup — installs workspace dependencies (runs once, then exits)
+  # ---------------------------------------------------------------------------
+  setup:
+    <<: *common
+    command: pnpm install
+
+  # ---------------------------------------------------------------------------
+  # Web — public-facing app
+  # ---------------------------------------------------------------------------
+  web:
+    <<: *common
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+    ports:
+      - "3000:3000"
+    command: pnpm --filter web dev --host 0.0.0.0
+
+  # ---------------------------------------------------------------------------
+  # Admin — internal admin panel
+  # ---------------------------------------------------------------------------
+  admin:
+    <<: *common
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+    ports:
+      - "3001:3001"
+    command: pnpm --filter admin dev --host 0.0.0.0
+
+  # ---------------------------------------------------------------------------
+  # Business — business dashboard
+  # ---------------------------------------------------------------------------
+  business:
+    <<: *common
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+    ports:
+      - "3002:3002"
+    command: pnpm --filter business dev --host 0.0.0.0
+
+volumes:
+  root_node_modules:
+  web_node_modules:
+  admin_node_modules:
+  business_node_modules:
+  ui_node_modules:
+  graphql_node_modules:

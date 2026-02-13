@@ -1,0 +1,50 @@
+query GetCategories {
+  getCategories {
+    id
+    name
+    description
+    coursesCount
+    createdAt
+    updatedAt
+  }
+}
+
+query GetCategory($getCategoryId: ID) {
+  getCategory(id: $getCategoryId) {
+    id
+    name
+    description
+    coursesCount
+    createdAt
+    updatedAt
+  }
+}
+
+mutation CreateCategory($input: CreateLevelOrCategoryInput!) {
+  createCategory(input: $input) {
+    id
+    name
+    description
+    coursesCount
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdateCategory(
+  $updateCategoryId: ID!
+  $input: UpdateLevelOrCategoryInput!
+) {
+  updateCategory(id: $updateCategoryId, input: $input) {
+    id
+    name
+    description
+    coursesCount
+    createdAt
+    updatedAt
+  }
+}
+
+mutation DeleteCategory($deleteCategoryId: ID!) {
+  deleteCategory(id: $deleteCategoryId)
+}

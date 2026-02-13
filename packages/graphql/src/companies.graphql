@@ -1,0 +1,269 @@
+mutation CreateCompany($input: CreateCompanyInput) {
+  createCompany(input: $input) {
+    id
+    name
+    email
+    address
+    taxId
+    taxName
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdateCompany($companyId: ID!, $input: UpdateCompanyInput) {
+  updateCompany(companyId: $companyId, input: $input) {
+    id
+    name
+    email
+    address
+    taxId
+    taxName
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+
+query Companies {
+  companies {
+    id
+    name
+    email
+    address
+    taxId
+    taxName
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+
+query Company($companyId: ID!) {
+  company(id: $companyId) {
+    id
+    name
+    email
+    address
+    taxId
+    taxName
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+
+mutation DeleteCompany($companyId: ID!) {
+  deleteCompany(companyId: $companyId)
+}
+
+query CompanyAdmins($companyId: ID!) {
+  companyAdmins(companyId: $companyId) {
+    id
+    fullName
+    userName
+    email
+    isVerified
+    isActive
+    createdAt
+  }
+}
+
+query CompanyUsers($companyId: ID!) {
+  companyUsers(companyId: $companyId) {
+    id
+    fullName
+    userName
+    email
+    isVerified
+    isActive
+    createdAt
+  }
+}
+
+fragment UserBasicInfo on User {
+  id
+  fullName
+  userName
+  profilePicture
+  email
+  isVerified
+  isActive
+  createdAt
+}
+
+query BusinessDashboardPeople($companyId: ID!) {
+  companyAdmins(companyId: $companyId) {
+    ...UserBasicInfo
+  }
+  companyUsers(companyId: $companyId) {
+    ...UserBasicInfo
+  }
+}
+
+query CompanyAdminInvites($companyId: ID!) {
+  companyAdminInvites(companyId: $companyId) {
+    id
+    email
+    companyId
+    type
+    createdAt
+    expiresAt
+    status
+  }
+}
+
+mutation InviteAdmins($input: InviteAdminsInput!) {
+  inviteAdmins(input: $input) {
+    companyId
+    invited
+    skipped
+    errors
+    invites {
+      id
+      email
+      companyId
+      type
+      createdAt
+      expiresAt
+      status
+    }
+  }
+}
+
+mutation ResendAdminInvite($inviteId: ID!) {
+  resendAdminInvite(inviteId: $inviteId) {
+    __typename
+    ... on AdminInvite {
+      id
+      email
+      companyId
+      type
+      createdAt
+      expiresAt
+      status
+    }
+    ... on InviteExpiredAndRenewed {
+      oldInviteId
+      newInvite {
+        id
+        email
+        companyId
+        type
+        createdAt
+        expiresAt
+        status
+      }
+    }
+    ... on InviteNotFoundError {
+      message
+    }
+    ... on InviteNotActiveError {
+      message
+    }
+  }
+}
+
+query CompanyCourses($companyId: ID!, $filter: CompanyCoursesFilter) {
+  companyCourses(companyId: $companyId, filter: $filter) {
+    id
+    title
+    shortDescription
+    featuredImage
+    status
+    visibility
+    category {
+      id
+      name
+    }
+    updatedAt
+    createdAt
+  }
+}
+
+query CompanyCourseProgressSummary(
+  $companyId: ID!
+  $filter: CompanyCourseProgressFilter
+) {
+  companyCourseProgressSummary(companyId: $companyId, filter: $filter) {
+    course {
+      id
+      title
+      featuredImage
+      category {
+        id
+        name
+      }
+    }
+    enrolledCount
+    startedCount
+    completedCount
+    avgProgressPercentage
+  }
+}
+
+query CompanyCourseProgress(
+  $companyId: ID!
+  $filter: CompanyCourseProgressFilter
+) {
+  companyCourseProgress(companyId: $companyId, filter: $filter) {
+    user {
+      id
+      fullName
+      email
+      profilePicture
+    }
+    course {
+      id
+      title
+      featuredImage
+      category {
+        id
+        name
+      }
+    }
+    progress {
+      id
+      completedLessons
+      completedQuizzes
+      totalLessons
+      totalQuizzes
+      progressPercentage
+      startedAt
+      completed
+      completedAt
+      averageScore
+      updatedAt
+    }
+  }
+}
+
+query TeamDashboard($companyId: ID!, $filter: TeamMembersFilter) {
+  companyTeamStats(companyId: $companyId) {
+    totalMembers
+    activeMembers
+    coursesInProgress
+    coursesCompleted
+    certificatesEarned
+    avgProgressPercentage
+  }
+  companyTeamMembers(companyId: $companyId, filter: $filter) {
+    total
+    members {
+      id
+      fullName
+      email
+      role
+      occupation
+      profilePicture
+      isActive
+      coursesInProgress
+      coursesCompleted
+      certificatesEarned
+      avgProgress
+      lastActivityAt
+    }
+  }
+}
+

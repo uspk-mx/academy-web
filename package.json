@@ -1,0 +1,31 @@
+{
+  "name": "academy-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "pnpm --parallel --filter './apps/*' dev",
+    "build": "pnpm --filter './apps/*' build",
+    "preview": "pnpm --parallel --filter './apps/*' preview",
+    "typecheck": "pnpm --parallel --filter './apps/*' --filter './packages/*' run typecheck",
+    "dev:web": "pnpm --filter ./apps/web dev",
+    "dev:admin": "pnpm --filter ./apps/admin dev",
+    "dev:business": "pnpm --filter ./apps/business dev",
+    "build:web": "pnpm --filter ./apps/web build",
+    "build:admin": "pnpm --filter ./apps/admin build",
+    "build:business": "pnpm --filter ./apps/business build",
+    "preview:web": "pnpm --filter ./apps/web preview",
+    "preview:admin": "pnpm --filter ./apps/admin preview",
+    "preview:business": "pnpm --filter ./apps/business preview",
+    "typecheck:web": "pnpm --filter ./apps/web run typecheck",
+    "typecheck:admin": "pnpm --filter ./apps/admin run typecheck",
+    "typecheck:business": "pnpm --filter ./apps/business run typecheck",
+    "ui": "cd packages/ui && pnpm dlx shadcn@latest add",
+    "codegen": "pnpm --parallel --filter ./packages/graphql run codegen"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.28.2"
+}

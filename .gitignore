@@ -1,0 +1,14 @@
+.DS_Store
+.env
+node_modules/
+.pnpm-store/
+
+# React Router
+.react-router/
+build/
+
+# Vercel
+.vercel/
+
+# TypeScript
+*.tsbuildinfo

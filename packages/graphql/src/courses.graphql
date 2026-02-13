@@ -1,0 +1,416 @@
+query InstructorCourses($search: String, $sortBy: String, $sortOrder: String, $page: Int, $limit: Int) {
+  instructorCourses(search: $search, sortBy: $sortBy, sortOrder: $sortOrder, page: $page, limit: $limit) {
+    totalCount
+    pageInfo {
+      page
+      limit
+      offset
+      hasNextPage
+    }
+    course {
+    id
+    title
+    description
+    shortDescription
+    pricingType
+    video {
+      id
+      videoURL
+      source
+      tags
+      description
+      duration
+    }
+    tags
+    featuredImage
+    price
+    discountedPrice
+    promotionDuration
+    level {
+      id
+      name
+      description
+    }
+    duration
+    requirements
+    status
+    category {
+      id
+      description
+      name
+    }
+    creatorID
+    creator {
+      fullName
+      userName
+      email
+      role
+    }
+    instructors {
+      fullName
+      userName
+      email
+      role
+      profilePicture
+      phoneNumber
+      id
+    }
+    topics {
+      id
+      course {
+        id
+      }
+      title
+      description
+    }
+    createdAt
+    updatedAt
+      visibility
+      maxEnrollments
+      extraSettings {
+        key
+        value
+      }
+      scheduledPublishAt
+      publishedAt
+      metadata {
+        id
+        learnings
+        benefits
+        targetAudience
+        materialsIncluded
+        requirements
+      }
+      instructors {
+        isActive
+        fullName
+        email
+      }
+      enrollments {
+        id
+        status
+        user {
+          id
+          fullName
+          email
+          profilePicture
+          major
+          occupation
+          isActive
+          userName
+          stripeId
+        }
+        enrolledAt
+      }
+      certificates {
+        id
+        issuedAt
+        template {
+          id
+          name
+          content
+          logoUrl
+          background
+        }
+        user {
+          id
+          fullName
+          email
+          isActive
+          profilePicture
+          phoneNumber
+        }
+        course {
+          id
+          title
+        }
+      }
+    }
+  }
+}
+
+mutation CreateInitialCourse($input: CreateInitialCourseInput!) {
+  createInitialCourse(input: $input) {
+    id
+    title
+    description
+    pricingType
+    instructors {
+      id
+      fullName
+      email
+    }
+    featuredImage
+    price
+    discountedPrice
+    promotionDuration
+    level {
+      id
+      name
+      description
+    }
+    duration
+    requirements
+    status
+    category {
+      id
+      name
+      description
+    }
+    creatorID
+    creator {
+      id
+      fullName
+      email
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+query Course($courseId: ID!) {
+  course(id: $courseId) {
+    id
+    title
+    shortDescription
+    description
+    duration
+    pricingType
+    video {
+      id
+      videoURL
+      source
+      tags
+      description
+      duration
+    }
+    tags
+    featuredImage
+    price
+    discountedPrice
+    promotionDuration
+    level {
+      id
+      name
+      description
+    }
+    requirements
+    status
+    category {
+      id
+      description
+      name
+    }
+    creatorID
+    creator {
+      id
+      fullName
+      userName
+      email
+      role
+    }
+    instructors {
+      id
+      fullName
+      userName
+      email
+      phoneNumber
+      isActive
+    }
+    topics {
+      id
+      course {
+        id
+        title
+      }
+      title
+      description
+      position
+      lessons {
+        id
+        title
+        position
+        featuredImage
+        content
+        attachments
+        video {
+          id
+          source
+          videoURL
+          type
+          tags
+          width
+          height
+          format
+          duration
+          description
+        }
+        progress {
+          id
+          completed
+          completedAt
+          startedAt
+        }
+      }
+      quizzes {
+        id
+        title
+        content
+        timer
+        timeUnit
+        passingGrade
+        position
+        maxAttempts
+        questions {
+          id
+          mark
+          order
+          title
+          type
+          settings {
+            questionMark
+            questionType
+            answerRequired
+            showQuestionMark
+            randomizeQuestion
+            sortableItems
+            correctAnswers
+            matrixMatches {
+              columnA
+              columnB
+            }
+          }
+          description
+          answerExplanation
+        }
+        progress {
+          id
+          completed
+          score
+          startedAt
+          completedAt
+        }
+      }
+      createdAt
+      updatedAt
+    }
+    maxEnrollments
+    visibility
+    extraSettings {
+      key
+      value
+    }
+    metadata {
+      id
+      learnings
+      benefits
+      targetAudience
+      materialsIncluded
+      requirements
+    }
+    createdAt
+    updatedAt
+    scheduledPublishAt
+  }
+}
+
+mutation UpdateCourse($input: UpdateCourseInput, $updateCourseId: ID!) {
+  updateCourse(input: $input, id: $updateCourseId) {
+    id
+    title
+    description
+    shortDescription
+    pricingType
+    instructors {
+      fullName
+      email
+    }
+    video {
+      videoURL
+      source
+      type
+      id
+      description
+      format
+      tags
+      height
+      width
+      duration
+    }
+    tags
+    featuredImage
+    price
+    discountedPrice
+    promotionDuration
+    level {
+      id
+      name
+      description
+    }
+    duration
+    requirements
+    status
+    category {
+      id
+      name
+      description
+    }
+    creatorID
+    creator {
+      id
+      fullName
+      email
+    }
+    createdAt
+    updatedAt
+    extraSettings {
+      key
+      value
+    }
+    maxEnrollments
+    scheduledPublishAt
+    publishedAt
+    visibility
+    metadata {
+      id
+      learnings
+      benefits
+      targetAudience
+      materialsIncluded
+      requirements
+    }
+    enrollments {
+      id
+      status
+      enrolledAt
+      user {
+        id
+        fullName
+        email
+        isActive
+        major
+        occupation
+        profilePicture
+        stripeId
+      }
+    }
+  }
+}
+
+query CourseIntroVideo($courseId: ID!) {
+  courseIntroVideo(courseId: $courseId) {
+    videoURL
+    source
+    type
+    duration
+    description
+    tags
+    width
+    height
+    format
+  }
+}
+
+mutation DeleteCourse($courseId: ID!) {
+  deleteCourse(id: $courseId)
+}

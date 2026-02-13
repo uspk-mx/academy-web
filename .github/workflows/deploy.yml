@@ -1,0 +1,107 @@
+# =============================================================================
+# Deploy — detects which apps changed, deploys only those to Vercel
+#
+# Triggers:
+#   - Push to main       → production deploy
+#   - Pull request       → preview deploy
+#
+# Each app deploys independently based on which files changed.
+# Shared package changes (packages/*) trigger ALL app deploys.
+# =============================================================================
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - "pnpm-lock.yaml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - "pnpm-lock.yaml"
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # CI gate — typecheck + build must pass before any deploy
+  # ---------------------------------------------------------------------------
+  ci:
+    name: CI
+    uses: ./.github/workflows/ci.yml
+
+  # ---------------------------------------------------------------------------
+  # Detect which apps have changes
+  # ---------------------------------------------------------------------------
+  changes:
+    name: Detect changes
+    needs: ci
+    runs-on: ubuntu-latest
+    outputs:
+      web: ${{ steps.filter.outputs.web }}
+      admin: ${{ steps.filter.outputs.admin }}
+      business: ${{ steps.filter.outputs.business }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            web:
+              - 'apps/web/**'
+              - 'packages/**'
+              - 'pnpm-lock.yaml'
+            admin:
+              - 'apps/admin/**'
+              - 'packages/**'
+              - 'pnpm-lock.yaml'
+            business:
+              - 'apps/business/**'
+              - 'packages/**'
+              - 'pnpm-lock.yaml'
+
+  # ---------------------------------------------------------------------------
+  # Deploy each app (only if it changed)
+  # ---------------------------------------------------------------------------
+  deploy-web:
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    uses: ./.github/workflows/vercel-deploy.yml
+    with:
+      app-name: web
+      is-production: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    secrets:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID }}
+
+  deploy-admin:
+    needs: changes
+    if: needs.changes.outputs.admin == 'true'
+    uses: ./.github/workflows/vercel-deploy.yml
+    with:
+      app-name: admin
+      is-production: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    secrets:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_ADMIN_PROJECT_ID }}
+
+  deploy-business:
+    needs: changes
+    if: needs.changes.outputs.business == 'true'
+    uses: ./.github/workflows/vercel-deploy.yml
+    with:
+      app-name: business
+      is-production: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    secrets:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_BUSINESS_PROJECT_ID }}

@@ -1,0 +1,122 @@
+mutation CreateLesson($input: CreateLessonInput!) {
+  createLesson(input: $input) {
+    id
+    topic {
+      id
+      title
+      description
+    }
+    title
+    content
+    position
+    createdAt
+    updatedAt
+    featuredImage
+    attachments
+    video {
+      id
+      videoURL
+      source
+      type
+      duration
+      description
+      tags
+      width
+      height
+      format
+      createdAt
+      updatedAt
+    }
+  }
+}
+
+mutation UpdateLesson($lessonId: ID!, $input: UpdateLessonInput!) {
+  updateLesson(id: $lessonId, input: $input) {
+    id
+    title
+    content
+    position
+    createdAt
+    updatedAt
+    featuredImage
+    attachments
+    video {
+      id
+      videoURL
+      source
+      type
+      duration
+      description
+      tags
+      width
+      height
+      format
+      createdAt
+      updatedAt
+    }
+    showPreview
+  }
+}
+
+mutation DeleteLesson($lessonId: ID!) {
+  deleteLesson(id: $lessonId)
+}
+
+query Lesson($lessonId: ID!) {
+  lesson(id: $lessonId) {
+    id
+    topic {
+      id
+    }
+    title
+    content
+    position
+    createdAt
+    updatedAt
+    featuredImage
+    attachments
+    video {
+      id
+      description
+      videoURL
+      source
+      tags
+      type
+    }
+  }
+}
+
+
+query LessonsByTopicId($topicId: ID!) {
+  lessonsByTopicId(topicId: $topicId) {
+    id
+    topic {
+      id
+      title
+      description
+      position
+    }
+    title
+    content
+    position
+    createdAt
+    updatedAt
+    featuredImage
+    attachments
+    showPreview
+    video {
+      id
+      videoURL
+      source
+      type
+      duration
+      description
+      tags
+      width
+      height
+      format
+      createdAt
+      updatedAt
+    }
+  }
+}

@@ -1,0 +1,134 @@
+mutation MarkLessonCompleted($input: MarkLessonCompletedInput!) {
+  markLessonCompleted(input: $input) {
+    id
+    completed
+    startedAt
+    completedAt
+    updatedAt
+    user {
+      id
+      fullName
+      email
+    }
+    lesson {
+      id
+      title
+    }
+  }
+}
+
+mutation SubmitQuizAttempt($input: SubmitQuizAttemptInput!) {
+  submitQuizAttempt(input: $input) {
+    id
+    score
+    completed
+    startedAt
+    completedAt
+    user {
+      id
+      fullName
+      email
+    }
+    quiz {
+      id
+      title
+    }
+  }
+}
+
+query GetCourseProgress($userId: ID!, $courseId: ID!) {
+  getCourseProgress(userId: $userId, courseId: $courseId) {
+    id
+    completedLessons
+    completedQuizzes
+    totalLessons
+    totalQuizzes
+    totalAssignments
+    progressPercentage
+    startedAt
+    completed
+    completedAt
+    averageCompletionTime
+    averageScore
+    createdAt
+    updatedAt
+    user {
+      id
+      fullName
+      email
+    }
+    course {
+      id
+      title
+    }
+  }
+}
+
+mutation StartCourseProgress($input: StartCourseProgressInput!) {
+  startCourseProgress(input: $input) {
+    id
+    user {
+      id
+      fullName
+      email
+      userName
+    }
+    course {
+      id
+      title
+      category {
+        id
+        name
+      }
+      level {
+        id
+        name
+      }
+    }
+    completedLessons
+    completedQuizzes
+    totalLessons
+    totalQuizzes
+    totalAssignments
+    progressPercentage
+    startedAt
+    completed
+    completedAt
+    averageCompletionTime
+    averageScore
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdateQuizProgress($input: QuizProgressInput!) {
+  updateQuizProgress(input: $input) {
+    id
+    user {
+      id
+      fullName
+      email
+      isActive
+      userName
+      profilePicture
+      phoneNumber
+      occupation
+    }
+    quiz {
+      id
+      title
+      timer
+      timeUnit
+      position
+      passingGrade
+      maxAttempts
+      content
+      createdAt
+      updatedAt
+    }
+    score
+    completed
+    startedAt
+    completedAt
+  }
+}

@@ -1,0 +1,20 @@
+mutation AssignInstructor($userId: ID!, $courseId: ID!) {
+  assignInstructor(userId: $userId, courseId: $courseId) {
+    id
+    assignedAt
+    user {
+      id
+      fullName
+      email
+    }
+    courses {
+      id
+      title
+      description
+    }
+  }
+}
+
+mutation UnassignInstructor($userId: ID!, $courseId: ID!) {
+  unassignInstructor(userId: $userId, courseId: $courseId)
+}

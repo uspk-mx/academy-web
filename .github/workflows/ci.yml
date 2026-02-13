@@ -1,0 +1,62 @@
+# =============================================================================
+# CI — runs quality checks on every push and pull request
+#
+# Active checks:  typecheck (tsc), build
+# Ready to enable: lint (ESLint), test (Vitest)
+#
+# This workflow also serves as a gate for deployments — deploy.yml calls it
+# via workflow_call before deploying to Vercel.
+# =============================================================================
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_call: # Allow deploy.yml to call this as a prerequisite
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Typecheck & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      # Uncomment when ESLint is configured:
+      #   1. Add eslint.config.js at the repo root
+      #   2. Add "lint": "eslint ." to each app's package.json
+      #   3. Add "lint" script to root: "pnpm --parallel --filter './apps/*' run lint"
+      # - name: Lint
+      #   run: pnpm lint
+
+      # Uncomment when a test framework is set up (e.g. Vitest):
+      #   1. pnpm add -Dw vitest
+      #   2. Add vitest.config.ts to each app
+      #   3. Add "test": "vitest run" to each app's package.json
+      #   4. Add "test" script to root: "pnpm --parallel --filter './apps/*' run test"
+      # - name: Test
+      #   run: pnpm test
+
+      - name: Build
+        run: pnpm build

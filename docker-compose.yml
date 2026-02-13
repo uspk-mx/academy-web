@@ -1,0 +1,98 @@
+# =============================================================================
+# Docker Compose — production images with Traefik reverse proxy
+#
+# For local development with hot reload, use docker-compose.dev.yml instead:
+#   make docker-dev       (or: docker compose -f docker-compose.dev.yml up)
+#
+# Usage:
+#   docker compose up --build          # Build & start all services
+#   docker compose up --build web      # Build & start only the web app
+#   docker compose logs -f web         # Follow logs for web
+#
+# Subdomain routing (via Traefik):
+#   http://academy.localhost           → web   (port 3000)
+#   http://admin.academy.localhost     → admin (port 3001)
+#   http://business.academy.localhost  → business (port 3002)
+#
+# Direct port access (without Traefik):
+#   http://localhost:3000  → web
+#   http://localhost:3001  → admin
+#   http://localhost:3002  → business
+#
+# Environment variables:
+#   Create a .env file at the repo root (or export before running):
+#     VITE_API_TARGET=https://api.yoursite.com
+#     VITE_STRIPE_KEY=pk_live_xxx
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # Traefik — reverse proxy for subdomain-based routing
+  # Dashboard: http://localhost:8080
+  # ---------------------------------------------------------------------------
+  reverse-proxy:
+    image: traefik:v3.2
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Web — public-facing app (academy.localhost)
+  # ---------------------------------------------------------------------------
+  web:
+    build:
+      context: .
+      args:
+        APP_NAME: web
+        VITE_API_TARGET: ${VITE_API_TARGET:-http://host.docker.internal:4000}
+        VITE_STRIPE_KEY: ${VITE_STRIPE_KEY:-}
+    ports:
+      - "3000:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.web.rule=Host(`academy.localhost`)"
+      - "traefik.http.services.web.loadbalancer.server.port=3000"
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Admin — internal admin panel (admin.academy.localhost)
+  # ---------------------------------------------------------------------------
+  admin:
+    build:
+      context: .
+      args:
+        APP_NAME: admin
+        VITE_API_TARGET: ${VITE_API_TARGET:-http://host.docker.internal:4000}
+        VITE_STRIPE_KEY: ${VITE_STRIPE_KEY:-}
+    ports:
+      - "3001:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.admin.rule=Host(`admin.academy.localhost`)"
+      - "traefik.http.services.admin.loadbalancer.server.port=3000"
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Business — business dashboard (business.academy.localhost)
+  # ---------------------------------------------------------------------------
+  business:
+    build:
+      context: .
+      args:
+        APP_NAME: business
+        VITE_API_TARGET: ${VITE_API_TARGET:-http://host.docker.internal:4000}
+        VITE_STRIPE_KEY: ${VITE_STRIPE_KEY:-}
+    ports:
+      - "3002:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.business.rule=Host(`business.academy.localhost`)"
+      - "traefik.http.services.business.loadbalancer.server.port=3000"
+    restart: unless-stopped

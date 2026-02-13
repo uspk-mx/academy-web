@@ -1,0 +1,165 @@
+mutation CreateCourseBundle($input: CreateCourseBundleInput!) {
+  createCourseBundle(input: $input) {
+    id
+    title
+    description
+    featuredImage
+    price
+    subtotalRegularPrice
+    discountType
+    discountValue
+    courses {
+      id
+      tags
+      title
+      description
+      price
+      duration
+      discountedPrice
+      featuredImage
+      visibility
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+query InstructorBundles(
+  $search: String
+  $sortBy: String
+  $sortOrder: String
+  $page: Int
+  $limit: Int
+) {
+  instructorBundles(
+    search: $search
+    sortBy: $sortBy
+    sortOrder: $sortOrder
+    page: $page
+    limit: $limit
+  ) {
+    totalCount
+    pageInfo {
+      page
+      limit
+      offset
+      hasNextPage
+    }
+    bundle {
+      id
+      title
+      description
+      featuredImage
+      price
+      subtotalRegularPrice
+      discountType
+      discountValue
+      courses {
+        id
+        title
+        description
+        price
+        duration
+        discountedPrice
+        featuredImage
+        instructors {
+          id
+          fullName
+          email
+          profilePicture
+          phoneNumber
+          isActive
+          userName
+        }
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}
+
+query Bundles(
+  $search: String
+  $sortBy: String
+  $sortOrder: String
+  $page: Int
+  $limit: Int
+) {
+  bundles(
+    search: $search
+    sortBy: $sortBy
+    sortOrder: $sortOrder
+    page: $page
+    limit: $limit
+  ) {
+    totalCount
+    pageInfo {
+      page
+      limit
+      offset
+      hasNextPage
+    }
+    bundle {
+      id
+      title
+      description
+      featuredImage
+      price
+      subtotalRegularPrice
+      discountType
+      discountValue
+      courses {
+        id
+        title
+        description
+        price
+        duration
+        discountedPrice
+        featuredImage
+        visibility
+        instructors {
+          id
+          fullName
+          email
+          profilePicture
+          phoneNumber
+          isActive
+          userName
+        }
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}
+
+query Bundle($bundleId: ID!) {
+  bundle(id: $bundleId) {
+    id
+    title
+    description
+    featuredImage
+    price
+    subtotalRegularPrice
+    discountType
+    discountValue
+    courses {
+      id
+      featuredImage
+      duration
+      description
+      price
+      title
+      visibility
+      instructors {
+        id
+        fullName
+        email
+        userName
+        isActive
+      }
+    }
+    createdAt
+    updatedAt
+  }
+}

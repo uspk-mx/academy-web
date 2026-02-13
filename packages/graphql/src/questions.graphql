@@ -1,0 +1,87 @@
+mutation CreateQuestion($input: CreateQuestionInput!) {
+  createQuestion(input: $input) {
+    id
+    title
+    media
+    description
+    type
+    mark
+    settings {
+      questionMark
+      questionType
+      answerRequired
+      showQuestionMark
+      randomizeQuestion
+      sortableItems
+      correctAnswers
+      matrixMatches {
+        columnA
+        columnB
+      }
+    }
+    order
+    answerExplanation
+    answers {
+      id
+      type
+      title
+      isCorrect
+      image
+      gapMatch
+      viewFormat
+      settings
+      order
+      correctAnswers
+      createdAt
+      updatedAt
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdateQuestion($questionId: ID!, $input: UpdateQuestionInput!) {
+  updateQuestion(id: $questionId, input: $input) {
+    id
+    title
+    type
+    media
+    description
+    order
+    mark
+    answerExplanation
+    settings {
+      questionMark
+      questionType
+      answerRequired
+      showQuestionMark
+      randomizeQuestion
+      sortableItems
+      correctAnswers
+      matrixMatches {
+        columnA
+        columnB
+      }
+    }
+    answers {
+      id
+      type
+      title
+      isCorrect
+      image
+      gapMatch
+      viewFormat
+      settings
+      order
+      correctAnswers
+      createdAt
+      updatedAt
+    }
+    updatedAt
+    createdAt
+  }
+}
+
+mutation DeleteQuestion($questionId: ID!) {
+  deleteQuestion(id: $questionId)
+}

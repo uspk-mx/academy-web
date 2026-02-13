@@ -1,0 +1,39 @@
+mutation Login($input: Login!) {
+  login(input: $input) {
+    token
+    role
+  }
+}
+
+mutation Logout {
+  logout
+}
+
+mutation ChangePassword($token: String!, $password: String!) {
+  changePassword(token: $token, password: $password)
+}
+
+mutation ResetPassword($email: String!) {
+  resetPassword(email: $email)
+}
+
+query ValidateInviteToken($token: String!) {
+  validateInviteToken(token: $token) {
+    valid
+    expired
+    used
+    data {
+      email
+      companyName
+      invitedBy
+      planName
+    }
+  }
+}
+
+query CheckUserExists($email: String!) {
+  checkUserExists(email: $email) {
+    exists
+    userId
+  }
+}

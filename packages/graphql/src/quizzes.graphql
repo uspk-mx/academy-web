@@ -1,0 +1,185 @@
+mutation CreateQuiz($input: CreateQuizInput!) {
+  createQuiz(input: $input) {
+    id
+    topic {
+      id
+      description
+      title
+    }
+    title
+    content
+    timer
+    timeUnit
+    position
+    maxAttempts
+    passingGrade
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdateQuiz($updateQuizId: ID!, $input: UpdateQuizInput) {
+  updateQuiz(id: $updateQuizId, input: $input) {
+    id
+    topic {
+      id
+    }
+    title
+    content
+    timer
+    timeUnit
+    position
+    maxAttempts
+    passingGrade
+    createdAt
+    updatedAt
+  }
+}
+
+query Quiz($quizId: ID!) {
+  quiz(id: $quizId) {
+    id
+    topic {
+      id
+      title
+      description
+      position
+    }
+    title
+    content
+    timer
+    timeUnit
+    position
+    maxAttempts
+    passingGrade
+    createdAt
+    updatedAt
+    questions {
+      id
+      title
+      description
+      type
+      order
+      answers {
+        id
+        title
+        type
+        order
+        isCorrect
+        image
+        gapMatch
+        viewFormat
+        settings
+        correctAnswers
+      }
+      settings {
+        questionMark
+        questionType
+        answerRequired
+        showQuestionMark
+        randomizeQuestion
+        sortableItems
+        correctAnswers
+        matrixMatches {
+          columnA
+          columnB
+        }
+      }
+      answerExplanation
+    }
+    progress {
+      id
+      score
+      quiz {
+        id
+      }
+      completed
+      user {
+        id
+        fullName
+        email
+        profilePicture
+        occupation
+        isActive
+      }
+    }
+  }
+}
+
+query QuizzesByTopicId($topicId: ID!) {
+  quizzesByTopicId(topicId: $topicId) {
+    id
+    topic {
+      id
+      title
+      description
+      position
+    }
+    title
+    content
+    timer
+    timeUnit
+    position
+    maxAttempts
+    passingGrade
+    createdAt
+    updatedAt
+    questions {
+      id
+      title
+      media
+      description
+      type
+      order
+      mark
+      answers {
+        id
+        title
+        type
+        order
+        isCorrect
+        image
+        gapMatch
+        viewFormat
+        settings
+        correctAnswers
+      }
+      settings {
+        questionMark
+        questionType
+        answerRequired
+        showQuestionMark
+        randomizeQuestion
+        sortableItems
+        correctAnswers
+        matrixMatches {
+          columnA
+          columnB
+        }
+      }
+      answerExplanation
+      updatedAt
+      createdAt
+    }
+    progress {
+      id
+      score
+      quiz {
+        id
+      }
+      completed
+      user {
+        id
+        fullName
+        email
+        profilePicture
+        occupation
+        isActive
+      }
+    }
+  }
+}
+
+mutation DeleteQuiz($deleteQuizId: ID!) {
+  deleteQuiz(id: $deleteQuizId)
+}
