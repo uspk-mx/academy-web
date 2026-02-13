@@ -34,7 +34,6 @@ function EmailInput() {
           onBlur={handleBlur}
           onChange={handleChange}
           placeholder="eg. jay@gmail.com"
-          size='lg'
           type="email"
           value={email}
         />

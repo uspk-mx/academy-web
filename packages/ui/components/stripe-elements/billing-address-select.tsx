@@ -19,7 +19,7 @@ export default function BillingAddress({
     <div className="space-y-2">
       <Label htmlFor={id}>Pais</Label>
       <Select onValueChange={onValueChange} value={value}>
-        <SelectTrigger id={id} size="lg">
+        <SelectTrigger id={id}>
           <SelectValue placeholder="Selecciona tu pais" />
         </SelectTrigger>
         <SelectContent>
