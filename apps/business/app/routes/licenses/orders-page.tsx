@@ -17,12 +17,12 @@ import { PageBreadCrumbs } from "ui/components/admin/page-breadcrumbs";
 
 type Props = { companyId: string };
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY || "", {
+const stripePromise = loadStripe(import.meta.env.VITE_PUBLISHABLE_KEY || "", {
   betas: ["custom_checkout_beta_5"],
   locale: "es",
 });
 
-console.log("PK", import.meta.env.VITE_STRIPE_KEY);
+console.log("PK", import.meta.env.VITE_PUBLISHABLE_KEY);
 
 
 export default function OrdersPage() {

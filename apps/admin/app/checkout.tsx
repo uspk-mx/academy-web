@@ -9,7 +9,7 @@ import { LockIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 
-const stripe = loadStripe(import.meta.env.STRIPE_KEY || "", {
+const stripe = loadStripe(import.meta.env.VITE_PUBLISHABLE_KEY || "", {
   betas: ["custom_checkout_beta_5"],
   locale: "es",
 });
@@ -32,7 +32,7 @@ export async function loader() {
   return Response.json({
     ENV: {
       API_TARGET: process.env.VITE_API_TARGET,
-      STRIPE_KEY: process.env.VITE_STRIPE_KEY,
+      STRIPE_KEY: process.env.VITE_PUBLISHABLE_KEY,
     },
   });
 }
