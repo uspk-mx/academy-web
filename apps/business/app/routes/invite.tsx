@@ -28,6 +28,5 @@ export const loader = async ({ request }: { request: Request }) => {
 };
 
 export default function Invite() {
-
-  return <InvitePage />;
+  return <InvitePage variant="business" />;
 }

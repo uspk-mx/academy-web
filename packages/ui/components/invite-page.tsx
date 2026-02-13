@@ -34,7 +34,7 @@ const signUpSchema = z.object({
     .min(1, { message: "Tu contaseña debe de tener al menos un caracter." }),
 });
 
-export default function InvitePage() {
+export default function InvitePage({ variant} : { variant?: "admin" | "business"}) {
   const [, createUserAction] = useMutation<
     CreateUserMutation,
     CreateUserMutationVariables
@@ -64,8 +64,8 @@ export default function InvitePage() {
           username: username || "",
           email,
           password,
-          role: "user",
-          token: searchParams.get('token')
+          role: variant === "admin" ? "admin" : "business",
+          token: searchParams.get("token"),
         },
       });
 
