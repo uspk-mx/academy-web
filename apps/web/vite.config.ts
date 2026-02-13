@@ -7,6 +7,9 @@ import path from "path";
 export default defineConfig({
   envDir: path.resolve(__dirname, "../.."),
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
+  ssr: {
+    external: ["html-react-parser"],
+  },
   optimizeDeps: {
     exclude: ["../../packages/graphql/generated"],
   },
