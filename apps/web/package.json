@@ -14,6 +14,7 @@
     "@react-router/serve": "7.12.0",
     "@stripe/react-stripe-js": "^3.1.1",
     "@stripe/stripe-js": "^5.10.0",
+    "@vercel/react-router": "^1.2.5",
     "cookie": "^1.1.1",
     "gql-generated": "workspace:*",
     "graphql": "^16.12.0",
