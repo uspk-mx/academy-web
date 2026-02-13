@@ -1,5 +1,5 @@
 import parse from "html-react-parser";
-import DOMPurify from "isomorphic-dompurify";
+import DOMPurify from "dompurify";
 import { type JSX, useEffect, useRef, useState } from "react";
 import { cn } from "ui/lib/utils";
 import Markdown, { MarkdownHooks } from "react-markdown";
