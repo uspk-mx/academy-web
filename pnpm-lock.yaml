@@ -585,7 +585,7 @@ importers:
         specifier: ^4.1.18
         version: 4.1.18
       turndown:
-        specifier: ^7.2.2
+        specifier: ^7.2.0
         version: 7.2.2
       tw-animate-css:
         specifier: ^1.4.0
@@ -613,7 +613,7 @@ importers:
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.10)
       '@types/turndown':
-        specifier: ^5.0.6
+        specifier: ^5.0.5
         version: 5.0.6
       typescript:
         specifier: ^5.9.2
