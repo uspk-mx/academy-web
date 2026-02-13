@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 
 const stripe = loadStripe(import.meta.env.STRIPE_KEY || "", {
-  betas: ["custom_checkout_beta_5"],
   locale: "es",
 });
 
