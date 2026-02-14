@@ -6,7 +6,7 @@ import type {
   UpdateUserProfileMutationVariables
 } from "gql-generated/gql/graphql";
 import { ArrowLeftIcon, Camera, Check, Edit, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 import { toast } from "sonner";
@@ -14,6 +14,7 @@ import { Button } from "ui/components/button";
 import { useMutation } from "urql";
 import type { z } from "zod";
 import { PageLoader } from "ui/components/admin";
+import { Skeleton } from "ui/components/skeleton";
 import { Header } from "ui/components/dashboard/header";
 import {
   type EditProfileFormSchema,
@@ -25,8 +26,7 @@ import { cn } from "ui/lib/utils";
 import { Input } from 'ui/components/input';
 
 export default function ProfilePage() {
-  const {customerData: data } = useCustomerContextProvider()
-  const [userData, setUserData] = useState(data)
+  const {customerData: userData } = useCustomerContextProvider()
   const [interests, setInterests] = useState(userData?.interests);
   const [proflePicture, setProflePicture] = useState(userData?.profilePicture);
   const [imagePreview, setImagePreview] = useState("");
@@ -41,8 +41,6 @@ export default function ProfilePage() {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [newInterest, setNewInterest] = useState("");
-
-  
 
   const { register, reset, handleSubmit, setValue } = useForm({
     mode: "onSubmit",
@@ -60,6 +58,23 @@ export default function ProfilePage() {
       profilePicture: proflePicture || "",
     },
   });
+
+  useEffect(() => {
+    if (userData) {
+      setInterests(userData.interests);
+      setProflePicture(userData.profilePicture);
+      reset({
+        email: userData.email,
+        fullName: userData.fullName,
+        userName: userData.userName,
+        phoneNumber: userData.phoneNumber || "",
+        interests: userData.interests?.map((i) => i ?? undefined) || [],
+        major: userData.major || "",
+        occupation: userData.occupation || "",
+        profilePicture: userData.profilePicture || "",
+      });
+    }
+  }, [userData, reset]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] || null;
@@ -209,7 +224,82 @@ export default function ProfilePage() {
 
         {/* Main content */}
         {!userData ? (
-          <PageLoader loadingLabel="Cargando perfil..." />
+          <div className="grid gap-6 md:grid-cols-[1fr_2fr]">
+            {/* Left column skeleton */}
+            <div className="space-y-6">
+              <div className="relative mx-auto w-full max-w-xs">
+                <div className="relative rounded-xl border-4 border-black bg-white p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                  <Skeleton className="mb-4 aspect-square w-full rounded-lg border-4 border-black" />
+                  <div className="flex flex-col items-center gap-2">
+                    <Skeleton className="h-7 w-40" />
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="mt-2 h-7 w-20 rounded-full" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative">
+                <div className="relative rounded-xl border-4 border-black bg-white p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                  <Skeleton className="mb-3 h-5 w-52" />
+                  <div className="space-y-2">
+                    <div>
+                      <Skeleton className="mb-1 h-3 w-24" />
+                      <Skeleton className="h-5 w-48" />
+                    </div>
+                    <div>
+                      <Skeleton className="mb-1 h-3 w-36" />
+                      <Skeleton className="h-5 w-48" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right column skeleton */}
+            <div className="relative">
+              <div className="relative rounded-xl border-4 border-black bg-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                <Skeleton className="mb-6 h-9 w-36" />
+
+                <div className="grid gap-6">
+                  <div>
+                    <Skeleton className="mb-4 h-7 w-48" />
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {Array.from({ length: 3 }).map((_, i) => (
+                        // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholders
+                        <div key={i}>
+                          <Skeleton className="mb-1 h-5 w-32" />
+                          <Skeleton className="h-10 w-full rounded-lg" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <Skeleton className="mb-4 h-7 w-52" />
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {Array.from({ length: 3 }).map((_, i) => (
+                        // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholders
+                        <div key={i}>
+                          <Skeleton className="mb-1 h-5 w-32" />
+                          <Skeleton className="h-10 w-full rounded-lg" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <Skeleton className="mb-4 h-7 w-28" />
+                    <div className="flex flex-wrap gap-2">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholders
+                        <Skeleton key={i} className="h-8 w-20 rounded-full" />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-[1fr_2fr]">
             {/* Left column - Profile picture */}
@@ -224,7 +314,7 @@ export default function ProfilePage() {
                           : userData?.profilePicture || ""
                       }
                       alt={userData?.fullName}
-                      className="object-cover"
+                      className="object-cover size-full"
                     />
 
                     {isEditing && (
@@ -288,7 +378,7 @@ export default function ProfilePage() {
                           dateStyle: "full",
                           timeStyle: "short",
                           timeZone: "America/Mexico_City",
-                        }).format(new Date(userData.createdAt ?? ""))}
+                        }).format(new Date(userData?.createdAt ?? ""))}
                       </p>
                     </div>
                     <div>
@@ -296,12 +386,12 @@ export default function ProfilePage() {
                         ULTIMA ACTUALIZACION
                       </p>
                       <p className="font-bold">
-                        {userData.updatedAt
+                        {userData?.updatedAt
                           ? new Intl.DateTimeFormat("es-MX", {
                               dateStyle: "full",
                               timeStyle: "short",
                               timeZone: "America/Mexico_City",
-                            }).format(new Date(userData.updatedAt))
+                            }).format(new Date(userData?.updatedAt))
                           : "Sin actualizar"}
                       </p>
                     </div>

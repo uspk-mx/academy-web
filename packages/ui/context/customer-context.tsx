@@ -20,7 +20,7 @@ type CustomerContextProviderProps = {
 export const CustomerContextProvider = ({
   children,
 }: CustomerContextProviderProps) => {
-  const [{ data, fetching, error }, refetchQuery] = useQuery<
+  const [{ data, fetching, error}, refetchQuery] = useQuery<
     GetProfileQuery,
     GetProfileQueryVariables
   >({ query: GetProfileDocument, requestPolicy: "cache-and-network" });
