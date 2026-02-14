@@ -1,24 +1,12 @@
-import { useEffect, type ReactNode } from "react";
-import { Outlet, redirect, useLoaderData, useNavigate } from "react-router";
+import type { ReactNode } from "react";
+import { Outlet, redirect, useLoaderData } from "react-router";
 import { Toaster } from "sonner";
 import { AppSidebar } from "ui/components/app-sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "ui/components/sidebar";
-import type {
-  MeQuery,
-  MeQueryVariables,
-  User,
-} from "gql-generated/generated/types";
 import { getCookie } from "ui/lib/cookies";
 import type { Route } from "./+types/layout";
-import { shouldRedirectBasedOnDifferentRole } from "ui/lib/auth";
-import { useQuery } from "urql";
-import { MeDocument } from "gql-generated/gql/graphql";
+import { requireRole } from "ui/lib/auth";
 import { sidebarConfig } from "ui/components/admin";
-
-// const stripe = loadStripe(import.meta.env.STRIPE_KEY || "", {
-//   betas: ["custom_checkout_beta_5"],
-//   locale: "es",
-// });
 
 export async function loader({ request }: Route.LoaderArgs) {
   const [cookies, sessionToken] = getCookie(request, "session_token");
@@ -27,37 +15,24 @@ export async function loader({ request }: Route.LoaderArgs) {
     return redirect("/login");
   }
 
+  const me = await requireRole(sessionToken, process.env.VITE_API_TARGET!, ["business", "admin"]);
   const sidebarState = cookies?.["sidebar:state"] === "true";
 
   return {
     sidebarState,
+    me,
   };
 }
 
 export default function BusinessLayout({ children }: { children: ReactNode }) {
-  const navigate = useNavigate();
-  const [{ data }] = useQuery<MeQuery, MeQueryVariables>({
-    query: MeDocument,
-    requestPolicy: "cache-and-network",
-  });
-
-  useEffect(() => {
-    const redirectPath = shouldRedirectBasedOnDifferentRole(
-      data?.me?.role,
-      "business",
-    );
-
-    if (redirectPath) {
-      navigate(redirectPath);
-    }
-  }, [data?.me?.role, navigate]);
+  const { me } = useLoaderData<typeof loader>();
 
   return (
     <>
       <SidebarProvider defaultOpen={true}>
         <AppSidebar
-          userData={{ ...data?.me, id: data?.me?.customerId as string } as any}
-          selectorLabel={data?.me?.company?.name || "Select Company"}
+          userData={{ ...me, id: me.customerId } as any}
+          selectorLabel={me.company?.name || "Select Company"}
           mainNavTree={sidebarConfig.businessNav ?? { title: "", items: [] }}
           secondaryNavTree={
             sidebarConfig.navSecondary ?? { title: "", items: [] }
