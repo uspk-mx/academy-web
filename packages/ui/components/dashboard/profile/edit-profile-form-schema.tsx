@@ -6,8 +6,7 @@ export const editProfileFormSchema = z.object({
     .min(1, { message: "Tu nombre completo es un campo requerido." }),
   userName: z.string().min(1, { message: "Tu usuario es un campo requerido." }),
   email: z
-    .string()
-    .email({ message: "Al parecer ingresaste un correo electronico invalido." })
+    .email({ error: "Al parecer ingresaste un correo electronico invalido." })
     .min(1, { message: "Tu correo electronico es un campo requerido." }),
   occupation: z.string().optional(),
   major: z.string().optional(),

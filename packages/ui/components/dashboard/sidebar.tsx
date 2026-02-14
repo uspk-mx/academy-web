@@ -66,7 +66,7 @@ export const Sidebar = ({
       alt="Profile"
       width={128}
       height={128}
-      className="relative rounded-xl border-4 max-h-32 border-black object-cover"
+      className="relative rounded-xl border-4 max-h-32 border-black object-cover size-full"
     />
   ) : (
     <div className="relative justify-center items-center flex h-full">
