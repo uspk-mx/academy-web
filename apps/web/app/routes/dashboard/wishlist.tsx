@@ -95,6 +95,13 @@ const mockBundles = [
 
 type SortOption = "recent" | "price_low" | "price_high" | "rating";
 
+export function meta() {
+  return [
+    { title: "Uspk Academy | Lista de Deseos" },
+    { name: "description", content: "Lista de deseos de Uspk Academy, visualiza y gestiona tus cursos favoritos." },
+  ];
+}
+
 export default function ImprovedWishlistPage() {
   const [courses, setCourses] = useState(mockCourses);
   const [bundles, setBundles] = useState(mockBundles);

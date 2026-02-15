@@ -20,7 +20,6 @@ import { Button } from "ui/components/button";
 import { useMutation, useQuery } from "urql";
 import { z } from "zod";
 
-import type { Route } from "./+types/invite";
 
 import {
   ActivateCompanySubscriptionDocument,
@@ -36,13 +35,12 @@ import {
   type LoginMutation,
   type LoginMutationVariables,
 } from "gql-generated/gql/graphql";
-import { redirect } from "react-router";
 import type { GraphQLError } from "graphql";
+import { redirect } from "react-router";
 
-// biome-ignore lint/correctness/noEmptyPattern: <explanation>
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
-    { title: "Uspk Academy | Inicia Sesion" },
+    { title: "Uspk Academy | Invitacion" },
     { name: "description", content: "Bienvenido a Uspk Academy!" },
   ];
 }

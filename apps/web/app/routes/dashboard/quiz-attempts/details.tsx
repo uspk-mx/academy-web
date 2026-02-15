@@ -1,11 +1,12 @@
-import type { GetProfileQuery, GetProfileQueryVariables } from "gql-generated/gql/graphql";
+import type {
+  GetProfileQuery,
+  GetProfileQueryVariables,
+} from "gql-generated/gql/graphql";
 import { GetProfileDocument } from "gql-generated/gql/graphql";
 import {
   ArrowLeft,
-  ArrowLeftIcon,
   Award,
   Book,
-  CheckCircle,
   CheckCircle2,
   Clock,
   HelpCircle,
@@ -15,7 +16,6 @@ import {
 } from "lucide-react";
 import { Link, useParams } from "react-router";
 import { Button } from "ui/components/button";
-import { Header } from "ui/components/dashboard/header";
 import { formatDate } from "ui/lib/utils";
 import { useQuery } from "urql";
 
@@ -187,7 +187,10 @@ const mockQuizAttempts = {
 export default function QuizAttemptDetailsPage() {
   const params = useParams();
   const id = Number(params.qid);
-  const [{ data, fetching }] = useQuery<GetProfileQuery, GetProfileQueryVariables>({
+  const [{ data, fetching }] = useQuery<
+    GetProfileQuery,
+    GetProfileQueryVariables
+  >({
     query: GetProfileDocument,
   });
 
@@ -238,7 +241,9 @@ export default function QuizAttemptDetailsPage() {
         {/* Header Card */}
         <div
           className={`overflow-hidden rounded-xl border-4 border-black mt-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] ${
-            quizAttempt.result === "Pass" ? "bg-chart-2/10" : "bg-destructive/10"
+            quizAttempt.result === "Pass"
+              ? "bg-chart-2/10"
+              : "bg-destructive/10"
           }`}
         >
           <div className="space-y-4 p-6">
@@ -253,8 +258,10 @@ export default function QuizAttemptDetailsPage() {
                 <h1 className="text-4xl font-black">{quizAttempt.title}</h1>
                 <p className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4" />
-                  {formatDate(quizAttempt.date,  {      hour: "2-digit",
-      minute: "2-digit",})}
+                  {formatDate(quizAttempt.date, {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </p>
               </div>
 
@@ -363,9 +370,7 @@ export default function QuizAttemptDetailsPage() {
                 <stat.icon className="h-5 w-5" strokeWidth={2.5} />
               </div>
               <div>
-                <p className="text-2xl font-black leading-none">
-                  {stat.value}
-                </p>
+                <p className="text-2xl font-black leading-none">{stat.value}</p>
                 <p className="text-xs font-bold text-muted-foreground">
                   {stat.label}
                 </p>

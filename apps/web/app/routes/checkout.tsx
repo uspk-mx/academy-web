@@ -34,6 +34,16 @@ export async function loader() {
   });
 }
 
+export function meta() {
+  return [
+    { title: `Uspk Academy | Checkout` },
+    {
+      name: "description",
+      content: "Página de checkout para completar la compra.",
+    },
+  ];
+}
+
 export default function Checkout() {
   const [clientSecret, setClientSecret] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +66,7 @@ export default function Checkout() {
             },
             credentials: "include",
             body: JSON.stringify({ query: mutation }),
-          }
+          },
         );
 
         if (!response.ok) {

@@ -5,25 +5,31 @@ import type {
   UpdateUserProfileMutation,
   UpdateUserProfileMutationVariables
 } from "gql-generated/gql/graphql";
+import { UpdateUserProfileDocument } from "gql-generated/gql/graphql";
 import { ArrowLeftIcon, Camera, Check, Edit, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 import { toast } from "sonner";
-import { Button } from "ui/components/button";
-import { useMutation } from "urql";
-import type { z } from "zod";
 import { PageLoader } from "ui/components/admin";
-import { Skeleton } from "ui/components/skeleton";
+import { Button } from "ui/components/button";
 import { Header } from "ui/components/dashboard/header";
 import {
   type EditProfileFormSchema,
   editProfileFormSchema,
 } from "ui/components/dashboard/profile/edit-profile-form-schema";
-import { useCustomerContextProvider } from "ui/context";
-import { UpdateUserProfileDocument } from "gql-generated/gql/graphql";
-import { cn } from "ui/lib/utils";
 import { Input } from 'ui/components/input';
+import { Skeleton } from "ui/components/skeleton";
+import { useCustomerContextProvider } from "ui/context";
+import { cn } from "ui/lib/utils";
+import { useMutation } from "urql";
+
+export function meta() {
+  return [
+    { title: "Uspk Academy | Perfil" },
+    { name: "description", content: "Perfil de usuario de Uspk Academy, visualiza y actualiza tu información personal." },
+  ];
+}
 
 export default function ProfilePage() {
   const {customerData: userData } = useCustomerContextProvider()

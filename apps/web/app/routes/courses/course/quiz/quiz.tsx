@@ -12,6 +12,14 @@ import type {
   TopicsByCourseQuery,
   TopicsByCourseQueryVariables,
 } from "gql-generated/gql/graphql";
+import type { Route } from "./+types/quiz";
+
+export function meta({ params }: Route.MetaArgs) {
+  return [
+    { title: `Uspk Academy | Quiz: ${params.quizId}` },
+    { name: "description", content: `Quiz del curso ${params.cid}` },
+  ];
+}
 
 export default function QuizPage() {
   const { cid: courseId, quizId } = useParams();
@@ -26,7 +34,6 @@ export default function QuizPage() {
       courseId: courseId as string,
     },
   });
-
 
   const [nextItemLabel, setNextItemLabel] = useState('')
   const [hasMoreTopics, setHasMoreTopics] = useState(false)
@@ -167,7 +174,7 @@ export default function QuizPage() {
           <ScrollArea className="flex-1 h-full overflow-y-auto">
             <div className="pb-6 xl:pb-0">
               <div className="relative h-full w-full flex flex-col">
-                <div className="relative flex-1 min-w-[1px] h-full flex flex-col justify-center z-0">
+                <div className="relative flex-1 min-w-px h-full flex flex-col justify-center z-0">
                   {!activeQuiz ? (
                     <PageLoader />
                   ) : (

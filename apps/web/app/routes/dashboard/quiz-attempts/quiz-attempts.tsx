@@ -1,11 +1,5 @@
-import type {
-  GetProfileQuery,
-  GetProfileQueryVariables,
-} from "gql-generated/gql/graphql";
-import { GetProfileDocument } from "gql-generated/gql/graphql";
 import {
   ArrowLeft,
-  ArrowLeftIcon,
   Award,
   Book,
   CheckCircle2,
@@ -13,15 +7,12 @@ import {
   Clock,
   Filter,
   HelpCircle,
-  Info,
   TrendingUp,
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
 import { Button } from "ui/components/button";
-import { Header } from "ui/components/dashboard/header";
-import { useQuery } from "urql";
 
 // Mock data for quiz attempts
 const mockQuizAttempts = [
@@ -88,6 +79,13 @@ const mockQuizAttempts = [
 ];
 
 type FilterOption = "all" | "pass" | "fail";
+
+export function meta() {
+  return [
+    { title: "Uspk Academy | Intentos de pruebas" },
+    { name: "description", content: "Intentos de pruebas, visualiza y administra los intentos de pruebas de los cursos." },
+  ];
+}
 
 export default function QuizAttemptsPage() {
   const [quizAttempts, setQuizAttempts] = useState(mockQuizAttempts);

@@ -13,18 +13,14 @@ import {
   Book,
   CheckCircle2,
   ChevronRight,
-  ChevronRightIcon,
   Clock,
   GraduationCap,
   PlayCircle,
-  SparkleIcon,
   Star,
   Target,
-  User,
-  Zap
+  Zap,
 } from "lucide-react";
 import { Link, redirect, useNavigate } from "react-router";
-import { toast } from "sonner";
 import { useMutation, useQuery } from "urql";
 
 export const loader = async ({ request }: { request: Request }) => {
@@ -42,6 +38,13 @@ export const loader = async ({ request }: { request: Request }) => {
 
   return null; // Proceed if authenticated
 };
+
+export function meta() {
+  return [
+    { title: "Uspk Academy | Dashboard" },
+    { name: "description", content: "Dashboard de Uspk Academy" },
+  ];
+}
 
 export default function DashboardPage() {
  const navigate = useNavigate();

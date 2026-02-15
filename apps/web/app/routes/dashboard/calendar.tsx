@@ -81,6 +81,13 @@ const mockScheduledClasses = [
   },
 ];
 
+export function meta() {
+  return [
+    { title: "Uspk Academy | Calendario" },
+    { name: "description", content: "Calendario de Uspk Academy, visualiza y programa tus clases en vivo." },
+  ];
+}
+
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date(2026, 1, 8)); 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);

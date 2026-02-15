@@ -32,6 +32,16 @@ const resetPasswordSchema = z.object({
     .email("Correo electronico invalido"),
 });
 
+export function meta() {
+  return [
+    { title: `Uspk Academy | Reiniciar contraseña` },
+    {
+      name: "description",
+      content: "Página para reiniciar la contraseña del usuario.",
+    },
+  ];
+}
+
 export default function ResetPasswordPage() {
   const [, resetPasswordMutation] = useMutation<
     ResetPasswordMutation,
@@ -49,8 +59,7 @@ export default function ResetPasswordPage() {
     formState: { errors, isSubmitting },
   } = useForm({
     mode: "onSubmit",
-    resolver:
-      zodResolver(resetPasswordSchema),
+    resolver: zodResolver(resetPasswordSchema),
   });
 
   const onLoginAction = async (data: z.infer<typeof resetPasswordSchema>) => {

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 export function meta() {
   return [
-    { title: "New React Router App" },
+    { title: "Uspk Academy | Home" },
     { name: "description", content: "Welcome to React Router!" },
   ];
 }

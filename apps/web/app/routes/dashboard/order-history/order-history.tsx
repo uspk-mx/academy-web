@@ -1,24 +1,20 @@
+import type { MeQuery, MeQueryVariables } from "gql-generated/gql/graphql";
+import { MeDocument } from "gql-generated/gql/graphql";
 import {
   ArrowLeft,
-  ArrowLeftIcon,
   Calendar,
-  CalendarIcon,
   DollarSign,
   Download,
   Package,
   Receipt,
   Search,
-  ShoppingBagIcon,
-  ShoppingCart,
-  ShoppingCartIcon,
+  ShoppingCart
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
-import { useQuery } from "urql";
 import { Button } from "ui/components/button";
-import { MeDocument } from "gql-generated/gql/graphql";
-import type { MeQuery, MeQueryVariables } from "gql-generated/gql/graphql";
 import { formatDate } from "ui/lib/utils";
+import { useQuery } from "urql";
 
 const mockOrders = {
   courses: [
@@ -151,6 +147,13 @@ const mockOrders = {
 
 type OrderType = "courses" | "bundles" | "subscriptions";
 
+export function meta() {
+  return [
+    { title: `Uspk Academy | Historial de órdenes` },
+    { name: "description", content: "Historial de órdenes de compra del estudiante." },
+  ];
+}
+
 export default function OrderHistoryPage() {
   const [activeTab, setActiveTab] = useState<OrderType>("courses");
   const [showOrders, setShowOrders] = useState(true);
@@ -267,7 +270,7 @@ export default function OrderHistoryPage() {
               className="flex items-center gap-3 rounded-xl border-4 border-black bg-card p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             >
               <div
-                className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border-2 border-black ${stat.color}`}
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-2 border-black ${stat.color}`}
               >
                 <stat.icon className="h-5 w-5" strokeWidth={2.5} />
               </div>

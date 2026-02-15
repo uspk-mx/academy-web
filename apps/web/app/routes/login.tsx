@@ -1,10 +1,9 @@
 
 import LoginPage from "../pages/login/login";
-import type { Route } from "./+types/login";
 
 import { redirect } from "react-router";
 
-export function meta({ data }: Route.MetaArgs) {
+export function meta() {
   return [
     { title: "Uspk Academy | Inicia Sesión" },
     { name: "description", content: "Bienvenido a Uspk Academy!" },

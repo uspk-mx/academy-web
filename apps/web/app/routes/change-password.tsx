@@ -17,25 +17,30 @@ import { capitalizeFirstLetter, cn } from "ui/lib/utils";
 import { useMutation } from "urql";
 import { z } from "zod";
 
-
 const changePasswordSchema = z.object({
-    password: z
-        .string({
-            error: "La contraseña es un campo requerido.",
-        })
-        .min(8, "La contraseña debe tener al menos 8 caracteres.")
-        .regex(/[0-9]/, "La contraseña debe tener al menos 1 número.")
-        .regex(/[a-z]/, "La contraseña debe tener al menos 1 letra minúscula.")
-        .regex(/[A-Z]/, "La contraseña debe tener al menos 1 letra mayúscula."),
+  password: z
+    .string({
+      error: "La contraseña es un campo requerido.",
+    })
+    .min(8, "La contraseña debe tener al menos 8 caracteres.")
+    .regex(/[0-9]/, "La contraseña debe tener al menos 1 número.")
+    .regex(/[a-z]/, "La contraseña debe tener al menos 1 letra minúscula.")
+    .regex(/[A-Z]/, "La contraseña debe tener al menos 1 letra mayúscula."),
 });
 
+export function meta() {
+  return [
+    { title: `Uspk Academy | Cambiar contraseña` },
+    { name: "description", content: "Página para cambiar la contraseña del usuario." },
+  ];
+}
 
 export default function ChangePasswordPage() {
   const [, changePasswordMutation] = useMutation<
     ChangePasswordMutation,
     ChangePasswordMutationVariables
   >(ChangePasswordDocument);
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [serverErrors, setServerErrors] = useState<GraphQLError[]>([]);
   const [showBanner, setShowBanner] = useState(false);
@@ -51,7 +56,9 @@ export default function ChangePasswordPage() {
     resolver: zodResolver(changePasswordSchema),
   });
 
-  const onChangePasswordAction = async (data: z.infer<typeof changePasswordSchema>) => {
+  const onChangePasswordAction = async (
+    data: z.infer<typeof changePasswordSchema>,
+  ) => {
     try {
       setIsLoading(true);
       const { password } = data;

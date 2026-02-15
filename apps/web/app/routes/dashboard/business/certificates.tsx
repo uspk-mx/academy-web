@@ -20,6 +20,13 @@ import { toast } from "sonner";
 import { Button } from "ui/components/button";
 import { useQuery } from "urql";
 
+export function meta() {
+  return [
+    { title: `Uspk Academy | Certificados` },
+    { name: "description", content: "Lista de certificados del estudiante." },
+  ];
+}
+
 export default function CertificadosPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"recent" | "name">("recent");

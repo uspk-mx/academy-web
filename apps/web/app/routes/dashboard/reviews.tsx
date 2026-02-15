@@ -49,6 +49,13 @@ const mockReviews = [
 type Review = (typeof mockReviews)[0];
 type FilterOption = "all" | "5" | "4" | "3" | "2" | "1";
 
+export function meta() {
+  return [
+    { title: "Uspk Academy | Reseñas" },
+    { name: "description", content: "Reseñas de cursos de Uspk Academy, visualiza y edita tus reseñas." },
+  ];
+}
+
 export default function ImprovedReviewsPage() {
   const [reviews, setReviews] = useState(mockReviews);
   const [filterRating, setFilterRating] = useState<FilterOption>("all");
@@ -180,7 +187,7 @@ export default function ImprovedReviewsPage() {
                 className="flex items-center gap-3 rounded-xl border-4 border-black bg-card p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
               >
                 <div
-                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border-2 border-black ${stat.color}`}
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-2 border-black ${stat.color}`}
                 >
                   <stat.icon className="h-5 w-5" strokeWidth={2.5} />
                 </div>

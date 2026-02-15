@@ -1,3 +1,9 @@
+import type {
+  Course,
+  GetUserEnrollmentsQuery,
+  GetUserEnrollmentsQueryVariables,
+} from "gql-generated/gql/graphql";
+import { GetUserEnrollmentsDocument } from "gql-generated/gql/graphql";
 import {
   Book,
   CheckCircle2,
@@ -7,20 +13,21 @@ import {
   SearchIcon,
   TrendingUp,
 } from "lucide-react";
+import { useState } from "react";
 import { Link, useSearchParams } from "react-router";
-import { useQuery } from "urql";
 import { MembershipCardSkeleton } from "ui/components/admin/memberships/membership-card-skeleton";
 import { CourseCard } from "ui/components/courses/course-card";
-import { CourseFilters } from "ui/components/courses/course-filters";
-import { GetUserEnrollmentsDocument } from "gql-generated/gql/graphql";
-import type {
-  Course,
-  GetUserEnrollmentsQuery,
-  GetUserEnrollmentsQueryVariables,
-} from "gql-generated/gql/graphql";
-import { useState } from "react";
+import { useQuery } from "urql";
 
 type CourseFilter = "all" | "in_progress" | "completed" | "not_started";
+
+
+export function meta() {
+  return [
+    { title: `Uspk Academy | Cursos` },
+    { name: "description", content: "Lista de cursos del estudiante." },
+  ];
+}
 
 export default function CoursesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -187,7 +194,7 @@ export default function CoursesPage() {
               className="flex items-center gap-3 rounded-xl border-4 border-black bg-card p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             >
               <div
-                className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border-2 border-black ${stat.color}`}
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-2 border-black ${stat.color}`}
               >
                 <stat.icon className="h-5 w-5" strokeWidth={2.5} />
               </div>

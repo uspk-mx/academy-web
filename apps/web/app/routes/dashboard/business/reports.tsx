@@ -17,6 +17,13 @@ import {
   type GetUserEnrollmentsQueryVariables,
 } from "gql-generated/gql/graphql";
 
+export function meta() {
+  return [
+    { title: `Uspk Academy | Reportes` },
+    { name: "description", content: "Reportes de progreso del estudiante." },
+  ];
+}
+
 export default function ReportesPage() {
   const [timeRange, setTimeRange] = useState<"week" | "month" | "all">("week");
 

@@ -20,6 +20,13 @@ import { Button } from "ui/components/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "ui/components/tabs";
 import { useQuery } from "urql";
 
+export function meta() {
+  return [
+    { title: `Uspk Academy | Mi Equipo` },
+    { name: "description", content: "Información del equipo de trabajo." },
+  ];
+}
+
 export default function MiEquipoPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const companyId = useCompanyId();

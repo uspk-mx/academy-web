@@ -39,7 +39,6 @@ export default function SignUpPage() {
     LoginMutationVariables
   >(LoginDocument);
   const navigate = useNavigate();
-  const [transition, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState(false);
   const [serverErrors, setServerErrors] = useState<GraphQLError[]>([]);
 

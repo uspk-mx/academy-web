@@ -9,7 +9,6 @@ const CartPage = () => {
 
   if (fetching) return <div>loading...</div>;
   return <Cart cartData={data?.me?.carts as CartType} />;
-  //   <Cart items={data?.me?.carts.items} />
 };
 
 export default CartPage;

@@ -1,19 +1,21 @@
 import SignUpPage from "../pages/signup/signup";
-import type { Route } from "./+types/signup";
 
 import { redirect } from "react-router";
 
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
-    { title: "Uspk Academy | Inicia Sesion" },
-    { name: "description", content: "Bienvenido a Uspk Academy!" },
+    { title: "Uspk Academy | Regístrate" },
+    {
+      name: "description",
+      content: "Únete a Uspk Academy y comienza tu aprendizaje!",
+    },
   ];
 }
 
 export const loader = async ({ request }: { request: Request }) => {
   const cookieHeader = request.headers.get("Cookie");
   const cookies = Object.fromEntries(
-    cookieHeader?.split("; ").map((cookie) => cookie.split("=")) || []
+    cookieHeader?.split("; ").map((cookie) => cookie.split("=")) || [],
   );
 
   const sessionToken = cookies["session_token"];
@@ -27,6 +29,5 @@ export const loader = async ({ request }: { request: Request }) => {
 };
 
 export default function SignUp() {
-
   return <SignUpPage />;
 }

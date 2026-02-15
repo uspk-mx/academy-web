@@ -7,6 +7,14 @@ import { LoadingVideoSkeleton } from "ui/components/admin/courses/loading-video-
 import { VideoPlayer } from "ui/components/admin/courses/video-player";
 import { ScrollArea } from "ui/components/scroll-area";
 import { useCustomerContextProvider } from "ui/context";
+import type { Route } from "./+types/lesson";
+
+export function meta({ params }: Route.MetaArgs) {
+  return [
+    { title: `Uspk Academy | Lección: ${params.lessonId}` },
+    { name: "description", content: `Lección del curso ${params.cid}` },
+  ];
+}
 
 export default function LessonPage() {
   const { cid: courseId, lessonId } = useParams();
@@ -18,11 +26,11 @@ export default function LessonPage() {
     () =>
       course?.topics?.some((topic) => {
         const lessons = topic?.lessons?.filter(
-          (lesson) => lesson?.id === lessonId
+          (lesson) => lesson?.id === lessonId,
         );
         return lessons?.some((lesson) => lesson.progress?.completed);
       }),
-    [course?.topics, lessonId]
+    [course?.topics, lessonId],
   );
 
   const activeLesson = course?.topics
