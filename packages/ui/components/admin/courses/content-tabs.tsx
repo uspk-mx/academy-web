@@ -67,7 +67,6 @@ export const ContentTabs = ({
 
   // Set initial active tab to the first available tab
   const [activeTab, setActiveTab] = useState(tabs[0]);
-  const [previousTab, setPreviousTab] = useState<string | null>(null);
 
   useEffect(() => {
     if (width <= 968) {

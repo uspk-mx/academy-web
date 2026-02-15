@@ -52,7 +52,7 @@ export function capitalizeFirstLetter(val: string) {
 }
 
 export function removeAcademyDataPrefix(input: string) {
-  const prefix = "https://academy-data.nyc3.digitaloceanspaces.com/";
+  const prefix = "https://pub-b7daf0a886e34f2b8c2ab3497bc521f7.r2.dev/";
   if (input.startsWith(prefix)) {
     return input.slice(prefix.length);
   } else {

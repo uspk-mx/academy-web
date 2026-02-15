@@ -81,7 +81,6 @@ const getBorderColor = useMemo(() => {
     return null;
   };
 
-  // Get CTA text
   const getCTAText = () => {
     if (isCompleted) return "Revisar curso";
     if (isStarted) return "Continuar aprendiendo";
@@ -192,37 +191,42 @@ const getBorderColor = useMemo(() => {
 }
 
 function getCourseUrl(course: Course) {
-  const topics = course.topics ?? [];
+  const topics = [...(course.topics ?? [])].sort(
+    (a, b) => (a?.position ?? 0) - (b?.position ?? 0)
+  );
 
-  // Flatten all lessons and quizzes with their topic positions
   const items: Array<{
     type: "lesson" | "quiz";
     id: string;
     position?: number;
-    progress?: { completed?: boolean };
+    progress?: { completed?: boolean } | null;
   }> = [];
 
   topics.forEach((topic) => {
-    (topic?.lessons ?? []).forEach((lesson) => {
-      //@ts-ignore
-      if (lesson) items.push({ type: "lesson", ...lesson });
-    });
-    (topic?.quizzes ?? []).forEach((quiz) => {
-      //@ts-ignore
-      if (quiz) items.push({ type: "quiz", ...quiz });
-    });
+    const topicItems = [
+      ...(topic?.lessons ?? []).map((lesson) => ({
+        type: "lesson" as const,
+        id: lesson!.id,
+        position: lesson!.position ?? 0,
+        progress: lesson!.progress,
+      })),
+      ...(topic?.quizzes ?? []).map((quiz) => ({
+        type: "quiz" as const,
+        id: quiz!.id,
+        position: quiz!.position ?? 0,
+        progress: quiz!.progress,
+      })),
+    ];
+    topicItems.sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+    items.push(...topicItems);
   });
 
-  items.sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
-
-  const firstIncomplete = items.find(
-    (item) => item.progress?.completed === false
-  );
-  const target = firstIncomplete ?? items[items.length - 1];
+  const firstIncomplete = items.find((item) => !item.progress?.completed);
+  const target = firstIncomplete ?? items[0];
 
   if (!target) return `/courses/${course.id}`;
 
   return target.type === "quiz"
     ? `/courses/${course.id}/quiz/${target.id}`
-    : `/courses/${course.id}/lesson/${target.id}`
+    : `/courses/${course.id}/lesson/${target.id}`;
 }

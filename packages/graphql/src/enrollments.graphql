@@ -120,6 +120,7 @@ query GetUserEnrollments {
         id
         title
         description
+        position
         lessons {
           id
           title
@@ -144,10 +145,24 @@ query GetUserEnrollments {
           attachments
           position
           updatedAt
+          progress {
+            id
+            completed
+            completedAt
+            startedAt
+          }
         }
         quizzes {
           id
           title
+          position
+          progress {
+            id
+            completed
+            score
+            startedAt
+            completedAt
+          }
         }
       }
       progress {

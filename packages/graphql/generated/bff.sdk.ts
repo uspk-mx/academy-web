@@ -1093,6 +1093,7 @@ export const GetUserEnrollmentsDocument = gql`
         id
         title
         description
+        position
         lessons {
           id
           title
@@ -1117,10 +1118,24 @@ export const GetUserEnrollmentsDocument = gql`
           attachments
           position
           updatedAt
+          progress {
+            id
+            completed
+            completedAt
+            startedAt
+          }
         }
         quizzes {
           id
           title
+          position
+          progress {
+            id
+            completed
+            score
+            startedAt
+            completedAt
+          }
         }
       }
       progress {

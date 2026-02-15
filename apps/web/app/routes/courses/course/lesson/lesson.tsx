@@ -42,7 +42,7 @@ export default function LessonPage() {
         <div className="flex-1">
           <ScrollArea className="flex-1 overflow-y-auto">
             <div className="relative w-full flex flex-col">
-              <div className="relative flex-1 min-w-[1px] flex z-0">
+              <div className="relative flex-1 min-w-px flex z-0">
                 {!activeLesson?.video?.videoURL && !fetching ? (
                   <div className="relative w-full  bg-black">
                     <div className="relative aspect-video">
