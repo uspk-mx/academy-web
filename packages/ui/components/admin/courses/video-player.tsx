@@ -437,8 +437,8 @@ const [duration, setDuration] = useState(
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white hover:bg-white/10 w-12 h-12"
-                  onClick={() => navigate("/dashboard/scourses")}
+                  className="text-white hover:bg-white/10 z-10 w-12 h-12"
+                  onClick={() => navigate("/courses")}
                 >
                   <ArrowLeftIcon className="h-8 w-8" />
                 </Button>
@@ -447,8 +447,8 @@ const [duration, setDuration] = useState(
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/10 w-12 h-12"
-                onClick={() => navigate("/dashboard/scourses")}
+                className="text-white hover:bg-white/10 z-10 w-12 h-12"
+                onClick={() => navigate("/courses")}
               >
                 <XIcon className="h-8 w-8" />
               </Button>
