@@ -1,11 +1,11 @@
-import { cn } from "ui/lib/utils";
-import { Link, useLocation } from "react-router";
+import type { CourseQuery } from "gql-generated/generated/types";
 import {
   FileTextIcon,
   MessageCircleQuestionIcon,
   VideoIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router";
 import {
   Accordion,
   AccordionContent,
@@ -13,10 +13,10 @@ import {
   AccordionTrigger,
 } from "ui/components/accordion";
 import { Checkbox } from "ui/components/checkbox";
-import { VideoMetadataDisplay } from "./video-metadata-display";
-import type { CourseQuery, Topic } from "gql-generated/generated/types";
 import { ScrollArea } from "ui/components/scroll-area";
 import { useProgress } from "ui/context/progress-context";
+import { cn } from "ui/lib/utils";
+import { VideoMetadataDisplay } from "./video-metadata-display";
 
 export const CourseMobileMenu = ({
   topics,
@@ -31,7 +31,7 @@ export const CourseMobileMenu = ({
   const activeTopicTitle = topics?.find(
     (topic) =>
       topic.lessons?.some((lesson) => pathname.includes(lesson?.id)) ||
-      topic.quizzes?.some((quiz) => pathname.includes(quiz?.id))
+      topic.quizzes?.some((quiz) => pathname.includes(quiz?.id)),
   )?.title;
 
   useEffect(() => {
@@ -97,15 +97,17 @@ export const CourseMobileMenu = ({
                           <div className="flex flex-row items-starts gap-4">
                             <Checkbox
                               id="checkbox-06"
-                              className="rounded-full"
-                              checked={
-                                isLesson
-                                  ? item.progress?.completed
-                                  : item.progress?.completed
-                              }
+                              className={cn("rounded-full", {
+                                "cursor-not-allowed": !isLesson,
+                              })}
+                              disabled={!isLesson || !!item.progress?.completed}
+                              checked={!!item.progress?.completed}
+                              onClick={(e) => e.stopPropagation()}
                               onCheckedChange={() => {
-                                markLessonComplete({ lessonId: itemId });
-                                markComplete(itemId);
+                                if (isLesson) {
+                                  markLessonComplete({ lessonId: itemId });
+                                  markComplete(itemId);
+                                }
                               }}
                             />
                             <div className="flex flex-col items-start gap-1">
@@ -140,7 +142,7 @@ export const CourseMobileMenu = ({
                                       "text-gray-950 truncate text-sm",
                                       {
                                         "font-bold": activeElement,
-                                      }
+                                      },
                                     )}
                                   >
                                     {item.title}

@@ -40,7 +40,7 @@ export const CourseSideNavigation = ({
   const activeTopicTitle = topics?.find(
     (topic) =>
       topic?.lessons?.some((lesson) => pathname.includes(lesson?.id)) ||
-      topic.quizzes?.some((quiz) => pathname.includes(quiz?.id))
+      topic.quizzes?.some((quiz) => pathname.includes(quiz?.id)),
   )?.title;
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export const CourseSideNavigation = ({
   return (
     <>
       {open ? (
-        <div className="hidden min-[969px]:flex flex-1 items-stretch bg-white basis-auto flex-col shrink-0 list-none m-0 min-h-0 p-0 relative no-underline z-0 max-w-[375px]">
+        <div className="hidden min-[969px]:flex flex-1 items-stretch bg-white basis-auto flex-col shrink-0 list-none m-0 min-h-0 p-0 relative no-underline z-0 max-w-93.75">
           <div className={cn("flex-1 border-l border-l-border")}>
             <ScrollArea className="w-full bg-white h-full">
               <div className="sticky top-0 z-10 flex flex-row justify-between items-center px-4 py-2 bg-white border-l-0 border-r-0 border-b border-b-border  border-gray-300">
@@ -127,10 +127,11 @@ export const CourseSideNavigation = ({
                                     !isLesson || !!item.progress?.completed
                                   }
                                   checked={!!item.progress?.completed}
+                                  onClick={(e) => e.stopPropagation()}
                                   onCheckedChange={() => {
-                                    handleMarkLessonComplete(
-                                      isLesson ? item.id : item.id
-                                    );
+                                    if (isLesson) {
+                                      handleMarkLessonComplete(item.id);
+                                    }
                                   }}
                                 />
                                 <div className="flex flex-col items-start gap-1">
@@ -172,7 +173,7 @@ export const CourseSideNavigation = ({
                                           "text-gray-950 truncate text-sm",
                                           {
                                             "font-bold": activeElement,
-                                          }
+                                          },
                                         )}
                                       >
                                         {item.title}

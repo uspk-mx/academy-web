@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useQuery } from "urql";
 import { PageLoader } from "ui/components/admin";
@@ -14,6 +14,80 @@ import type {
 } from "gql-generated/gql/graphql";
 import type { Route } from "./+types/quiz";
 
+type CourseItem = {
+  type: "lesson" | "quiz";
+  id: string;
+  title: string;
+  completed: boolean;
+};
+
+type NextAction = {
+  label: string;
+  target: { type: "lesson" | "quiz"; id: string } | null;
+};
+
+function getCourseItemsList(
+  topics: TopicsByCourseQuery["topicsByCourseId"],
+): CourseItem[] {
+  const sortedTopics = [...(topics ?? [])].sort(
+    (a, b) => (a.position ?? 0) - (b.position ?? 0),
+  );
+
+  const items: CourseItem[] = [];
+
+  for (const topic of sortedTopics) {
+    const topicItems = [
+      ...(topic.lessons ?? []).map((lesson) => ({
+        type: "lesson" as const,
+        id: lesson.id,
+        title: lesson.title,
+        position: lesson.position ?? 0,
+        completed: !!lesson.progress?.completed,
+      })),
+      ...(topic.quizzes ?? []).map((quiz) => ({
+        type: "quiz" as const,
+        id: quiz.id,
+        title: quiz.title,
+        position: quiz.position ?? 0,
+        completed: !!quiz.progress?.completed,
+      })),
+    ];
+    topicItems.sort((a, b) => a.position - b.position);
+    items.push(...topicItems);
+  }
+
+  return items;
+}
+
+function getNextAction(items: CourseItem[], currentId?: string): NextAction {
+  const currentIndex = items.findIndex((item) => item.id === currentId);
+
+  // Priority 1: Next item after current
+  if (currentIndex >= 0 && currentIndex < items.length - 1) {
+    const next = items[currentIndex + 1];
+    const label =
+      next.type === "lesson" ? "Siguiente lección" : "Siguiente quiz";
+    return { label, target: { type: next.type, id: next.id } };
+  }
+
+  // Priority 2: First incomplete lesson before current
+  const incompleteBeforeCurrent = items.find(
+    (item, i) => i < currentIndex && !item.completed && item.type === "lesson",
+  );
+  if (incompleteBeforeCurrent) {
+    return {
+      label: `Continuar: ${incompleteBeforeCurrent.title}`,
+      target: {
+        type: "lesson",
+        id: incompleteBeforeCurrent.id,
+      },
+    };
+  }
+
+  // Priority 3: All done
+  return { label: "Volver al dashboard", target: null };
+}
+
 export function meta({ params }: Route.MetaArgs) {
   return [
     { title: `Uspk Academy | Quiz: ${params.quizId}` },
@@ -25,7 +99,7 @@ export default function QuizPage() {
   const { cid: courseId, quizId } = useParams();
   const navigate = useNavigate();
 
-    const [{ data, fetching }] = useQuery<
+  const [{ data, fetching }] = useQuery<
     TopicsByCourseQuery,
     TopicsByCourseQueryVariables
   >({
@@ -35,129 +109,22 @@ export default function QuizPage() {
     },
   });
 
-  const [nextItemLabel, setNextItemLabel] = useState('')
-  const [hasMoreTopics, setHasMoreTopics] = useState(false)
   const course = data?.topicsByCourseId?.find((item) => item?.course);
 
   const activeQuiz = data?.topicsByCourseId
     ?.flatMap((topic) => topic.quizzes || [])
     .find((quiz) => quiz.id === quizId);
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-    useEffect(() => {
-      const topics = data?.topicsByCourseId || [];
-      let foundCurrent = false;
-
-      for (let i = 0; i < topics.length; i++) {
-        const topic = topics[i];
-        const elements = [...(topic.lessons || []), ...(topic.quizzes || [])];
-        const sortedElements = elements.sort(
-          (a, b) => (a?.position || 0) - (b.position || 0)
-        );
-
-        for (let j = 0; j < sortedElements.length; j++) {
-          const element = sortedElements[j];
-
-          if (element.id === quizId) {
-            foundCurrent = true;
-
-            // Check if there's a next element in the same topic
-            if (j < sortedElements.length - 1) {
-              setNextItemLabel("Siguiente material")
-              setHasMoreTopics(true)
-            }
-
-            // Otherwise, move to the next topic
-            if (i < topics.length - 1) {
-              const nextTopic = topics[i + 1];
-              const nextTopicElements = [
-                ...(nextTopic.lessons || []),
-                ...(nextTopic.quizzes || []),
-              ];
-              const nextSortedElements = nextTopicElements.sort(
-                (a, b) => (a?.position || 0) - (b.position || 0)
-              );
-
-              if (nextSortedElements.length > 0) {
-                setNextItemLabel("Siguiente seccion")
-                setHasMoreTopics(true)
-              }
-            }
-
-            if (!(j < sortedElements.length - 1 && i < topics.length - 1)) {
-              setNextItemLabel("Regresar al dashboard")
-              setHasMoreTopics(false)
-            }
-          }
-        }
-      }
-
-    if (!foundCurrent) {
-      console.warn("Current quiz not found in topics.");
-    }
-    }, [])
-    
+  const nextAction = useMemo(() => {
+    if (!data?.topicsByCourseId) return null;
+    const items = getCourseItemsList(data.topicsByCourseId);
+    return getNextAction(items, quizId);
+  }, [data?.topicsByCourseId, quizId]);
 
   const navigateToNextElement = () => {
-    const topics = data?.topicsByCourseId || [];
-    let foundCurrent = false;
-
-    for (let i = 0; i < topics.length; i++) {
-      const topic = topics[i];
-      const elements = [...(topic.lessons || []), ...(topic.quizzes || [])];
-      const sortedElements = elements.sort(
-        (a, b) => (a?.position || 0) - (b.position || 0)
-      );
-
-      for (let j = 0; j < sortedElements.length; j++) {
-        const element = sortedElements[j];
-
-        if (element.id === quizId) {
-          foundCurrent = true;
-
-          // Check if there's a next element in the same topic
-          if (j < sortedElements.length - 1) {
-            const nextElement = sortedElements[j + 1];
-            console.log("Next element in the same topic: ", nextElement);
-            return navigate(
-              `/courses/${courseId}/${
-                "video" in nextElement ? "lesson" : "quiz"
-              }/${nextElement.id}`
-            );
-          }
-
-          // Otherwise, move to the next topic
-          if (i < topics.length - 1) {
-            const nextTopic = topics[i + 1];
-            const nextTopicElements = [
-              ...(nextTopic.lessons || []),
-              ...(nextTopic.quizzes || []),
-            ];
-            const nextSortedElements = nextTopicElements.sort(
-              (a, b) => (a?.position || 0) - (b.position || 0)
-            );
-
-            if (nextSortedElements.length > 0) {
-              const nextElement = nextSortedElements[0];
-              console.log("Next element in the next topic: ", nextElement);
-              return navigate(
-                `/courses/${courseId}/${
-                  "video" in nextElement ? "lesson" : "quiz"
-                }/${nextElement.id}`
-              );
-            }
-          }
-
-          if (!(j < sortedElements.length - 1 && i < topics.length - 1)) {
-              navigate('/courses')
-          }
-        }
-      }
-    }
-
-    if (!foundCurrent) {
-      console.warn("Current quiz not found in topics.");
-    }
+    if (!nextAction?.target) return navigate("/courses");
+    const { type, id } = nextAction.target;
+    navigate(`/courses/${courseId}/${type}/${id}`);
   };
 
   return (
@@ -181,7 +148,7 @@ export default function QuizPage() {
                     <Quiz
                       quiz={activeQuiz}
                       navigateToNextCourseItem={navigateToNextElement}
-                      nextItemLabel={nextItemLabel}
+                      nextItemLabel={nextAction?.label}
                     />
                   )}
                 </div>

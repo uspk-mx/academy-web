@@ -12,8 +12,6 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-//@ts-ignore
-import confetti from "canvas-confetti";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useMutation } from "urql";
 import { Checkbox, Input, Label } from "ui/components/index";
@@ -97,19 +95,7 @@ export function Quiz({
     SubmitQuizAttemptMutationVariables
   >(SubmitQuizAttemptDocument);
 
-  const { isQuizCompleted, markQuizComplete } = useProgress();
-
-  const completeQuiz = () => {
-    confetti(confettiConfig);
-    setTimeout(() => {
-      confetti({
-        ...confettiConfig,
-        particleCount: 50,
-        spread: 100,
-        origin: { y: 0.7 },
-      });
-    }, 200);
-  };
+  const { markQuizComplete } = useProgress();
 
   const handleStartQuiz = () => {
     // Check if we still have attempts available
@@ -310,12 +296,6 @@ export function Quiz({
     );
   }
 
-  const confettiConfig = {
-    particleCount: 100,
-    spread: 70,
-    origin: { y: 0.6 },
-  };
-
   if (quizState === "completed") {
     const score = calculateScore();
 
@@ -350,8 +330,6 @@ export function Quiz({
         maxAttempts={quiz.maxAttempts}
         questions={quiz.questions}
         onRetry={handleStartQuiz}
-        onComplete={completeQuiz}
-        // onViewResults={handleViewResults}
         onNextLesson={navigateToNextCourseItem}
         nextItemLabel={nextItemLabel}
       />

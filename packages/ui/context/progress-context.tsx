@@ -1,10 +1,10 @@
-//@ts-ignore
 import confetti from "canvas-confetti";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useMutation } from "urql";
 import {
   MarkLessonCompletedDocument,
+  SubmitQuizAttemptDocument,
   UpdateQuizProgressDocument,
 } from "gql-generated/gql/graphql";
 import type {
@@ -36,7 +36,7 @@ type ProgressContextType = {
 };
 
 const ProgressContext = createContext<ProgressContextType | undefined>(
-  undefined
+  undefined,
 );
 
 const serializeSet = (set: Set<string>) => JSON.stringify(Array.from(set));
@@ -64,7 +64,7 @@ export function ProgressProvider({
   const [, submitQuizAttemptMutation] = useMutation<
     SubmitQuizAttemptMutation,
     SubmitQuizAttemptMutationVariables
-  >(MarkLessonCompletedDocument);
+  >(SubmitQuizAttemptDocument);
 
   const [, updateQuizProgressMutation] = useMutation<
     UpdateQuizProgressMutation,
@@ -83,7 +83,7 @@ export function ProgressProvider({
   const { customerData } = useCustomerContextProvider();
 
   const courseProgress = customerData?.courses.find(
-    (item) => item?.id === courseId
+    (item) => item?.id === courseId,
   )?.progress;
 
   const localTotalItems =
@@ -213,7 +213,7 @@ export function ProgressProvider({
   useEffect(() => {
     localStorage.setItem(
       `course-progress-${courseId}`,
-      serializeSet(completedItems)
+      serializeSet(completedItems),
     );
   }, [completedItems, courseId]);
 
@@ -247,7 +247,7 @@ export function TotalItemsSetter({ courseId }: { courseId: string }) {
   const { customerData } = useCustomerContextProvider();
 
   const topics = customerData?.courses.find(
-    (item) => item?.id === courseId
+    (item) => item?.id === courseId,
   )?.topics;
 
   useEffect(() => {

@@ -8,8 +8,6 @@ import {
 import { Button } from "ui/components/button";
 import { Separator } from "ui/components/separator";
 import { CheckCircle2 } from "lucide-react";
-import { useEffect } from "react";
-
 interface QuizSubmittedProps {
   score: number;
   totalScore: number;
@@ -19,7 +17,6 @@ interface QuizSubmittedProps {
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   questions: any[];
   onRetry: () => void;
-  onComplete: () => void;
   onViewResults?: () => void;
   onNextLesson: () => void;
   nextItemLabel?: string;
@@ -34,7 +31,6 @@ export function QuizSubmitted({
   nextItemLabel,
   questions,
   onRetry,
-  onComplete,
   onViewResults,
   onNextLesson,
 }: QuizSubmittedProps) {
@@ -45,13 +41,6 @@ export function QuizSubmitted({
     (q) =>
       q.type === "FREE_CHOICE" || q.type === "ESSAY" || q.type === "ASSESSMENT"
   );
-
-  // We trigger confetti if passed
-  useEffect(() => {
-    if (passed) {
-      onComplete();
-    }
-  }, [passed, onComplete]);
 
   return (
     <div className="px-6">

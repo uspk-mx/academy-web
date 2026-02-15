@@ -1,10 +1,9 @@
 import confetti from "canvas-confetti";
-import { useMemo, useState } from "react";
+import type { Certificate } from "gql-generated/generated/types";
+import { useState } from "react";
 import { redirect, useNavigate, useSearchParams } from "react-router";
-import { useMutation, useQuery } from "urql";
 import { CourseEmptyPage } from "ui/components/courses/course-empty-page";
 import { CoursesPageToolbar } from "ui/components/courses/course-page-toolbar";
-import type { Certificate } from "gql-generated/generated/types";
 
 export const loader = async ({ request }: { request: Request }) => {
   const cookieHeader = request.headers.get("Cookie");
