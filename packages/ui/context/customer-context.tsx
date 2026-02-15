@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 import { type CombinedError, type UseQueryExecute, useQuery } from "urql";
 import { GetProfileDocument, MeDocument } from "gql-generated/gql/graphql";
-import type { GetProfileQuery, GetProfileQueryVariables, MeQuery, MeQueryVariables } from "gql-generated/gql/graphql";
+import type { GetProfileQuery, GetProfileQueryVariables, MeQuery } from "gql-generated/gql/graphql";
 
 const CustomerContext = createContext<{
   customerData: MeQuery["me"] | null;

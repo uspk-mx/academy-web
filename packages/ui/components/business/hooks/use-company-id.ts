@@ -1,11 +1,14 @@
+import {
+  GetProfileDocument,
+  type GetProfileQuery,
+  type GetProfileQueryVariables,
+} from "gql-generated/gql/graphql";
 import { useQuery } from "urql";
-import type { MeQuery, MeQueryVariables } from "gql-generated/generated/types";
-import { MeDocument } from "gql-generated/gql/graphql";
 
 export function useCompanyId(): string {
-  const [{ data }] = useQuery<MeQuery, MeQueryVariables>({
-    query: MeDocument,
+  const [{ data }] = useQuery<GetProfileQuery, GetProfileQueryVariables>({
+    query: GetProfileDocument,
     requestPolicy: "cache-and-network",
   });
-  return data?.me?.company?.id ?? "";
+  return data?.getProfile?.company?.id ?? "";
 }
