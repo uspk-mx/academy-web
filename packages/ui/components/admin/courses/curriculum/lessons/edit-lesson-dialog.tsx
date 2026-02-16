@@ -33,8 +33,11 @@ import {
   uploadFileToCloudinary,
 } from "ui/lib/cloudinary";
 import { cn } from "ui/lib/utils";
+import { useTopicContent } from "ui/context/topic-content-context";
 
 export function EditLessonDialog({ lesson }: { lesson: Lesson }): ReactNode {
+  const { content: topicContent, setContent: setTopicContent } =
+    useTopicContent();
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState<Content>(lesson?.content || "");
   const inputRefVideo = useRef<HTMLInputElement | null>(null);
@@ -42,23 +45,23 @@ export function EditLessonDialog({ lesson }: { lesson: Lesson }): ReactNode {
   const [image, setImage] = useState<File | null>(null);
   const [video, setVideo] = useState<File | null>(null);
   const [videoPreview, setVideoPreview] = useState(
-    lesson?.video?.videoURL || ""
+    lesson?.video?.videoURL || "",
   );
   const [feauteredImage, setFeauteredImage] = useState(
-    lesson?.featuredImage || ""
+    lesson?.featuredImage || "",
   );
   const [introVideo, setIntroVideo] = useState<VideoInput | null>(
-    lesson?.video || {}
+    lesson?.video || {},
   );
   const [lessonTitle, setLessonTitle] = useState(lesson?.title || "");
   const [showPreview, setShowPreview] = useState(lesson?.showPreview || false);
 
   const [imageUrl, setImageUrl] = useState<string | null>(
-    lesson?.featuredImage || null
+    lesson?.featuredImage || null,
   );
   const [videoData, setVideoData] = useState<VideoInput>(lesson?.video || {});
   const [attachments, setAttachments] = useState<any>(
-    lesson?.attachments || []
+    lesson?.attachments || [],
   );
 
   const [isImageModified, setIsImageModified] = useState(false);
@@ -100,25 +103,23 @@ export function EditLessonDialog({ lesson }: { lesson: Lesson }): ReactNode {
       }
 
       try {
-        const filePromises = lesson.attachments.map(
-          async (url: string) => {
-            if (!url) return null;
+        const filePromises = lesson.attachments.map(async (url: string) => {
+          if (!url) return null;
 
-            const response = await fetch(url);
-            const blob = await response.blob();
+          const response = await fetch(url);
+          const blob = await response.blob();
 
-            const fileName = extractFilenameFromUrl(url);
-            const file = new File([blob], fileName, { type: blob.type });
+          const fileName = extractFilenameFromUrl(url);
+          const file = new File([blob], fileName, { type: blob.type });
 
-            return {
-              file,
-              name: fileName,
-              size: file.size,
-              type: file.type,
-              url,
-            };
-          }
-        );
+          return {
+            file,
+            name: fileName,
+            size: file.size,
+            type: file.type,
+            url,
+          };
+        });
 
         const filesArray = (await Promise.all(filePromises)).filter(Boolean);
         setFiles(filesArray as FileData[]);
@@ -170,7 +171,7 @@ export function EditLessonDialog({ lesson }: { lesson: Lesson }): ReactNode {
           {
             method: "POST",
             body: formData,
-          }
+          },
         );
 
         const result = await response.json();
@@ -278,6 +279,13 @@ export function EditLessonDialog({ lesson }: { lesson: Lesson }): ReactNode {
       });
 
       if (response.data) {
+        const updatedLesson = response.data.updateLesson;
+        setTopicContent(
+          topicContent.map((item) =>
+            item.id === lesson.id ? updatedLesson : item,
+          ),
+        );
+
         toast.success("Leccion actualizada", {
           description: "La leccion fue actualizada correctamente.",
         });
@@ -318,7 +326,7 @@ export function EditLessonDialog({ lesson }: { lesson: Lesson }): ReactNode {
         }}
         className={cn(
           "w-11/12 gap-y-0 sm:pb-0 sm:px-0 sm:max-w-267.5 left-0 top-24! pt-0!",
-          { "pointer-events-none": isUpdating }
+          { "pointer-events-none": isUpdating },
         )}
       >
         <DrawerHeader
