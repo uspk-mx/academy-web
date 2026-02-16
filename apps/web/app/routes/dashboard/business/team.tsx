@@ -22,7 +22,7 @@ import { useQuery } from "urql";
 
 export function meta() {
   return [
-    { title: `Uspk Academy | Mi Equipo` },
+    { title: "Uspk Academy | Mi Equipo" },
     { name: "description", content: "Información del equipo de trabajo." },
   ];
 }
@@ -74,10 +74,7 @@ export default function MiEquipoPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg border-4 border-black bg-chart-4 p-2">
-                  <Users
-                    className="h-8 w-8 stroke-white"
-                    strokeWidth={2.5}
-                  />
+                  <Users className="h-8 w-8 stroke-white" strokeWidth={2.5} />
                 </div>
                 <div>
                   <h1 className="text-3xl font-black">Mi Equipo</h1>

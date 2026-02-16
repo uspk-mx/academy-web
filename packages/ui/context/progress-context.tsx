@@ -56,6 +56,7 @@ export function ProgressProvider({
   children: React.ReactNode;
   courseId: string;
 }) {
+  const { refetchQuery } = useCustomerContextProvider();
   const [, markLessonCompletedMutation] = useMutation<
     MarkLessonCompletedMutation,
     MarkLessonCompletedMutationVariables
@@ -143,8 +144,8 @@ export function ProgressProvider({
 
     if (response.data?.markLessonCompleted) {
       toast.success("Lección marcada como completada");
-      // markComplete(input.lessonId);
       setIsLessonCompleted(true);
+      refetchQuery?.({ requestPolicy: "network-only" });
     }
   };
 
@@ -181,6 +182,7 @@ export function ProgressProvider({
         toast.success("Progreso del quiz guardado correctamente");
         setIsQuizCompleted(true);
         completeQuiz();
+        refetchQuery?.({ requestPolicy: "network-only" });
       }
     } catch (error) {
       console.error("Error updating quiz progress:", error);
@@ -205,6 +207,7 @@ export function ProgressProvider({
     if (response.data?.submitQuizAttempt) {
       toast.success("Intento de cuestionario enviado");
       markComplete(input.quizId);
+      refetchQuery?.({ requestPolicy: "network-only" });
     }
   };
 
