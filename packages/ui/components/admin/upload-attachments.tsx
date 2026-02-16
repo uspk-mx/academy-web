@@ -86,11 +86,8 @@ export function UploadAttachment({
   setInitialAttachments?: (value: SetStateAction<string[]>) => void;
   setIsAttchmentModified?: (value: boolean) => void;
 }): ReactNode {
-  const [filesLocal, setFilesLocal] = useState<FileData[]>(files);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  console.log("files:", initialAttachments);
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -139,19 +136,7 @@ export function UploadAttachment({
         )}, otros archivos en ${formatFileSize(SIZE_LIMITS.default)}.`,
       });
     }
-    setFiles((prevFiles) => {
-      // Keep all previous files exactly as they are
-      const existingFiles = [...prevFiles];
-      // Add the new files
-      return [...existingFiles, ...newFiles];
-    });
-
-    setFilesLocal((prevFiles) => {
-      // Keep all previous files exactly as they are
-      const existingFiles = [...prevFiles];
-      // Add the new files
-      return [...existingFiles, ...newFiles];
-    });
+    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -160,9 +145,6 @@ export function UploadAttachment({
 
   const handleRemoveFile = (name: string): void => {
     setFiles((prevFiles) => prevFiles.filter((file) => file.name !== name));
-    setFilesLocal((prevFiles) =>
-      prevFiles.filter((file) => file.name !== name)
-    );
 
     if (!initialAttachments?.length || !setInitialAttachments) return;
 
@@ -184,12 +166,12 @@ export function UploadAttachment({
   };
 
   return (
-    <UploadAttachmentsContainer shouldRender={filesLocal.length > 0}>
-      {filesLocal.length > 0 ? (
+    <UploadAttachmentsContainer shouldRender={files.length > 0}>
+      {files.length > 0 ? (
         <>
           <ScrollArea className="mb-4">
             <div className="space-y-2 max-h-64">
-              {filesLocal.map((file) => {
+              {files.map((file) => {
                 const Icon = getFileIcon(file.type);
                 return (
                   <div

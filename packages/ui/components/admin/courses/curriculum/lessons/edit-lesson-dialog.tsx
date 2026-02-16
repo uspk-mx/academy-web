@@ -91,12 +91,17 @@ export function EditLessonDialog({ lesson }: { lesson: Lesson }): ReactNode {
   }, [lesson]);
 
   useEffect(() => {
-    const buildFilesfromAttachments = async (): Promise<void> => {
-      if (!lesson.attachments || lesson.attachments.length === 0) return;
+    if (!open) return;
+
+    const buildFilesFromAttachments = async (): Promise<void> => {
+      if (!lesson.attachments || lesson.attachments.length === 0) {
+        setFiles([]);
+        return;
+      }
 
       try {
-        const filePromises = lesson.attachments?.map(
-          async (url: string, index: number) => {
+        const filePromises = lesson.attachments.map(
+          async (url: string) => {
             if (!url) return null;
 
             const response = await fetch(url);
@@ -116,15 +121,14 @@ export function EditLessonDialog({ lesson }: { lesson: Lesson }): ReactNode {
         );
 
         const filesArray = (await Promise.all(filePromises)).filter(Boolean);
-        setFiles(filesArray as any);
+        setFiles(filesArray as FileData[]);
       } catch (error) {
-        // eslint-disable-next-line no-console -- just for debugging
         console.error("Error fetching attachments:", error);
       }
     };
 
-    buildFilesfromAttachments();
-  }, [lesson.attachments]);
+    buildFilesFromAttachments();
+  }, [open, lesson.attachments]);
 
   const handleVideoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] || null;
