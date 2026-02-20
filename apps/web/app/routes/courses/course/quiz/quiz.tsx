@@ -7,12 +7,17 @@ import { CourseHeader } from "ui/components/admin/courses/course-header";
 import { CourseSideNavigation } from "ui/components/admin/courses/course-sidenav";
 import { Quiz } from "ui/components/admin/courses/quiz/quiz";
 import { ScrollArea } from "ui/components/scroll-area";
-import { TopicsByCourseDocument } from "gql-generated/gql/graphql";
+import { CourseDocument, GetCourseProgressDocument, TopicsByCourseDocument } from "gql-generated/gql/graphql";
 import type {
+  CourseQuery,
+  CourseQueryVariables,
+  GetCourseProgressQuery,
+  GetCourseProgressQueryVariables,
   TopicsByCourseQuery,
   TopicsByCourseQueryVariables,
 } from "gql-generated/gql/graphql";
 import type { Route } from "./+types/quiz";
+import { useCustomerContextProvider } from "ui/context/customer-context";
 
 type CourseItem = {
   type: "lesson" | "quiz";
@@ -99,6 +104,10 @@ export default function QuizPage() {
   const { cid: courseId, quizId } = useParams();
   const navigate = useNavigate();
 
+    const { customerData } = useCustomerContextProvider();
+  
+    const courseData = customerData?.courses?.find((item) => item?.id === courseId);
+
   const [{ data, fetching }] = useQuery<
     TopicsByCourseQuery,
     TopicsByCourseQueryVariables
@@ -111,6 +120,26 @@ export default function QuizPage() {
 
   const course = data?.topicsByCourseId?.find((item) => item?.course);
 
+
+    const [{ data: courseInfo, fetching: fetchingCourse }] = useQuery<
+      CourseQuery,
+      CourseQueryVariables
+    >({
+      query: CourseDocument,
+      variables: { courseId: courseId || "" },
+      pause: !courseId,
+    });
+  
+    const [{ data: courseProgressData, fetching: fetchingCourseProgress }] =
+      useQuery<GetCourseProgressQuery, GetCourseProgressQueryVariables>({
+        query: GetCourseProgressDocument,
+        variables: {
+          courseId: courseId || "",
+          userId: customerData?.customerId || "",
+        },
+        pause: !courseId,
+      });
+  
   const activeQuiz = data?.topicsByCourseId
     ?.flatMap((topic) => topic.quizzes || [])
     .find((quiz) => quiz.id === quizId);
@@ -134,6 +163,13 @@ export default function QuizPage() {
         topicItemId="mdeiwonmdieow"
         isItemCompleted={activeQuiz?.progress?.completed}
         isLesson={false}
+        certificateData={{
+          studentName: customerData?.fullName ?? "",
+          studentLevel: courseInfo?.course?.level?.name ?? "",
+          studentLevelDescription: courseInfo?.course?.level?.name ?? "",
+          teacherName: courseInfo?.course.instructors?.[0].fullName ?? "",
+          date: courseProgressData?.getCourseProgress?.completedAt || "",
+        }}
       />
 
       <div className="flex flex-1 h-full flex-row">

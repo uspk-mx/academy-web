@@ -2,6 +2,7 @@ import {
   CircleAlert,
   Cloud,
   ExternalLinkIcon,
+  Loader2,
   Minus,
   TrashIcon,
   X,
@@ -148,7 +149,6 @@ export function BuilderNav(): ReactNode {
       ? `lesson/${courseData?.course?.topics?.[0].lessons?.[0].id}`
       : `quiz/${courseData?.course?.topics?.[0].quizzes?.[0].id}`;
 
-  console.log("lessonQuizId:", lessonQuizId);
   const previewUrl = `/courses/${courseData?.course.id}/${lessonQuizId}`;
 
   return (
@@ -169,7 +169,7 @@ export function BuilderNav(): ReactNode {
         <div className="flex items-center gap-4 xl:hidden ml-auto">
           <div
             className={cn(
-              "md:flex items-center gap-2 hidden data-[curriculum-route=true]:hidden"
+              "md:flex items-center gap-2 hidden data-[curriculum-route=true]:hidden",
             )}
             data-curriculum-route={shouldHideActionButtons}
           >
@@ -180,9 +180,11 @@ export function BuilderNav(): ReactNode {
               type="submit"
               variant="ghost"
             >
-              <Cloud
-                className={`w-4 h-4 ${isSubmitting ? "animate-spin" : ""}`}
-              />
+              {isSubmitting ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Cloud className="w-4 h-4" />
+              )}
               Save as Draft
             </Button>
             <ButtonSelector
@@ -195,7 +197,8 @@ export function BuilderNav(): ReactNode {
                   action: () => navigate(previewUrl),
                   disabled: courseData?.course.topics?.some(
                     (topic) =>
-                      topic.lessons?.length === 0 || topic.quizzes?.length === 0
+                      topic.lessons?.length === 0 ||
+                      topic.quizzes?.length === 0,
                   ),
                   rightDecorator: (
                     <ExternalLinkIcon
@@ -328,11 +331,11 @@ export function BuilderNav(): ReactNode {
                     type="submit"
                     variant="ghost"
                   >
-                    <Cloud
-                      className={`w-4 h-4 ${
-                        isSubmitting ? "animate-spin" : ""
-                      }`}
-                    />
+                    {isSubmitting ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      <Cloud className="w-4 h-4" />
+                    )}
                     Save as Draft
                   </Button>
                 </DrawerClose>
@@ -348,7 +351,7 @@ export function BuilderNav(): ReactNode {
                         disabled: courseData?.course.topics?.some(
                           (topic) =>
                             topic.lessons?.length === 0 ||
-                            topic.quizzes?.length === 0
+                            topic.quizzes?.length === 0,
                         ),
                         rightDecorator: (
                           <ExternalLinkIcon
@@ -421,9 +424,11 @@ export function BuilderNav(): ReactNode {
               type="submit"
               variant="noShadowNeutral"
             >
-              <Cloud
-                className={`w-4 h-4 ${isSubmitting ? "animate-spin" : ""}`}
-              />
+              {isSubmitting ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Cloud className="w-4 h-4" />
+              )}
               Save as Draft
             </Button>
             <ButtonSelector
@@ -438,7 +443,8 @@ export function BuilderNav(): ReactNode {
                   action: () => navigate(previewUrl),
                   disabled: courseData?.course.topics?.some(
                     (topic) =>
-                      topic.lessons?.length === 0 || topic.quizzes?.length === 0
+                      topic.lessons?.length === 0 ||
+                      topic.quizzes?.length === 0,
                   ),
                   rightDecorator: (
                     <ExternalLinkIcon
@@ -474,7 +480,7 @@ export function BuilderNav(): ReactNode {
               variant="noShadowNeutral"
               disabled={courseData?.course.topics?.some(
                 (topic) =>
-                  topic.lessons?.length === 0 || topic.quizzes?.length === 0
+                  topic.lessons?.length === 0 || topic.quizzes?.length === 0,
               )}
               asChild
             >

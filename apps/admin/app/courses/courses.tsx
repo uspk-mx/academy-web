@@ -97,8 +97,29 @@ export default function Courses() {
     }
   }, [hasQueried, fetching]);
 
+  const lastUpdatedCourses = useMemo(() => {
+    if (!courses) return [];
+    //  return the course list comparing updateDate to today
+    const today = new Date();
+    return courses.map((course) => {
+      const updatedAt = new Date(course.updatedAt);
+      const timeDiff = today.getTime() - updatedAt.getTime();
+      const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
+      return {
+        ...course,
+        lastUpdated: isNaN(daysDiff)
+          ? "Fecha no disponible"
+          : daysDiff === 0
+          ? "Actualizado hoy"
+          : `Actualizado hace ${daysDiff} día${daysDiff > 1 ? "s" : ""}`,
+      };
+    });
+  }, [courses, sortBy, sortOrder]);
+
+  console.log("lastUpdatedCourses", lastUpdatedCourses, sortBy, sortOrder);
+
   const isInitialLoading = fetching && !searchQuery;
-  const showNoResults = !fetching && searchQuery && courses?.length === 0;
+  const showNoResults = !fetching && searchQuery && lastUpdatedCourses?.length === 0;
 
   const handleDeleteCourse = async () => {
     try {
@@ -167,7 +188,7 @@ export default function Courses() {
                 </p>
               </div>
             ) : (
-              courses?.map((course) => (
+              lastUpdatedCourses?.map((course) => (
                 <CourseCard
                   key={course.id}
                   course={course as Course}

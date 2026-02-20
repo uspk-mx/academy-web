@@ -1,21 +1,28 @@
 import { ArrowLeft, CheckCircle2Icon, XIcon } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router";
 import { Button } from "ui/components/button";
 import { Separator } from "ui/components/separator";
 import { useProgress } from "ui/context/progress-context";
+import { exportCertificatePdf, pdfUrlToFile, type CertificateData, type TextOverlay } from "ui/lib/pdf-exports";
 import { cn } from "ui/lib/utils";
+
+const PDF_URL = "https://pub-b7daf0a886e34f2b8c2ab3497bc521f7.r2.dev/uploads/Certificate.pdf"
 
 export const CourseHeader = ({
   courseTitle,
   topicItemId,
   isItemCompleted,
   isLesson,
+  certificateData,
 }: {
   courseTitle: string;
   topicItemId: string;
   isItemCompleted?: boolean;
   isLesson?: boolean;
+  certificateData?: CertificateData;
 }) => {
+  const [isExporting, setIsExporting] = useState(false);
   const {
     markComplete,
     markLessonComplete,
@@ -29,6 +36,76 @@ export const CourseHeader = ({
   };
 
   const isDarkMode = false;
+
+  const textOverlays: TextOverlay[] = [
+    {
+      id: "studentName",
+      label: "Student Name",
+      x: 52,
+      y: 37,
+      fontSize: 32,
+      fontFamily: "sans-serif",
+      color: "#1a1a2e",
+    },
+    {
+      id: "teacherName",
+      label: "Teacher Name",
+      x: 54,
+      y: 59,
+      fontSize: 20,
+      fontFamily: "sans-serif",
+      color: "#1a1a2e",
+    },
+    {
+      id: "studentLevel",
+      label: "Student Level",
+      x: 79,
+      y: 66,
+      fontSize: 24,
+      fontFamily: "sans-serif",
+      color: "#1a1a2e",
+    },
+    {
+      id: "studentLevelDescription",
+      label: "Student Level Description",
+      x: 75,
+      y: 43,
+      fontSize: 12,
+      fontFamily: "sans-serif",
+      color: "#1a1a2e",
+    },
+    {
+      id: "date",
+      label: "Date",
+      x: 28,
+      y: 59,
+      fontSize: 16,
+      fontFamily: "sans-serif",
+      color: "#1a1a2e",
+    },
+  ];
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const pdfFile = await pdfUrlToFile(PDF_URL, "certificate_template.pdf");
+      await exportCertificatePdf(
+        pdfFile,
+        certificateData ?? {
+          studentName: "Nombre del estudiante",
+          teacherName: "Nombre del profesor",
+          studentLevelDescription: "Descripción del nivel del estudiante",
+          studentLevel: "Nivel del estudiante",
+          date: new Date().toLocaleDateString(),
+        },
+        textOverlays,
+      );
+    } catch (error) {
+      console.error("Export failed:", error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <div className="bg-background p-4 border-b hidden md:block">
@@ -59,6 +136,12 @@ export const CourseHeader = ({
               ? "🎉 Courso completado!"
               : `Tu progreso: ${completedCourseItems} de ${totalItems} (${progressPercentage}%)`}
           </p>
+
+          {progressPercentage === 100 && (
+            <Button variant="noShadow" size="sm" onClick={handleExport} disabled={isExporting}>
+              {isExporting ? "Descargando certificado..." : "Descargar certificado"}
+            </Button>
+          )}
 
           {isLesson ? (
             <Button

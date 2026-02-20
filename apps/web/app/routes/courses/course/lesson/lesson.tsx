@@ -8,6 +8,15 @@ import { VideoPlayer } from "ui/components/admin/courses/video-player";
 import { ScrollArea } from "ui/components/scroll-area";
 import { useCustomerContextProvider } from "ui/context";
 import type { Route } from "./+types/lesson";
+import {
+  CourseDocument,
+  GetCourseProgressDocument,
+  type CourseQuery,
+  type CourseQueryVariables,
+  type GetCourseProgressQuery,
+  type GetCourseProgressQueryVariables,
+} from "gql-generated/gql/graphql";
+import { useQuery } from "urql";
 
 export function meta({ params }: Route.MetaArgs) {
   return [
@@ -33,6 +42,25 @@ export default function LessonPage() {
     [course?.topics, lessonId],
   );
 
+  const [{ data: courseData, fetching: fetchingCourse }] = useQuery<
+    CourseQuery,
+    CourseQueryVariables
+  >({
+    query: CourseDocument,
+    variables: { courseId: courseId || "" },
+    pause: !courseId,
+  });
+
+  const [{ data: courseProgressData, fetching: fetchingCourseProgress }] =
+    useQuery<GetCourseProgressQuery, GetCourseProgressQueryVariables>({
+      query: GetCourseProgressDocument,
+      variables: {
+        courseId: courseId || "",
+        userId: customerData?.customerId || "",
+      },
+      pause: !courseId,
+    });
+
   const activeLesson = course?.topics
     ?.flatMap((topic) => topic.lessons)
     .find((lesson) => lesson?.id === lessonId);
@@ -44,6 +72,13 @@ export default function LessonPage() {
         topicItemId={lessonId || ""}
         isItemCompleted={isLessonCompleted}
         isLesson
+        certificateData={{
+          studentName: customerData?.fullName ?? "",
+          studentLevel: courseData?.course?.level?.name ?? "",
+          studentLevelDescription: courseData?.course?.level?.name ?? "",
+          teacherName: courseData?.course?.instructors?.[0]?.fullName ?? "",
+          date: courseProgressData?.getCourseProgress?.completedAt || "",
+        }}
       />
 
       <div className="flex flex-1 flex-row">
