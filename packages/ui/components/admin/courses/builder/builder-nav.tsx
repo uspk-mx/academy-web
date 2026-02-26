@@ -57,6 +57,7 @@ import {
   type UpdateCourseMutationVariables,
 } from "gql-generated/generated/types";
 import { cn } from "ui/lib/utils";
+import { logos } from "ui/lib/config/site";
 
 export function BuilderNav(): ReactNode {
   const navigate = useNavigate();
@@ -158,12 +159,12 @@ export function BuilderNav(): ReactNode {
           <img
             alt=""
             className="xl:flex hidden size-16"
-            src="https://res.cloudinary.com/uspk/image/upload/v1670008070/logos/svg/color-logo-new.svg"
+            src={logos.full}
           />
           <img
             alt=""
             className="flex xl:hidden size-10"
-            src="https://res.cloudinary.com/uspk/image/upload/v1642566273/logos/svg/uspk-u-mark.svg"
+            src={logos.icon}
           />
         </div>
         <div className="flex items-center gap-4 xl:hidden ml-auto">

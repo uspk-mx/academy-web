@@ -38,6 +38,7 @@ import { useMutation } from "urql";
 import { CommandMenu, useCommandMenu } from "./command-menu";
 import { Skeleton } from "../skeleton";
 import { useMemo } from "react";
+import { logos } from "ui/lib/config/site";
 
 interface UserData {
   fullName: string | null;
@@ -96,7 +97,7 @@ export const Header = ({
           {/* Logo */}
           <Link to="/" className="shrink-0 hover:rotate-2 transition-transform">
             <img
-              src="https://res.cloudinary.com/uspk/image/upload/v1670008070/logos/svg/color-logo-new.svg"
+              src={logos.full}
               alt="Logo"
               className="h-9"
             />
