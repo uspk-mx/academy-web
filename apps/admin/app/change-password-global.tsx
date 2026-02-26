@@ -16,6 +16,7 @@ import type {
   ChangePasswordMutationVariables,
 } from "gql-generated/generated/types";
 import { capitalizeFirstLetter, cn } from "ui/lib/utils";
+import { logos } from "ui/lib/config/site";
 
 const changePasswordSchema = z.object({
   password: z
@@ -88,7 +89,7 @@ export default function ChangePasswordPage() {
             <div className="space-y-6 text-center">
               <div className="w-12 h-12 rounded-full bg-primary/5 shadow-xl mx-auto flex items-center justify-center">
                 <img
-                  src="https://res.cloudinary.com/uspk/image/upload/v1642566273/logos/svg/uspk-u-mark.svg"
+                  src={logos.icon}
                   className="size-10"
                   alt=""
                 />
@@ -120,7 +121,7 @@ export default function ChangePasswordPage() {
               <div className="space-y-2 text-center">
                 <div className="w-12 h-12 rounded-full bg-primary/5 shadow-xl mx-auto flex items-center justify-center">
                   <img
-                    src="https://res.cloudinary.com/uspk/image/upload/v1642566273/logos/svg/uspk-u-mark.svg"
+                    src={logos.icon}
                     className="size-10"
                     alt=""
                   />

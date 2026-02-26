@@ -21,6 +21,7 @@ import type {
 } from "gql-generated/gql/graphql";
 import useStep from "ui/hooks/use-step";
 import { cn } from "ui/lib/utils";
+import { logos } from "ui/lib/config/site";
 
 
 const signUpSchema = z.object({
@@ -115,7 +116,7 @@ export default function SignUpPage() {
             <div className="space-y-2 text-center">
               <div className="w-12 h-12 rounded-full bg-primary/5 shadow-xl mx-auto flex items-center justify-center">
                 <img
-                  src="https://res.cloudinary.com/uspk/image/upload/v1642566273/logos/svg/uspk-u-mark.svg"
+                  src={logos.icon}
                   className="size-10"
                   alt=""
                 />
