@@ -1,6 +1,8 @@
 import {
   DndContext,
   PointerSensor,
+  TouchSensor,
+  KeyboardSensor,
   closestCenter,
   useSensor,
   useSensors,
@@ -8,6 +10,7 @@ import {
 import {
   SortableContext,
   arrayMove,
+  sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
@@ -66,6 +69,15 @@ export default function QuizQuestion({
       activationConstraint: {
         distance: 8,
       },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
     })
   );
 
@@ -369,7 +381,7 @@ function SortableItem({
       style={style}
       {...attributes}
       {...listeners}
-      className="p-2 bg-gray-100 rounded"
+      className="p-2 bg-gray-100 rounded touch-none"
     >
       {children}
     </li>
