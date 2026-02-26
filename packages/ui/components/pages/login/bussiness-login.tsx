@@ -14,6 +14,7 @@ import { Alert, AlertTitle } from "ui/components/alert";
 import { Button } from "ui/components/button";
 import EmailInput from "ui/components/email-input";
 import { PasswordInput } from "ui/components/password-input";
+import { logos } from "ui/lib/config/site";
 import { cn } from "ui/lib/utils";
 import { useMutation } from "urql";
 import { z } from "zod";
@@ -91,7 +92,7 @@ export const BusinessLogin = ({
               <div className="space-y-2 text-center mb-2">
                 <div className="w-12 h-12 rounded-full bg-primary/5 shadow-xl mx-auto flex items-center justify-center">
                   <img
-                    src="https://res.cloudinary.com/uspk/image/upload/v1642566273/logos/svg/uspk-u-mark.svg"
+                    src={logos.icon}
                     className="size-10"
                     alt=""
                   />
