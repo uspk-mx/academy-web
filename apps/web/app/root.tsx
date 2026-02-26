@@ -10,8 +10,16 @@ import { TooltipProvider } from "ui/components/tooltip";
 
 import type { Route } from "./+types/root";
 import "ui/globals.css";
-import { cacheExchange, createClient, debugExchange, fetchExchange, Provider, ssrExchange } from "urql";
-import { isServerSide } from 'ui/lib/ssr-exchange';
+import {
+  cacheExchange,
+  createClient,
+  debugExchange,
+  fetchExchange,
+  Provider,
+  ssrExchange,
+} from "urql";
+import { isServerSide } from "ui/lib/ssr-exchange";
+import { logos } from "ui/lib/config/site";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -26,9 +34,28 @@ export const links: Route.LinksFunction = () => [
   },
   {
     rel: "icon",
-    href: "/favicon.svg",
-    sizes: "114x114",
+    href: logos.favicon.icon96,
+    sizes: "96x96",
+    type: "image/png",
+  },
+  {
+    rel: "icon",
+    href: logos.favicon.iconSvg,
+    sizes: "any",
     type: "image/svg+xml",
+  },
+  {
+    rel: "shortcut icon",
+    href: logos.favicon.icon,
+  },
+  {
+    rel: "apple-touch-icon",
+    href: logos.favicon.appleTouchIcon,
+    sizes: "180x180",
+  },
+  {
+    rel: "manifest",
+    href: "/site.webmanifest",
   },
 ];
 
@@ -51,6 +78,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
+        <meta name="apple-mobile-web-app-title" content="Uspk Academy" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />

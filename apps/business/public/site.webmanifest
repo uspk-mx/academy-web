@@ -1,0 +1,21 @@
+{
+  "name": "Uspk Academy",
+  "short_name": "Uspk Academy",
+  "icons": [
+    {
+      "src": "https://pub-74a58968a0814f12bf1cecf8c23125ee.r2.dev/logos/favicon/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "https://pub-74a58968a0814f12bf1cecf8c23125ee.r2.dev/logos/favicon/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
