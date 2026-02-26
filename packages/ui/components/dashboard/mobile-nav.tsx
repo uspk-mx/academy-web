@@ -24,6 +24,13 @@ export const MobileNav = ({ userData }: { userData: MeQuery["me"] | null }) => {
     LogoutMutationVariables
   >(LogoutDocument);
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      return onCloseNav();
+    }
+    return onOpenChange();
+  };
+
   const isBusinessUser = Boolean(userData?.company?.id);
 
   const handleLogout = async () => {
@@ -105,7 +112,7 @@ export const MobileNav = ({ userData }: { userData: MeQuery["me"] | null }) => {
         ))}
 
         {/* Menu Sheet */}
-        <Sheet open={open} onOpenChange={onOpenChange}>
+        <Sheet open={open} onOpenChange={handleOpenChange}>
           <SheetTrigger asChild>
             <button
               type="button"
@@ -117,7 +124,7 @@ export const MobileNav = ({ userData }: { userData: MeQuery["me"] | null }) => {
               <span className="text-xs font-bold">Menú</span>
             </button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-80" onClose={onCloseNav}>
+          <SheetContent side="right" className="w-80">
             <SheetHeader className="mb-6">
               <SheetTitle className="text-2xl font-black">Menú</SheetTitle>
             </SheetHeader>
