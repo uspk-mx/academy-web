@@ -23,6 +23,13 @@ import { Checkbox } from "ui/components/checkbox";
 import { HtmlRenderer } from "ui/components/html-renderer";
 import { Label } from "ui/components/label";
 import { RadioGroupCard } from "ui/components/radio-group-card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "ui/components/select";
 import { Textarea } from "ui/components/textarea";
 import { type Question, QuestionType } from "gql-generated/generated/types";
 
@@ -56,6 +63,15 @@ export default function QuizQuestion({
   const [matrixAnswers, setMatrixAnswers] = useState<string[]>(
     savedAnswer || []
   );
+
+  const shuffledMatrixOptions = useMemo(() => {
+    if (question.type !== QuestionType.MatrixSorting || !question.settings?.matrixMatches) {
+      return [];
+    }
+    return question.settings.matrixMatches
+      .map((match: { columnB: string }) => match.columnB)
+      .sort(() => Math.random() - 0.5);
+  }, [question.type, question.settings?.matrixMatches]);
 
   const modifiedQuestionContent = useMemo(() => {
     if (question.type === QuestionType.FillInTheBlanks) {
@@ -306,17 +322,26 @@ export default function QuizQuestion({
                   <span className="font-medium min-w-30">
                     {match.columnA}
                   </span>
-                  <Input
+                  <Select
                     value={matrixAnswers[index] || ""}
-                    onChange={(e) => {
+                    onValueChange={(value) => {
                       const newAnswers = [...matrixAnswers];
-                      newAnswers[index] = e.target.value;
+                      newAnswers[index] = value;
                       setMatrixAnswers(newAnswers);
                       onAnswer(newAnswers);
                     }}
-                    placeholder="Escribe la respuesta correspondiente"
-                    className="flex-1"
-                  />
+                  >
+                    <SelectTrigger className="flex-1" variant="neutral">
+                      <SelectValue placeholder="Selecciona la respuesta" />
+                    </SelectTrigger>
+                    <SelectContent variant="neutral">
+                      {shuffledMatrixOptions.map((option: string) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               )
             )}

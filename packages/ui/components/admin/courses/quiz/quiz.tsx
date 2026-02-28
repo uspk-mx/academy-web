@@ -12,12 +12,19 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useMutation } from "urql";
 import { Checkbox, Input, Label } from "ui/components/index";
 import { Button } from "ui/components/button";
 import { HtmlRenderer } from "ui/components/html-renderer";
 import { RadioGroupCard } from "ui/components/radio-group-card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "ui/components/select";
 import { Textarea } from "ui/components/textarea";
 import { useProgress } from "ui/context/progress-context";
 import { SubmitQuizAttemptDocument } from "gql-generated/gql/graphql";
@@ -468,6 +475,15 @@ export function QuestionContent({
     savedAnswer || []
   );
 
+  const shuffledMatrixOptions = useMemo(() => {
+    if (question.type !== QuestionType.MatrixSorting || !question.settings?.matrixMatches) {
+      return [];
+    }
+    return question.settings.matrixMatches
+      .map((match: { columnB: string }) => match.columnB)
+      .sort(() => Math.random() - 0.5);
+  }, [question.type, question.settings?.matrixMatches]);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -631,17 +647,27 @@ export function QuestionContent({
             (match: any, index: number) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
               <div key={index} className="flex items-center space-x-4">
-                <span className="font-medium">{match.columnA}</span>
-                <Input
+                <span className="font-medium min-w-30">{match.columnA}</span>
+                <Select
                   value={matrixAnswers[index] || ""}
-                  onChange={(e) => {
+                  onValueChange={(value) => {
                     const newAnswers = [...matrixAnswers];
-                    newAnswers[index] = e.target.value;
+                    newAnswers[index] = value;
                     setMatrixAnswers(newAnswers);
                     onAnswer(newAnswers);
                   }}
-                  placeholder="Enter matching item"
-                />
+                >
+                  <SelectTrigger className="flex-1" variant="neutral">
+                    <SelectValue placeholder="Selecciona la respuesta" />
+                  </SelectTrigger>
+                  <SelectContent variant="neutral">
+                    {shuffledMatrixOptions.map((option: string) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             )
           )}
