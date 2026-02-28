@@ -198,7 +198,7 @@ export function Quiz({
               return (
                 acc +
                 (index < correctAnswerArray.length &&
-                answer.toLowerCase() === correctAnswerArray[index].toLowerCase()
+                answer.trim().toLowerCase() === correctAnswerArray[index].trim().toLowerCase()
                   ? 1
                   : 0)
               );
@@ -224,7 +224,7 @@ export function Quiz({
               const [_, correctValue] = correctAnswers[index].split(":");
               return (
                 acc +
-                (answer.toLowerCase() === correctValue.toLowerCase() ? 1 : 0)
+                (answer.trim().toLowerCase() === correctValue.trim().toLowerCase() ? 1 : 0)
               );
             }, 0);
             score += (correctCount / correctAnswers.length) * mark;

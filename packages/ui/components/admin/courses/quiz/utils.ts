@@ -68,7 +68,7 @@ const checkAnswerCorrectness = (
           return (
             acc +
             (index < correctAnswerArray.length &&
-            answer.toLowerCase() === correctAnswerArray[index].toLowerCase()
+            answer.trim().toLowerCase() === correctAnswerArray[index].trim().toLowerCase()
               ? 1
               : 0)
           );
@@ -100,7 +100,7 @@ const checkAnswerCorrectness = (
           if (index >= correctAnswers.length) return acc;
           const [_, correctValue] = correctAnswers[index].split(":");
           return (
-            acc + (answer.toLowerCase() === correctValue.toLowerCase() ? 1 : 0)
+            acc + (answer.trim().toLowerCase() === correctValue.trim().toLowerCase() ? 1 : 0)
           );
         }, 0);
         earnedMarks = (correctCount / correctAnswers.length) * mark;
