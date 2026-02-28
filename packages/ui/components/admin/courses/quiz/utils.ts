@@ -141,7 +141,11 @@ const formatCorrectAnswers = (
   questionType?: string
 ): string => {
   if (!correctAnswers) {
-    return "Calificacion manual pendiente";
+    const manualGradingTypes = ["FREE_CHOICE", "ESSAY", "ASSESSMENT"];
+    if (questionType && manualGradingTypes.includes(questionType)) {
+      return "Calificacion manual pendiente";
+    }
+    return "Respuesta correcta no configurada";
   }
   if (questionType === "FILL_IN_THE_BLANKS" && correctAnswers[0]) {
     return correctAnswers[0].split("|").join(" ");

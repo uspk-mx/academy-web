@@ -186,8 +186,8 @@ export default function QuizQuestion({
             onValueChange={(value) => onAnswer(value)}
             value={savedAnswer}
             options={[
-              { label: "Verdadero", value: "true" },
-              { label: "Falso", value: "false" },
+              { label: "True", value: "true" },
+              { label: "False", value: "false" },
             ]}
           />
         );
@@ -303,7 +303,7 @@ export default function QuizQuestion({
               ) => (
                 // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                 <div key={index} className="flex items-center space-x-4">
-                  <span className="font-medium min-w-[120px]">
+                  <span className="font-medium min-w-30">
                     {match.columnA}
                   </span>
                   <Input
