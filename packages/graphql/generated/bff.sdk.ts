@@ -1915,6 +1915,11 @@ export const MarkLessonCompletedDocument = gql`
   }
 }
     `;
+export const RevertLessonProgressDocument = gql`
+    mutation RevertLessonProgress($lessonId: ID!) {
+  revertLessonProgress(lessonId: $lessonId)
+}
+    `;
 export const SubmitQuizAttemptDocument = gql`
     mutation SubmitQuizAttempt($input: SubmitQuizAttemptInput!) {
   submitQuizAttempt(input: $input) {
@@ -3535,6 +3540,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     MarkLessonCompleted(variables: Types.MarkLessonCompletedMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.MarkLessonCompletedMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<Types.MarkLessonCompletedMutation>({ document: MarkLessonCompletedDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'MarkLessonCompleted', 'mutation', variables);
+    },
+    RevertLessonProgress(variables: Types.RevertLessonProgressMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.RevertLessonProgressMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.RevertLessonProgressMutation>({ document: RevertLessonProgressDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'RevertLessonProgress', 'mutation', variables);
     },
     SubmitQuizAttempt(variables: Types.SubmitQuizAttemptMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.SubmitQuizAttemptMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<Types.SubmitQuizAttemptMutation>({ document: SubmitQuizAttemptDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SubmitQuizAttempt', 'mutation', variables);

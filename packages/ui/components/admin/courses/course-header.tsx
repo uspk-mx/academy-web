@@ -1,6 +1,17 @@
 import { ArrowLeft, CheckCircle2Icon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "ui/components/alert-dialog";
 import { Button } from "ui/components/button";
 import { Separator } from "ui/components/separator";
 import { useProgress } from "ui/context/progress-context";
@@ -26,6 +37,7 @@ export const CourseHeader = ({
   const {
     markComplete,
     markLessonComplete,
+    revertLessonComplete,
     completedCourseItems,
     totalItems,
     progressPercentage,
@@ -33,6 +45,10 @@ export const CourseHeader = ({
 
   const handleMarkLessonComplete = async () => {
     await markLessonComplete({ lessonId: topicItemId });
+  };
+
+  const handleRevertLessonComplete = async () => {
+    await revertLessonComplete(topicItemId);
   };
 
   const isDarkMode = false;
@@ -144,27 +160,52 @@ export const CourseHeader = ({
           )}
 
           {isLesson ? (
-            <Button
-              variant="noShadowNeutral"
-              type="button"
-              className={cn("md:flex hidden", {
-                "cursor-not-allowed": isItemCompleted,
-              })}
-              onClick={!isItemCompleted ? handleMarkLessonComplete : undefined}
-              disabled={isItemCompleted}
-            >
-              <div className="text-gray-900! flex flex-row gap-2 items-center">
-                <CheckCircle2Icon
-                  className={cn("size-4", {
-                    "text-green-500": isItemCompleted,
-                  })}
-                />
-
-                <p className="text-gray-950!">
-                  {isItemCompleted ? "Completado" : "Marcar como completado"}
-                </p>
-              </div>
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="noShadowNeutral"
+                  type="button"
+                  className="md:flex hidden"
+                >
+                  <div className="text-gray-900! flex flex-row gap-2 items-center">
+                    <CheckCircle2Icon
+                      className={cn("size-4", {
+                        "text-green-500": isItemCompleted,
+                      })}
+                    />
+                    <p className="text-gray-950!">
+                      {isItemCompleted ? "Completado" : "Marcar como completado"}
+                    </p>
+                  </div>
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    {isItemCompleted
+                      ? "Desmarcar lección"
+                      : "Completar lección"}
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {isItemCompleted
+                      ? "¿Estás seguro de que deseas desmarcar esta lección como completada?"
+                      : "¿Estás seguro de que deseas marcar esta lección como completada?"}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={
+                      isItemCompleted
+                        ? handleRevertLessonComplete
+                        : handleMarkLessonComplete
+                    }
+                  >
+                    {isItemCompleted ? "Desmarcar" : "Completar"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           ) : null}
 
           <Button

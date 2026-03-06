@@ -30,11 +30,15 @@ export const CourseSideNavigation = ({
   const pathname = location.pathname;
   const [activeItem, setActiveItem] = useState("");
 
-  const { markComplete, markLessonComplete } = useProgress();
+  const { markComplete, markLessonComplete, revertLessonComplete } = useProgress();
 
   const handleMarkLessonComplete = async (itemId: string) => {
     markComplete(itemId);
     markLessonComplete({ lessonId: itemId });
+  };
+
+  const handleRevertLessonComplete = async (itemId: string) => {
+    await revertLessonComplete(itemId);
   };
 
   const activeTopicTitle = topics?.find(
@@ -119,18 +123,20 @@ export const CourseSideNavigation = ({
                             >
                               <div className="flex flex-row items-starts gap-4">
                                 <Checkbox
-                                  id="checkbox-06"
+                                  id={`checkbox-${item.id}`}
                                   className={cn("rounded-full", {
                                     "cursor-not-allowed": !isLesson,
                                   })}
-                                  disabled={
-                                    !isLesson || !!item.progress?.completed
-                                  }
+                                  disabled={!isLesson}
                                   checked={!!item.progress?.completed}
                                   onClick={(e) => e.stopPropagation()}
                                   onCheckedChange={() => {
                                     if (isLesson) {
-                                      handleMarkLessonComplete(item.id);
+                                      if (item.progress?.completed) {
+                                        handleRevertLessonComplete(item.id);
+                                      } else {
+                                        handleMarkLessonComplete(item.id);
+                                      }
                                     }
                                   }}
                                 />

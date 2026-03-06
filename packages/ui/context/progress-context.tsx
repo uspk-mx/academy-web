@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useMutation } from "urql";
 import {
   MarkLessonCompletedDocument,
+  RevertLessonProgressDocument,
   SubmitQuizAttemptDocument,
   UpdateQuizProgressDocument,
 } from "gql-generated/gql/graphql";
@@ -11,6 +12,8 @@ import type {
   MarkLessonCompletedInput,
   MarkLessonCompletedMutation,
   MarkLessonCompletedMutationVariables,
+  RevertLessonProgressMutation,
+  RevertLessonProgressMutationVariables,
   SubmitQuizAttemptInput,
   SubmitQuizAttemptMutation,
   SubmitQuizAttemptMutationVariables,
@@ -26,6 +29,7 @@ type ProgressContextType = {
   completedCourseItems: number;
   markComplete: (id: string) => void;
   markLessonComplete: (input: MarkLessonCompletedInput) => Promise<void>;
+  revertLessonComplete: (lessonId: string) => Promise<void>;
   submitQuizAttempt: (input: SubmitQuizAttemptInput) => void;
   markQuizComplete: (quizId: string, score?: number) => void;
   isCompleted: (id: string) => boolean;
@@ -61,6 +65,11 @@ export function ProgressProvider({
     MarkLessonCompletedMutation,
     MarkLessonCompletedMutationVariables
   >(MarkLessonCompletedDocument);
+
+  const [, revertLessonProgressMutation] = useMutation<
+    RevertLessonProgressMutation,
+    RevertLessonProgressMutationVariables
+  >(RevertLessonProgressDocument);
 
   const [, submitQuizAttemptMutation] = useMutation<
     SubmitQuizAttemptMutation,
@@ -149,6 +158,23 @@ export function ProgressProvider({
     }
   };
 
+  const revertLessonComplete = async (lessonId: string) => {
+    const response = await revertLessonProgressMutation({ lessonId });
+
+    if (response.error) {
+      console.error("Error reverting lesson progress:", response.error);
+      toast.error("Hubo un error al desmarcar la lección", {
+        description: response.error.message,
+      });
+    }
+
+    if (response.data?.revertLessonProgress) {
+      toast.success("Lección desmarcada como completada");
+      setIsLessonCompleted(false);
+      refetchQuery?.({ requestPolicy: "network-only" });
+    }
+  };
+
   const completeQuiz = () => {
     confetti(confettiConfig);
     setTimeout(() => {
@@ -233,6 +259,7 @@ export function ProgressProvider({
         progressPercentage,
         markComplete,
         markLessonComplete,
+        revertLessonComplete,
         markQuizComplete: handleMarkAsCompleteQuiz,
         submitQuizAttempt,
         isCompleted,

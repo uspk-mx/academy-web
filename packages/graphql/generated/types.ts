@@ -723,6 +723,7 @@ export type Mutation = {
   resendAdminInvite: ResendAdminInviteResult;
   resendInvite: Scalars['Boolean']['output'];
   resetPassword: Scalars['String']['output'];
+  revertLessonProgress: Scalars['Boolean']['output'];
   startCourseProgress?: Maybe<CourseProgress>;
   submitQuizAttempt?: Maybe<QuizProgress>;
   subscribeUser: UserSubscription;
@@ -1020,6 +1021,11 @@ export type MutationResendInviteArgs = {
 
 export type MutationResetPasswordArgs = {
   email: Scalars['String']['input'];
+};
+
+
+export type MutationRevertLessonProgressArgs = {
+  lessonId: Scalars['ID']['input'];
 };
 
 
@@ -2406,6 +2412,13 @@ export type MarkLessonCompletedMutationVariables = Exact<{
 
 
 export type MarkLessonCompletedMutation = { __typename?: 'Mutation', markLessonCompleted?: { __typename?: 'LessonProgress', id: string, completed: boolean, startedAt?: string | null, completedAt?: string | null, updatedAt?: string | null, user: { __typename?: 'User', id: string, fullName: string, email: string }, lesson: { __typename?: 'Lesson', id: string, title: string } } | null };
+
+export type RevertLessonProgressMutationVariables = Exact<{
+  lessonId: Scalars['ID']['input'];
+}>;
+
+
+export type RevertLessonProgressMutation = { __typename?: 'Mutation', revertLessonProgress: boolean };
 
 export type SubmitQuizAttemptMutationVariables = Exact<{
   input: SubmitQuizAttemptInput;

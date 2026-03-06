@@ -6,6 +6,17 @@ import {
   EllipsisVerticalIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "ui/components/alert-dialog";
 import { Button } from "ui/components/button";
 import { HtmlRenderer } from "ui/components/html-renderer";
 import { Separator } from "ui/components/separator";
@@ -45,6 +56,7 @@ export const ContentTabs = ({
   const {
     markComplete,
     markLessonComplete,
+    revertLessonComplete,
     completedCourseItems,
     isLessonCompleted,
     totalItems,
@@ -55,6 +67,11 @@ export const ContentTabs = ({
     if (!lessonId) return;
     markComplete(lessonId);
     markLessonComplete({ lessonId });
+  };
+
+  const handleRevertLessonComplete = async () => {
+    if (!lessonId) return;
+    await revertLessonComplete(lessonId);
   };
 
   // Determine tabs based on width and content
@@ -141,34 +158,56 @@ export const ContentTabs = ({
           </DrawerTrigger>
           <DrawerContent>
             <div className="flex flex-col flex-1 pb-4 px-4 gap-4 mt-4">
-              <Button
-                variant="noShadowNeutral"
-                type="button"
-                className={cn({
-                  "cursor-not-alloweD": isLessonCompleted || isItemCompleted,
-                })}
-                disabled={isLessonCompleted || isItemCompleted}
-                onClick={
-                  !isLessonCompleted || !isItemCompleted
-                    ? handleMarkLessonComplete
-                    : undefined
-                }
-                size="lg"
-              >
-                <div className="text-gray-900! flex flex-row gap-2 items-center">
-                  <CheckCircle2Icon
-                    className={cn("size-4", {
-                      "text-green-500": isLessonCompleted || isItemCompleted,
-                    })}
-                  />
-
-                  <p className="text-gray-950!">
-                    {isLessonCompleted || isItemCompleted
-                      ? "Completado"
-                      : "Marcar como completado"}
-                  </p>
-                </div>
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="noShadowNeutral"
+                    type="button"
+                    size="lg"
+                  >
+                    <div className="text-gray-900! flex flex-row gap-2 items-center">
+                      <CheckCircle2Icon
+                        className={cn("size-4", {
+                          "text-green-500": isLessonCompleted || isItemCompleted,
+                        })}
+                      />
+                      <p className="text-gray-950!">
+                        {isLessonCompleted || isItemCompleted
+                          ? "Completado"
+                          : "Marcar como completado"}
+                      </p>
+                    </div>
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      {isLessonCompleted || isItemCompleted
+                        ? "Desmarcar lección"
+                        : "Completar lección"}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {isLessonCompleted || isItemCompleted
+                        ? "¿Estás seguro de que deseas desmarcar esta lección como completada?"
+                        : "¿Estás seguro de que deseas marcar esta lección como completada?"}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={
+                        isLessonCompleted || isItemCompleted
+                          ? handleRevertLessonComplete
+                          : handleMarkLessonComplete
+                      }
+                    >
+                      {isLessonCompleted || isItemCompleted
+                        ? "Desmarcar"
+                        : "Completar"}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
               <Button
                 variant="noShadowNeutral"
                 onClick={handleDonwloadAttachments}

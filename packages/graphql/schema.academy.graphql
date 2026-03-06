@@ -705,6 +705,7 @@ type Mutation {
   subscribeUser(input: SubscribeUserInput!): UserSubscription!
   cancelUserSubscription(subscriptionId: ID!): Boolean!
   markLessonCompleted(input: MarkLessonCompletedInput!): LessonProgress
+  revertLessonProgress(lessonId: ID!): Boolean!
   submitQuizAttempt(input: SubmitQuizAttemptInput!): QuizProgress
   updateQuizProgress(input: QuizProgressInput!): QuizProgress
   updateCourseProgress(input: UpdateCourseProgressInput!): CourseProgress

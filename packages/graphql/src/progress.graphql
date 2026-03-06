@@ -17,6 +17,10 @@ mutation MarkLessonCompleted($input: MarkLessonCompletedInput!) {
   }
 }
 
+mutation RevertLessonProgress($lessonId: ID!) {
+  revertLessonProgress(lessonId: $lessonId)
+}
+
 mutation SubmitQuizAttempt($input: SubmitQuizAttemptInput!) {
   submitQuizAttempt(input: $input) {
     id

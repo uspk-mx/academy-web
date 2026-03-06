@@ -1,11 +1,28 @@
+import type {
+  Question
+} from "gql-generated/generated/types";
 import {
   CheckCircle2,
   ChevronDown,
   ChevronUp,
   Clock,
-  Scroll,
-  XCircle,
+  XCircle
 } from "lucide-react";
+import { useState } from "react";
+import Markdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "ui/components/alert-dialog";
+import { Badge } from "ui/components/badge";
 import { Button } from "ui/components/button";
 import {
   Card,
@@ -14,30 +31,11 @@ import {
   CardHeader,
   CardTitle,
 } from "ui/components/card";
-import { ScrollArea } from "ui/components/scroll-area";
-import { Separator } from "ui/components/separator";
-import type {
-  Question,
-  UpdateQuizProgressMutation,
-  UpdateQuizProgressMutationVariables,
-} from "gql-generated/generated/types";
-import {
-  checkAnswerCorrectness,
-  formatAnswer,
-  formatCorrectAnswers,
-} from "./utils";
-import Markdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import { useMutation } from "urql";
-import { UpdateQuizProgressDocument } from "gql-generated/gql/graphql";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "ui/components/collapsible";
-import { useState } from "react";
-import { Badge } from "ui/components/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "ui/components/tabs";
 import {
   Drawer,
   DrawerClose,
@@ -46,6 +44,13 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "ui/components/drawer";
+import { Separator } from "ui/components/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "ui/components/tabs";
+import {
+  checkAnswerCorrectness,
+  formatAnswer,
+  formatCorrectAnswers,
+} from "./utils";
 
 interface QuizResultProps {
   score: number;
@@ -341,14 +346,31 @@ export default function QuizResult({
               {attemptsLeft === 1 ? "intento" : "intentos"} restantes)
             </Button>
           )}
-          <Button
-            className="w-full"
-            type="button"
-            variant="noShadow"
-            onClick={onComplete}
-          >
-            Completar módulo
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                className="w-full"
+                type="button"
+                variant="noShadow"
+              >
+                Completar módulo
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Completar módulo</AlertDialogTitle>
+                <AlertDialogDescription>
+                  ¿Estás seguro de que deseas marcar este módulo como completado?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={onComplete}>
+                  Completar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardFooter>
       </Card>
     </div>

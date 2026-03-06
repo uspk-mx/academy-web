@@ -724,6 +724,7 @@ export type Mutation = {
   resendAdminInvite: ResendAdminInviteResult;
   resendInvite: Scalars['Boolean']['output'];
   resetPassword: Scalars['String']['output'];
+  revertLessonProgress: Scalars['Boolean']['output'];
   startCourseProgress?: Maybe<CourseProgress>;
   submitQuizAttempt?: Maybe<QuizProgress>;
   subscribeUser: UserSubscription;
@@ -1021,6 +1022,11 @@ export type MutationResendInviteArgs = {
 
 export type MutationResetPasswordArgs = {
   email: Scalars['String']['input'];
+};
+
+
+export type MutationRevertLessonProgressArgs = {
+  lessonId: Scalars['ID']['input'];
 };
 
 
@@ -2407,6 +2413,13 @@ export type MarkLessonCompletedMutationVariables = Exact<{
 
 
 export type MarkLessonCompletedMutation = { __typename?: 'Mutation', markLessonCompleted?: { __typename?: 'LessonProgress', id: string, completed: boolean, startedAt?: string | null, completedAt?: string | null, updatedAt?: string | null, user: { __typename?: 'User', id: string, fullName: string, email: string }, lesson: { __typename?: 'Lesson', id: string, title: string } } | null };
+
+export type RevertLessonProgressMutationVariables = Exact<{
+  lessonId: Scalars['ID']['input'];
+}>;
+
+
+export type RevertLessonProgressMutation = { __typename?: 'Mutation', revertLessonProgress: boolean };
 
 export type SubmitQuizAttemptMutationVariables = Exact<{
   input: SubmitQuizAttemptInput;
@@ -3837,6 +3850,28 @@ export const mockMeQuery = (resolver: GraphQLResponseResolver<MeQuery, MeQueryVa
 export const mockMarkLessonCompletedMutation = (resolver: GraphQLResponseResolver<MarkLessonCompletedMutation, MarkLessonCompletedMutationVariables>, options?: RequestHandlerOptions) =>
   graphql.mutation<MarkLessonCompletedMutation, MarkLessonCompletedMutationVariables>(
     'MarkLessonCompleted',
+    resolver,
+    options
+  )
+
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockRevertLessonProgressMutation(
+ *   ({ query, variables }) => {
+ *     const { lessonId } = variables;
+ *     return HttpResponse.json({
+ *       data: { revertLessonProgress }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+export const mockRevertLessonProgressMutation = (resolver: GraphQLResponseResolver<RevertLessonProgressMutation, RevertLessonProgressMutationVariables>, options?: RequestHandlerOptions) =>
+  graphql.mutation<RevertLessonProgressMutation, RevertLessonProgressMutationVariables>(
+    'RevertLessonProgress',
     resolver,
     options
   )
