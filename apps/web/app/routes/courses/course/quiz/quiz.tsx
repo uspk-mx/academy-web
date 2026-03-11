@@ -167,7 +167,7 @@ export default function QuizPage() {
           studentName: customerData?.fullName ?? "",
           studentLevel: courseInfo?.course?.level?.name ?? "",
           studentLevelDescription: courseInfo?.course?.level?.name ?? "",
-          teacherName: courseInfo?.course.instructors?.[0].fullName ?? "",
+          teacherName: courseInfo?.course.instructors?.[0]?.fullName ?? "",
           date: courseProgressData?.getCourseProgress?.completedAt || "",
         }}
       />
