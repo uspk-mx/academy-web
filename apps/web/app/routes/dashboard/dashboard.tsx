@@ -1,4 +1,5 @@
 import type {
+  Course,
   GetProfileQuery,
   GetProfileQueryVariables,
   LogoutMutation,
@@ -21,6 +22,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Link, redirect, useNavigate } from "react-router";
+import { getCourseUrl } from "ui/components/courses/course-card";
 import { useMutation, useQuery } from "urql";
 
 export const loader = async ({ request }: { request: Request }) => {
@@ -127,7 +129,7 @@ export default function DashboardPage() {
       {lastCourse ? (
         // User has courses in progress
         <Link
-          to={`/courses/${lastCourse.id}`}
+          to={getCourseUrl(lastCourse as Course)}
           className="group mb-6 block overflow-hidden rounded-2xl border-4 border-black bg-main p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]"
         >
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
@@ -276,7 +278,7 @@ export default function DashboardPage() {
             {inProgressCourses.slice(1, 4).map((course) => (
               <Link
                 key={course?.id}
-                to={`/courses/${course?.id}`}
+                to={getCourseUrl(course as Course)}
                 className="group relative overflow-hidden rounded-xl border-4 border-black bg-card shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
               >
                 <div className="aspect-video overflow-hidden border-b-4 border-black bg-muted">

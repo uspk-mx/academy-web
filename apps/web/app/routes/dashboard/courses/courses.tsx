@@ -13,14 +13,23 @@ import {
   SearchIcon,
   TrendingUp,
 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { MembershipCardSkeleton } from "ui/components/admin/memberships/membership-card-skeleton";
 import { CourseCard } from "ui/components/courses/course-card";
 import { useQuery } from "urql";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "ui/components/pagination";
+import { usePagination } from "ui/hooks/use-pagination";
 
 type CourseFilter = "all" | "in_progress" | "completed" | "not_started";
-
 
 export function meta() {
   return [
@@ -42,7 +51,16 @@ export default function CoursesPage() {
     GetUserEnrollmentsQueryVariables
   >({ query: GetUserEnrollmentsDocument });
 
-  const courses = data?.getUserEnrollments;
+  const pagination = usePagination({
+    totalItems: data?.getUserEnrollments?.length ?? 0,
+    initialPage: 1,
+    itemsPerPage: 6,
+  });
+
+  const nextPage = pagination.nextPage;
+  const previousPage = pagination.previousPage;
+
+  const courses = pagination.paginate(data?.getUserEnrollments ?? []);
 
   const stats = {
     total: courses?.length || 0,
@@ -348,6 +366,38 @@ export default function CoursesPage() {
             <CourseCard course={course.course as Course} key={course?.id} />
           ))}
         </div>
+      )}
+      {pagination.totalPages > 1 && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem onClick={previousPage}>
+              <PaginationPrevious
+                href="#"
+                isDisabled={!pagination.hasPreviousPage}
+              />
+            </PaginationItem>
+            {pagination.pageRange.map((page, index) =>
+              page === -1 ? (
+                <PaginationItem key={`ellipsis-${index}`}>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              ) : (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    href="#"
+                    isActive={page === pagination.currentPage}
+                    onClick={() => pagination.goToPage(page)}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              ),
+            )}
+            <PaginationItem onClick={nextPage}>
+              <PaginationNext href="#" isDisabled={!pagination.hasNextPage} />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       )}
     </div>
   );

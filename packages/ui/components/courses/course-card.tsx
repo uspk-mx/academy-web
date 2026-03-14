@@ -190,7 +190,7 @@ const getBorderColor = useMemo(() => {
   );
 }
 
-function getCourseUrl(course: Course) {
+export function getCourseUrl(course: Course) {
   const topics = [...(course.topics ?? [])].sort(
     (a, b) => (a?.position ?? 0) - (b?.position ?? 0)
   );
