@@ -27,8 +27,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@11.2.2",
-  "pnpm": {
-    "onlyBuiltDependencies": ["core-js", "esbuild", "msw"]
-  }
+  "packageManager": "pnpm@11.2.2"
 }
