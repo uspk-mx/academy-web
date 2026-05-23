@@ -98,6 +98,11 @@ export default function CoursesPage() {
       return true; // "all"
     })
     .sort((a, b) => {
+      // Unlocked courses first, locked courses at the bottom
+      const aUnlocked = a?.course?.isUnlocked !== false ? 1 : 0;
+      const bUnlocked = b?.course?.isUnlocked !== false ? 1 : 0;
+      if (aUnlocked !== bUnlocked) return bUnlocked - aUnlocked;
+
       if (sortOrder === "a-z") {
         return (a?.course?.title || "").localeCompare(b?.course?.title || "");
       }

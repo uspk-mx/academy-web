@@ -308,9 +308,27 @@ query Course($courseId: ID!) {
       materialsIncluded
       requirements
     }
+    prerequisites {
+      id
+      title
+      featuredImage
+    }
+    isUnlocked
     createdAt
     updatedAt
     scheduledPublishAt
+  }
+}
+
+mutation SetCoursePrerequisites($input: SetCoursePrerequisitesInput!) {
+  setCoursePrerequisites(input: $input) {
+    id
+    title
+    prerequisites {
+      id
+      title
+      featuredImage
+    }
   }
 }
 

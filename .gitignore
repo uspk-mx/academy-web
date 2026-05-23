@@ -12,3 +12,6 @@ build/
 
 # TypeScript
 *.tsbuildinfo
+
+*storybook.log
+storybook-static

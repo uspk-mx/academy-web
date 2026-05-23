@@ -1,144 +1,293 @@
-import { CheckIcon, UploadIcon } from "lucide-react";
+import { CheckIcon, ImagePlusIcon, LoaderCircleIcon, XIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useMutation, useQuery } from "urql";
+import { MeDocument, UpdateCompanyDocument } from "gql-generated/generated/bff.sdk";
+import type {
+  MeQuery,
+  MeQueryVariables,
+  UpdateCompanyMutation,
+  UpdateCompanyMutationVariables,
+} from "gql-generated/generated/types";
 import { PageBreadCrumbs } from "ui/components/admin/page-breadcrumbs";
-import {
-  Button,
-  Input,
-  Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "ui/components/index";
+import { Button } from "ui/components/button";
+import { Input } from "ui/components/input";
+import { Label } from "ui/components/label";
+import { Textarea } from "ui/components/textarea";
+import { useImageUpload } from "ui/hooks/use-image-upload";
+import { uploadFileToCloudinary } from "ui/lib/cloudinary";
+
+function ImageUploadField({
+  label,
+  description,
+  currentImage,
+  aspectClass,
+  onRemove,
+  onClickUpload,
+  fileInputRef,
+  onFileChange,
+}: {
+  label: string;
+  description: string;
+  currentImage: string | null;
+  aspectClass: string;
+  onRemove: () => void;
+  onClickUpload: () => void;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
+  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <Label className="block text-sm font-medium">{label}</Label>
+      <p className="text-xs text-muted-foreground">{description}</p>
+      {currentImage ? (
+        <div className={`relative rounded-lg border-2 overflow-hidden ${aspectClass}`}>
+          <img
+            src={currentImage}
+            alt={label}
+            className="w-full h-full object-contain bg-muted/30"
+          />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8"
+            onClick={onRemove}
+          >
+            <XIcon className="w-4 h-4" />
+          </Button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={onClickUpload}
+          className={`flex flex-col items-center justify-center gap-2 w-full ${aspectClass} rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors bg-muted/50`}
+        >
+          <ImagePlusIcon className="w-8 h-8 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">Subir imagen</span>
+        </button>
+      )}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={onFileChange}
+        className="hidden"
+        accept="image/*"
+      />
+    </div>
+  );
+}
 
 export function CompanyProfile() {
+  const [{ data, fetching }] = useQuery<MeQuery, MeQueryVariables>({
+    query: MeDocument,
+    requestPolicy: "cache-and-network",
+  });
+
+  const [, updateCompany] = useMutation<
+    UpdateCompanyMutation,
+    UpdateCompanyMutationVariables
+  >(UpdateCompanyDocument);
+
+  const company = data?.me?.company;
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [taxId, setTaxId] = useState("");
+  const [taxName, setTaxName] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Logo upload
+  const [logoRemoved, setLogoRemoved] = useState(false);
+  const {
+    file: logoFile,
+    previewUrl: logoPreview,
+    fileInputRef: logoInputRef,
+    handleThumbnailClick: handleLogoClick,
+    handleFileChange: handleLogoChange,
+    handleRemove: originalLogoRemove,
+  } = useImageUpload();
+
+  const handleLogoRemove = () => {
+    originalLogoRemove();
+    setLogoRemoved(true);
+  };
+
+  // Icon upload
+  const [iconRemoved, setIconRemoved] = useState(false);
+  const {
+    file: iconFile,
+    previewUrl: iconPreview,
+    fileInputRef: iconInputRef,
+    handleThumbnailClick: handleIconClick,
+    handleFileChange: handleIconChange,
+    handleRemove: originalIconRemove,
+  } = useImageUpload();
+
+  const handleIconRemove = () => {
+    originalIconRemove();
+    setIconRemoved(true);
+  };
+
+  useEffect(() => {
+    if (company) {
+      setName(company.name ?? "");
+      setEmail(company.email ?? "");
+      setAddress(company.address ?? "");
+      setTaxId(company.taxId ?? "");
+      setTaxName(company.taxName ?? "");
+      setLogoRemoved(false);
+      setIconRemoved(false);
+    }
+  }, [company]);
+
+  const currentLogo = logoPreview || (!logoRemoved ? company?.logo : null) || null;
+  const currentIcon = iconPreview || (!iconRemoved ? company?.icon : null) || null;
+
+  const handleSave = async () => {
+    if (!company?.id) return;
+
+    if (!name.trim()) {
+      toast.error("El nombre de la empresa es requerido");
+      return;
+    }
+    if (!email.trim()) {
+      toast.error("El email de la empresa es requerido");
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      let logoUrl: string | null | undefined;
+      if (logoFile) {
+        logoUrl = await uploadFileToCloudinary(logoFile, "image");
+      } else if (logoRemoved) {
+        logoUrl = "";
+      }
+
+      let iconUrl: string | null | undefined;
+      if (iconFile) {
+        iconUrl = await uploadFileToCloudinary(iconFile, "image");
+      } else if (iconRemoved) {
+        iconUrl = "";
+      }
+
+      const result = await updateCompany({
+        companyId: company.id,
+        input: {
+          name: name.trim(),
+          email: email.trim(),
+          address: address.trim() || null,
+          taxId: taxId.trim() || null,
+          taxName: taxName.trim() || null,
+          ...(logoUrl !== undefined && { logo: logoUrl }),
+          ...(iconUrl !== undefined && { icon: iconUrl }),
+        },
+      });
+
+      if (result.error) {
+        toast.error("Error al actualizar la empresa", {
+          description: result.error.message,
+        });
+      } else {
+        toast.success("Empresa actualizada correctamente");
+      }
+    } catch (error) {
+      toast.error("Ocurrio un error inesperado");
+      console.error(error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (company) {
+      setName(company.name ?? "");
+      setEmail(company.email ?? "");
+      setAddress(company.address ?? "");
+      setTaxId(company.taxId ?? "");
+      setTaxName(company.taxName ?? "");
+      originalLogoRemove();
+      originalIconRemove();
+      setLogoRemoved(false);
+      setIconRemoved(false);
+    }
+  };
+
+  if (fetching && !company) {
+    return (
+      <div className="p-8">
+        <PageBreadCrumbs
+          items={[
+            { href: "/settings", label: "Ajustes" },
+            { label: "Perfil de la Empresa" },
+          ]}
+        />
+        <div className="animate-pulse space-y-6 max-w-3xl mt-8">
+          <div className="h-8 bg-muted rounded w-1/3" />
+          <div className="h-40 bg-muted rounded" />
+          <div className="h-40 bg-muted rounded" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!company) {
+    return (
+      <div className="p-8">
+        <PageBreadCrumbs
+          items={[
+            { href: "/settings", label: "Ajustes" },
+            { label: "Perfil de la Empresa" },
+          ]}
+        />
+        <div className="text-center py-16">
+          <p className="text-muted-foreground">
+            No se encontro informacion de la empresa.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-8">
       <PageBreadCrumbs
         items={[
-          { href: "/dashboard", label: "Dashboard" },
-          { href: "/settings", label: "Settings" },
-          { href: "/settings/profile", label: "Company Profile" },
+          { href: "/settings", label: "Ajustes" },
+          { label: "Perfil de la Empresa" },
         ]}
       />
-      <h1 className="text-3xl font-bold mb-8">Company Profile</h1>
+      <h1 className="text-3xl font-bold mb-8">Perfil de la Empresa</h1>
 
       <div className="max-w-3xl">
         <div className="bg-white border-2 border-border rounded-xl p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-6">Company Information</h2>
+          <h2 className="text-xl font-semibold mb-6">Informacion General</h2>
 
           <div className="space-y-4">
             <div>
               <Label className="block text-sm font-medium mb-2">
-                Company Name
+                Nombre de la Empresa
               </Label>
-              <Input type="text" defaultValue="Uspk Academy" />
+              <Input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Nombre de la empresa"
+              />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="block text-sm font-medium mb-2">
-                  Industry
-                </Label>
-                <Select defaultValue="technology">
-                  <SelectTrigger variant="neutral">
-                    <SelectValue placeholder="Select an industry" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="technology">Technology</SelectItem>
-                    <SelectItem value="education">Education</SelectItem>
-                    <SelectItem value="healthcare">Healthcare</SelectItem>
-                    <SelectItem value="finance">Finance</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="block text-sm font-medium mb-2">
-                  Company Size
-                </Label>
-                <Select defaultValue="1-50">
-                  <SelectTrigger variant="neutral">
-                    <SelectValue placeholder="Select a company size" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1-50">1-50 employees</SelectItem>
-                    <SelectItem value="51-200">51-200 employees</SelectItem>
-                    <SelectItem value="201-500">201-500 employees</SelectItem>
-                    <SelectItem value="500+">500+ employees</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white border-2 border-border rounded-xl p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-6">Company Logo</h2>
-
-          <div className="flex items-center gap-6">
-            <div className="w-24 h-24 bg-black rounded-lg flex items-center justify-center text-white text-3xl font-bold">
-              U
-            </div>
-            <div className="flex-1">
-              <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer">
-                <UploadIcon className="mx-auto mb-2 text-gray-400" size={32} />
-                <div className="text-sm font-medium mb-1">
-                  Click to upload or drag and drop
-                </div>
-                <div className="text-xs text-gray-500">
-                  SVG, PNG, JPG or GIF (max. 2MB)
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white border-2 border-border rounded-xl p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-6">Address</h2>
-
-          <div className="space-y-4">
             <div>
               <Label className="block text-sm font-medium mb-2">
-                Street Address
+                Email de la Empresa
               </Label>
-              <Input type="text" placeholder="123 Main St" />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="block text-sm font-medium mb-2">City</Label>
-                <Input type="text" placeholder="San Francisco" />
-              </div>
-              <div>
-                <Label className="block text-sm font-medium mb-2">
-                  State / Province
-                </Label>
-                <Input type="text" placeholder="California" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="block text-sm font-medium mb-2">
-                  ZIP / Postal Code
-                </Label>
-                <Input type="text" placeholder="94102" />
-              </div>
-              <div>
-                <Label className="block text-sm font-medium mb-2">
-                  Country
-                </Label>
-                <Select defaultValue="US">
-                  <SelectTrigger variant="neutral">
-                    <SelectValue placeholder="United States" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="US">United States</SelectItem>
-                    <SelectItem value="CA">Canada</SelectItem>
-                    <SelectItem value="MX">Mexico</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="contacto@empresa.com"
+              />
             </div>
           </div>
         </div>
@@ -146,26 +295,97 @@ export function CompanyProfile() {
         <div className="bg-white border-2 border-border rounded-xl p-6 mb-6">
           <h2 className="text-xl font-semibold mb-6">Branding</h2>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Primary Color
-            </label>
-            <div className="flex items-center gap-4">
-              <input
-                type="color"
-                defaultValue="#FFD700"
-                className="w-16 h-12 border-2 border-gray-200 rounded-lg cursor-pointer"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <ImageUploadField
+              label="Logo"
+              description="Logo principal de la empresa. Se usara en reportes, certificados y facturas."
+              currentImage={currentLogo}
+              aspectClass="aspect-video"
+              onRemove={handleLogoRemove}
+              onClickUpload={handleLogoClick}
+              fileInputRef={logoInputRef}
+              onFileChange={handleLogoChange}
+            />
+
+            <ImageUploadField
+              label="Icono"
+              description="Icono cuadrado para el sidebar y notificaciones."
+              currentImage={currentIcon}
+              aspectClass="aspect-square max-w-[160px]"
+              onRemove={handleIconRemove}
+              onClickUpload={handleIconClick}
+              fileInputRef={iconInputRef}
+              onFileChange={handleIconChange}
+            />
+          </div>
+        </div>
+
+        <div className="bg-white border-2 border-border rounded-xl p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-6">Direccion</h2>
+
+          <div className="space-y-4">
+            <div>
+              <Label className="block text-sm font-medium mb-2">
+                Direccion
+              </Label>
+              <Textarea
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Calle, numero, colonia, ciudad, estado, CP"
+                maxRows={3}
               />
-              <Input type="text" defaultValue="#FFD700" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white border-2 border-border rounded-xl p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-6">Datos Fiscales</h2>
+
+          <div className="space-y-4">
+            <div>
+              <Label className="block text-sm font-medium mb-2">
+                Razon Social
+              </Label>
+              <Input
+                type="text"
+                value={taxName}
+                onChange={(e) => setTaxName(e.target.value)}
+                placeholder="Razon social de la empresa"
+              />
+            </div>
+
+            <div>
+              <Label className="block text-sm font-medium mb-2">RFC</Label>
+              <Input
+                type="text"
+                value={taxId}
+                onChange={(e) => setTaxId(e.target.value)}
+                placeholder="RFC de la empresa"
+              />
             </div>
           </div>
         </div>
 
         <div className="flex gap-3">
-          <Button variant="neutral">Cancel</Button>
-          <Button>
-            <CheckIcon size={18} />
-            Save Changes
+          <Button variant="neutral" onClick={handleCancel} disabled={isSaving}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSave} disabled={isSaving}>
+            {isSaving ? (
+              <>
+                <LoaderCircleIcon
+                  className="-ms-1 animate-spin"
+                  size={16}
+                  aria-hidden="true"
+                />
+                Guardando...
+              </>
+            ) : (
+              <>
+                <CheckIcon size={18} />
+                Guardar Cambios
+              </>
+            )}
           </Button>
         </div>
       </div>

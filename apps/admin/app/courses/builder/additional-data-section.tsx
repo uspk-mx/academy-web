@@ -2,7 +2,8 @@ import { ArrowLeft, ChevronLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, redirect, useParams } from "react-router";
 import { toast } from "sonner";
-import { useQuery } from "urql";
+import { useMutation, useQuery } from "urql";
+import { CoursePrerequisiteSelector } from "ui/components/admin/course-prerequisite-selector";
 import { ExtraSettingsEditor } from "ui/components/admin/extra-settings-editor";
 import { PageLoader } from "ui/components/admin/page-loader";
 import { Button } from "ui/components/button";
@@ -18,10 +19,18 @@ import { Label } from "ui/components/label";
 import { TagTextarea } from "ui/components/tag-textarea";
 import { useBuilderDispatch, useBuilderState } from "ui/context/builder-context";
 import { useBuilderNav } from "ui/context/builder-nav-context";
-import { CourseDocument } from "gql-generated/generated/bff.sdk";
+import {
+  CourseDocument,
+  InstructorCoursesDocument,
+  SetCoursePrerequisitesDocument,
+} from "gql-generated/generated/bff.sdk";
 import type {
   CourseQuery,
   CourseQueryVariables,
+  InstructorCoursesQuery,
+  InstructorCoursesQueryVariables,
+  SetCoursePrerequisitesMutation,
+  SetCoursePrerequisitesMutationVariables,
 } from "gql-generated/generated/types";
 import type { Route } from "./+types/additional-data-section";
 
@@ -54,10 +63,24 @@ export default function AdditionalDataSection() {
     query: CourseDocument,
     variables: { courseId: cid || "" },
   });
+  const [{ data: coursesData }] = useQuery<
+    InstructorCoursesQuery,
+    InstructorCoursesQueryVariables
+  >({
+    query: InstructorCoursesDocument,
+    variables: { limit: 100 },
+  });
+  const [, setPrerequisites] = useMutation<
+    SetCoursePrerequisitesMutation,
+    SetCoursePrerequisitesMutationVariables
+  >(SetCoursePrerequisitesDocument);
   const { extraSettings, metadata, duration, title } = useBuilderState();
   const { formId, onSubmitForm } = useBuilderNav();
   const dispatch = useBuilderDispatch();
   const [isSaving, setIsSaving] = useState(false);
+  const [selectedPrerequisites, setSelectedPrerequisites] = useState<string[]>(
+    []
+  );
 
   useEffect(() => {
     if (data?.course.metadata?.benefits) {
@@ -121,25 +144,37 @@ export default function AdditionalDataSection() {
         })),
       });
     }
+
+    if (data?.course.prerequisites && data?.course.prerequisites.length > 0) {
+      setSelectedPrerequisites(data.course.prerequisites.map((p) => p.id));
+    }
   }, [data?.course, dispatch]);
 
   const onSaveAdditionalData = async () => {
     try {
       setIsSaving(true);
-      await onSubmitForm?.({
-        title: data?.course?.title || "",
-        metadata: {
-          benefits: JSON.stringify(metadata?.benefits),
-          learnings: JSON.stringify(metadata?.learnings),
-          materialsIncluded: JSON.stringify(metadata?.materialsIncluded),
-          requirementsInstructions: JSON.stringify(
-            metadata?.requirementsInstructions
-          ),
-          targetAudience: JSON.stringify(metadata?.targetAudience),
-        },
-        extraSettings: extraSettings,
-        duration: duration,
-      });
+      await Promise.all([
+        onSubmitForm?.({
+          title: data?.course?.title || "",
+          metadata: {
+            benefits: JSON.stringify(metadata?.benefits),
+            learnings: JSON.stringify(metadata?.learnings),
+            materialsIncluded: JSON.stringify(metadata?.materialsIncluded),
+            requirementsInstructions: JSON.stringify(
+              metadata?.requirementsInstructions
+            ),
+            targetAudience: JSON.stringify(metadata?.targetAudience),
+          },
+          extraSettings: extraSettings,
+          duration: duration,
+        }),
+        setPrerequisites({
+          input: {
+            courseId: cid || "",
+            requiredCourseIds: selectedPrerequisites,
+          },
+        }),
+      ]);
 
       setIsSaving(false);
     } catch (error) {
@@ -318,6 +353,20 @@ export default function AdditionalDataSection() {
               }
               settings={extraSettings || []}
               helperText="Ingresa los ajustes adicionales que quieras incluir en tu curso, con un formato de clave:valor"
+            />
+            <CoursePrerequisiteSelector
+              label="Cursos prerequisito"
+              helperText="Selecciona los cursos que el estudiante debe completar antes de acceder a este curso"
+              courses={
+                coursesData?.instructorCourses?.course?.map((c) => ({
+                  id: c.id,
+                  title: c.title,
+                  featuredImage: c.featuredImage,
+                })) || []
+              }
+              currentCourseId={cid}
+              selectedCourseIds={selectedPrerequisites}
+              onSelectCourses={setSelectedPrerequisites}
             />
           </div>
         </div>

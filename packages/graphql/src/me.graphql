@@ -490,6 +490,8 @@ query Me {
       isActive
       taxId
       taxName
+      logo
+      icon
       stripeId
       setupIntentClientSecret
       address

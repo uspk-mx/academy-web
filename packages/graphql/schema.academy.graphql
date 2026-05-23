@@ -138,6 +138,8 @@ type Company {
   taxId: String
   taxName: String
   isActive: Boolean
+  logo: String
+  icon: String
   createdAt: String!
   updatedAt: String!
   setupIntentClientSecret: String
@@ -242,6 +244,9 @@ type Course {
   visibility: Visibility
   scheduledPublishAt: String
   publishedAt: String
+  prerequisites: [Course!]
+  isUnlocked: Boolean
+  learningPaths: [LearningPath!]
   createdAt: String!
   updatedAt: String!
   pricingType: PricingType
@@ -362,6 +367,13 @@ input CreateInitialCourseInput {
   levelId: ID
   status: String!
   categoryId: ID
+}
+
+input CreateLearningPathInput {
+  name: String!
+  description: String!
+  featuredImage: String
+  courseIds: [ID!]
 }
 
 input CreateLessonInput {
@@ -543,6 +555,21 @@ enum ItemType {
   SUBSCRIPTION
 }
 
+type LearningPath {
+  id: ID!
+  name: String!
+  description: String!
+  featuredImage: String
+  courses: [LearningPathCourse!]
+  createdAt: String!
+  updatedAt: String!
+}
+
+type LearningPathCourse {
+  course: Course!
+  position: Int!
+}
+
 type Lesson {
   id: ID!
   topic: Topic
@@ -713,6 +740,10 @@ type Mutation {
   addToCart(input: AddToCartInput!): Cart!
   removeFromCart(itemId: ID!): Cart!
   checkout(cartId: ID!): CheckoutSession!
+  createLearningPath(input: CreateLearningPathInput!): LearningPath!
+  updateLearningPath(learningPathId: ID!, input: UpdateLearningPathInput!): LearningPath!
+  deleteLearningPath(learningPathId: ID!): LearningPath!
+  setCoursePrerequisites(input: SetCoursePrerequisitesInput!): Course!
 }
 
 type PageInfo {
@@ -808,6 +839,8 @@ type Query {
   bundle(id: ID!): CourseBundle!
   instructorBundles(search: String, sortBy: String, sortOrder: String, page: Int = 1, limit: Int = 10): PaginatedBundle!
   cart: Cart
+  learningPaths: [LearningPath!]!
+  learningPath(id: ID!): LearningPath!
 }
 
 type Question {
@@ -927,6 +960,11 @@ type Roles {
   updatedAt: String!
 }
 
+input SetCoursePrerequisitesInput {
+  courseId: ID!
+  requiredCourseIds: [ID!]!
+}
+
 type SetupIntentRequired {
   clientSecret: String!
 }
@@ -1040,6 +1078,8 @@ input UpdateCompanyInput {
   taxId: String
   taxName: String
   isActive: Boolean
+  logo: String
+  icon: String
 }
 
 input UpdateCourseBundleInput {
@@ -1088,6 +1128,13 @@ input UpdateCourseProgressInput {
   completedAt: String
   averageCompletionTime: Float
   averageScore: Float
+}
+
+input UpdateLearningPathInput {
+  name: String
+  description: String
+  featuredImage: String
+  courseIds: [ID!]
 }
 
 input UpdateLessonInput {

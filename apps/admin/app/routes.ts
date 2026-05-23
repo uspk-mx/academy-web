@@ -22,6 +22,7 @@ export default [
       route("enrollments", "./enrollments/enrollments.tsx"),
     ]),
     route("bundles", "./bundles/bundles.tsx"),
+    route("learning-paths", "./learning-paths/learning-paths.tsx"),
     route("students", "./students/students.tsx"),
     route("instructors", "./instructors/instructors.tsx"),
     route("communication", "./communication/communication.tsx"),

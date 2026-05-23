@@ -101,7 +101,6 @@ export default function AssignPage() {
   }, [invites, search, tab]);
 
   const availableSeats = report?.unredeemedSubscriptions ?? 0;
-  console.log("Available seats:", availableSeats);
 
   async function onSendInvites() {
     if (!selectedOrderId) {
@@ -127,7 +126,6 @@ export default function AssignPage() {
     }
 
     const payload = res.data?.inviteEmployees;
-    console.log("Invite payload:", payload);
     toast.success(`Invited ${payload?.invited ?? 0} employees`);
 
     // refresh right panel

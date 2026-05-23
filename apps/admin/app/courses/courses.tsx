@@ -116,7 +116,6 @@ export default function Courses() {
     });
   }, [courses, sortBy, sortOrder]);
 
-  console.log("lastUpdatedCourses", lastUpdatedCourses, sortBy, sortOrder);
 
   const isInitialLoading = fetching && !searchQuery;
   const showNoResults = !fetching && searchQuery && lastUpdatedCourses?.length === 0;

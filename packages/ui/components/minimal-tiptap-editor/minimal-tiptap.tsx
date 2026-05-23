@@ -99,8 +99,6 @@ export const MinimalTiptapEditor = React.forwardRef<
       return null;
     }
 
-    console.log("showMediaActions", showMediaActions);
-
     return (
       <MeasuredContainer
         as="div"

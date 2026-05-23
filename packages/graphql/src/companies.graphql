@@ -21,6 +21,8 @@ mutation UpdateCompany($companyId: ID!, $input: UpdateCompanyInput) {
     taxId
     taxName
     isActive
+    logo
+    icon
     createdAt
     updatedAt
   }

@@ -296,6 +296,8 @@ export const UpdateCompanyDocument = gql`
     taxId
     taxName
     isActive
+    logo
+    icon
     createdAt
     updatedAt
   }
@@ -857,9 +859,28 @@ export const CourseDocument = gql`
       materialsIncluded
       requirements
     }
+    prerequisites {
+      id
+      title
+      featuredImage
+    }
+    isUnlocked
     createdAt
     updatedAt
     scheduledPublishAt
+  }
+}
+    `;
+export const SetCoursePrerequisitesDocument = gql`
+    mutation SetCoursePrerequisites($input: SetCoursePrerequisitesInput!) {
+  setCoursePrerequisites(input: $input) {
+    id
+    title
+    prerequisites {
+      id
+      title
+      featuredImage
+    }
   }
 }
     `;
@@ -986,6 +1007,12 @@ export const GetEnrollmentsDocument = gql`
       description
       status
       price
+      prerequisites {
+        id
+        title
+        featuredImage
+      }
+      isUnlocked
     }
     enrolledAt
     status
@@ -1011,6 +1038,12 @@ export const GetEnrollmentByIdDocument = gql`
       description
       status
       price
+      prerequisites {
+        id
+        title
+        featuredImage
+      }
+      isUnlocked
     }
     enrolledAt
     status
@@ -1190,6 +1223,12 @@ export const GetUserEnrollmentsDocument = gql`
         isActive
         userName
       }
+      prerequisites {
+        id
+        title
+        featuredImage
+      }
+      isUnlocked
     }
     enrolledAt
     status
@@ -1217,6 +1256,126 @@ export const AssignInstructorDocument = gql`
 export const UnassignInstructorDocument = gql`
     mutation UnassignInstructor($userId: ID!, $courseId: ID!) {
   unassignInstructor(userId: $userId, courseId: $courseId)
+}
+    `;
+export const LearningPathsDocument = gql`
+    query LearningPaths {
+  learningPaths {
+    id
+    name
+    description
+    featuredImage
+    createdAt
+    updatedAt
+    courses {
+      position
+      course {
+        id
+        title
+        featuredImage
+        level {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+    `;
+export const LearningPathDocument = gql`
+    query LearningPath($id: ID!) {
+  learningPath(id: $id) {
+    id
+    name
+    description
+    featuredImage
+    createdAt
+    updatedAt
+    courses {
+      position
+      course {
+        id
+        title
+        featuredImage
+        level {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+    `;
+export const CreateLearningPathDocument = gql`
+    mutation CreateLearningPath($input: CreateLearningPathInput!) {
+  createLearningPath(input: $input) {
+    id
+    name
+    description
+    featuredImage
+    createdAt
+    updatedAt
+    courses {
+      position
+      course {
+        id
+        title
+        featuredImage
+        level {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+    `;
+export const UpdateLearningPathDocument = gql`
+    mutation UpdateLearningPath($learningPathId: ID!, $input: UpdateLearningPathInput!) {
+  updateLearningPath(learningPathId: $learningPathId, input: $input) {
+    id
+    name
+    description
+    featuredImage
+    createdAt
+    updatedAt
+    courses {
+      position
+      course {
+        id
+        title
+        featuredImage
+        level {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+    `;
+export const DeleteLearningPathDocument = gql`
+    mutation DeleteLearningPath($learningPathId: ID!) {
+  deleteLearningPath(learningPathId: $learningPathId) {
+    id
+    name
+    description
+    featuredImage
+    createdAt
+    updatedAt
+    courses {
+      position
+      course {
+        id
+        title
+        featuredImage
+        level {
+          id
+          name
+        }
+      }
+    }
+  }
 }
     `;
 export const CreateLessonDocument = gql`
@@ -1888,6 +2047,8 @@ export const MeDocument = gql`
       isActive
       taxId
       taxName
+      logo
+      icon
       stripeId
       setupIntentClientSecret
       address
@@ -3158,6 +3319,10 @@ export const GetProfileDocument = gql`
           background
         }
       }
+      extraSettings {
+        key
+        value
+      }
       createdAt
       updatedAt
       reviews {
@@ -3364,6 +3529,8 @@ export const GetProfileDocument = gql`
       isActive
       taxId
       taxName
+      logo
+      icon
       stripeId
       setupIntentClientSecret
       address
@@ -3478,6 +3645,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     Course(variables: Types.CourseQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.CourseQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<Types.CourseQuery>({ document: CourseDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'Course', 'query', variables);
     },
+    SetCoursePrerequisites(variables: Types.SetCoursePrerequisitesMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.SetCoursePrerequisitesMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.SetCoursePrerequisitesMutation>({ document: SetCoursePrerequisitesDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SetCoursePrerequisites', 'mutation', variables);
+    },
     UpdateCourse(variables: Types.UpdateCourseMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.UpdateCourseMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<Types.UpdateCourseMutation>({ document: UpdateCourseDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'UpdateCourse', 'mutation', variables);
     },
@@ -3504,6 +3674,21 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     UnassignInstructor(variables: Types.UnassignInstructorMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.UnassignInstructorMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<Types.UnassignInstructorMutation>({ document: UnassignInstructorDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'UnassignInstructor', 'mutation', variables);
+    },
+    LearningPaths(variables?: Types.LearningPathsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.LearningPathsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.LearningPathsQuery>({ document: LearningPathsDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'LearningPaths', 'query', variables);
+    },
+    LearningPath(variables: Types.LearningPathQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.LearningPathQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.LearningPathQuery>({ document: LearningPathDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'LearningPath', 'query', variables);
+    },
+    CreateLearningPath(variables: Types.CreateLearningPathMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.CreateLearningPathMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.CreateLearningPathMutation>({ document: CreateLearningPathDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'CreateLearningPath', 'mutation', variables);
+    },
+    UpdateLearningPath(variables: Types.UpdateLearningPathMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.UpdateLearningPathMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.UpdateLearningPathMutation>({ document: UpdateLearningPathDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'UpdateLearningPath', 'mutation', variables);
+    },
+    DeleteLearningPath(variables: Types.DeleteLearningPathMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.DeleteLearningPathMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.DeleteLearningPathMutation>({ document: DeleteLearningPathDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteLearningPath', 'mutation', variables);
     },
     CreateLesson(variables: Types.CreateLessonMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.CreateLessonMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<Types.CreateLessonMutation>({ document: CreateLessonDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'CreateLesson', 'mutation', variables);

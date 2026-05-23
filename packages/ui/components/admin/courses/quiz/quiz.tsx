@@ -47,6 +47,7 @@ import {
   Clock,
 } from "lucide-react";
 import { Card } from "ui/components/card";
+import pino from "pino";
 
 interface QuizProps {
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -103,6 +104,8 @@ export function Quiz({
   >(SubmitQuizAttemptDocument);
 
   const { markQuizComplete } = useProgress();
+
+  const logger = pino()
 
   const handleStartQuiz = () => {
     // Check if we still have attempts available
@@ -215,7 +218,7 @@ export function Quiz({
           break;
 
         case QuestionType.Sorting:
-          console.log("question.settings:", question.settings);
+          logger.info(`question.settings: ${question.settings}`);
           if (Array.isArray(userAnswer) && Array.isArray(correctAnswers)) {
             const correctCount = userAnswer.reduce((acc, answer, index) => {
               return acc + (answer === correctAnswers[index] ? 1 : 0);
@@ -344,7 +347,7 @@ export function Quiz({
   }
 
   const currentQuestion = quiz.questions[currentQuestionIndex];
-  console.log("currentQuestion: ", currentQuestion);
+  logger.info(`currentQuestion: ${currentQuestion}`);
 
   if (!currentQuestion) {
     return <div>Error: Question not found</div>;

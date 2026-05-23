@@ -19,6 +19,7 @@ import {
   useStripe,
 } from "@stripe/react-stripe-js";
 import type { Stripe } from "@stripe/stripe-js";
+import pino from "pino";
 
 /**
  * You must create stripePromise once in your app (not inside this file).
@@ -74,12 +75,14 @@ export function SetupIntentDialog(props: SetupIntentDialogProps) {
     onSuccess,
   } = props;
 
+  const logger = pino()
+  
   // If we don't have clientSecret, don't render Elements
   const canRender = open && !!clientSecret;
-  console.log("clientSecret", clientSecret);
+  logger.info(`clientSecret: ${clientSecret}`);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[520px]">
+      <DialogContent className="sm:max-w-130">
         <DialogHeader>
           <DialogTitle>Add payment method</DialogTitle>
           <DialogDescription>

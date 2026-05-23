@@ -377,7 +377,6 @@ const [duration, setDuration] = useState(
     if (lessonId) {
       markLessonComplete({ lessonId });
       revalidator.revalidate();
-      console.log(`Lesson ${lessonId} marked as complete!`); // Optional: for debugging
     } else {
       console.warn("Video ended but no lessonId was found."); // Optional: for debugging
     }

@@ -43,6 +43,7 @@ export default [
       route("invoices", "./routes/billing/invoices.tsx"),
     ]),
     ...prefix("settings", [
+      index('./routes/settings/settings.tsx'),
       route("profile", "./routes/settings/profile.tsx"),
       route("account", "./routes/settings/account.tsx"),
     ]),

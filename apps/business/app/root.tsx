@@ -57,8 +57,6 @@ const ssr = ssrExchange({
   initialState: undefined,
 });
 
-console.log("import.meta.env.VITE_API_TARGET:", import.meta.env.VITE_API_TARGET)
-
 const urqlClient = createClient({
   url: `${import.meta.env.VITE_API_TARGET}/query`,
   exchanges: [debugExchange, cacheExchange, ssr, fetchExchange],

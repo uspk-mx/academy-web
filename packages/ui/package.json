@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "keywords": [],
   "author": "",
@@ -37,6 +39,7 @@
     "@radix-ui/react-toggle": "^1.1.10",
     "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@storybook/addon-themes": "^10.2.17",
     "@stripe/react-stripe-js": "^3.1.1",
     "@stripe/stripe-js": "^5.10.0",
     "@tanstack/react-table": "^8.21.3",
@@ -66,12 +69,13 @@
     "cmdk": "^1.1.1",
     "cookie": "^1.1.1",
     "date-fns": "^4.1.0",
+    "dompurify": "^3.2.4",
     "embla-carousel-react": "^8.6.0",
     "gql-generated": "workspace:*",
     "graphql": "^16.12.0",
     "graphql-request": "^7.4.0",
     "html-react-parser": "^5.2.15",
-    "dompurify": "^3.2.4",
+    "leo-profanity": "^1.9.0",
     "lowlight": "^3.3.0",
     "lucide-react": "^0.563.0",
     "motion": "^12.29.2",
@@ -103,11 +107,22 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^5.0.1",
+    "@storybook/addon-a11y": "^10.2.16",
+    "@storybook/addon-docs": "^10.2.16",
+    "@storybook/addon-vitest": "^10.2.16",
+    "@storybook/react-vite": "^10.2.16",
+    "@tailwindcss/vite": "^4.1.18",
+    "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^22",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@types/turndown": "^5.0.5",
-    "@types/canvas-confetti": "^1.9.0",
-    "typescript": "^5.9.2"
+    "@vitest/browser-playwright": "^4.0.18",
+    "@vitest/coverage-v8": "^4.0.18",
+    "playwright": "^1.58.2",
+    "storybook": "^10.2.16",
+    "typescript": "^5.9.2",
+    "vitest": "^4.0.18"
   }
 }

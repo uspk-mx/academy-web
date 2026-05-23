@@ -54,6 +54,7 @@ import { QuestionSettings } from "./question-settings";
 import type { UpdateQuestionInput } from "gql-generated/gql/graphql";
 import { useDirtyIds } from "ui/hooks/use-dirty-ids";
 import { useRevalidator } from "react-router";
+import pino from "pino";
 
 export function CreateQuestionDialog({
   quizId,
@@ -103,6 +104,7 @@ export function CreateQuestionDialog({
   } = useDirtyIds();
 
   const revalidator = useRevalidator();
+  const logger = pino()
 
   useEffect(() => {
     // Detect if the question has changed
@@ -111,9 +113,8 @@ export function CreateQuestionDialog({
     lastSelectedQuestionIdRef.current = selectedQuestion?.id || null;
 
     if (questionChanged) {
-      console.log(
-        "🔄 Question changed, initializing fileUrls for:",
-        selectedQuestion?.id
+      logger.info(
+        `🔄 Question changed, initializing fileUrls for: ${selectedQuestion?.id}`,
       );
       isInitializingRef.current = true;
 
@@ -139,10 +140,10 @@ export function CreateQuestionDialog({
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     // 🔍 DEBUG
-    console.log("🔵 fileUrls changed:", fileUrls);
+    logger.info(`🔵 fileUrls changed: ${fileUrls}`);
 
     if (isInitializingRef.current) {
-      console.log("⏭️ Skipping fileUrls change - initializing");
+      logger.info("⏭️ Skipping fileUrls change - initializing");
       return;
     }
 
@@ -150,11 +151,10 @@ export function CreateQuestionDialog({
     const lastFileUrlsStr = JSON.stringify(lastFileUrlsRef.current);
 
     if (selectedQuestion && currentFileUrlsStr !== lastFileUrlsStr) {
-      console.log(
-        "🔥 User changed fileUrls from",
-        lastFileUrlsRef.current,
-        "to",
-        fileUrls
+      logger.info(
+        `🔥 User changed fileUrls from: ${lastFileUrlsRef.current},
+        to:
+        ${fileUrls}`
       );
 
       lastFileUrlsRef.current = fileUrls;
@@ -163,9 +163,8 @@ export function CreateQuestionDialog({
         updateQuestion(selectedQuestion.id, { media: fileUrls[0] });
       } else {
         // 🔑 IMPORTANTE: Actualizar a null cuando se borra
-        console.log(
-          "🗑️ Setting media to null for question:",
-          selectedQuestion.id
+        logger.info(
+          `🗑️ Setting media to null for question: ${selectedQuestion.id}`,
         );
         updateQuestion(selectedQuestion.id, { media: null });
       }
@@ -175,13 +174,13 @@ export function CreateQuestionDialog({
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (isInitializingRef.current) {
-      console.log("⏭️ Skipping files change - initializing");
+      logger.info("⏭️ Skipping files change - initializing");
       return;
     }
 
     // Si hay archivos nuevos (files aumentó)
     if (files.length > 0 && files.length !== lastFilesCountRef.current) {
-      console.log("📁 User selected new file(s):", files.length, "files");
+      logger.info(`📁 User selected new file(s): ${files.length} "files"`);
       lastFilesCountRef.current = files.length;
 
       if (selectedQuestion) {
@@ -189,7 +188,7 @@ export function CreateQuestionDialog({
       }
     } else if (files.length === 0 && lastFilesCountRef.current > 0) {
       // Files fueron limpiados
-      console.log("🧹 Files cleared");
+      logger.info("🧹 Files cleared");
       lastFilesCountRef.current = 0;
     }
   }, [files.length, selectedQuestion?.id, markQuestionDirty]);
@@ -392,27 +391,29 @@ export function CreateQuestionDialog({
       );
       if (!updatedQuestion) return;
 
-      console.log("🔍 DEBUG handleUpdateQuestion START:", {
-        selectedQuestionId: selectedQuestion?.id,
-        questionType: selectedQuestion?.type,
-        filesLength: files.length,
-        fileUrlsLength: fileUrls.length,
-        files: files,
-        fileUrls: fileUrls,
-      });
+      logger.info(
+        `🔍 DEBUG handleUpdateQuestion START: ${JSON.stringify({
+          selectedQuestionId: selectedQuestion?.id,
+          questionType: selectedQuestion?.type,
+          filesLength: files.length,
+          fileUrlsLength: fileUrls.length,
+          files: files,
+          fileUrls: fileUrls,
+        })}`,
+      );
 
       setIsSaving(true);
 
       let mediaUrl: string | null | undefined = undefined;
 
       if (selectedQuestion?.type === QuestionType.FillInTheBlanks) {
-        console.log("📸 Processing FillInTheBlanks media");
+        logger.info("📸 Processing FillInTheBlanks media");
 
         const realFiles = files.filter(
           (file) => file instanceof File && file.size > 0
         );
 
-        console.log("🔍 Real files check:", {
+        logger.info(`🔍 Real files check: ${ {
           totalFiles: files.length,
           realFiles: realFiles.length,
           files: files.map((f) => ({
@@ -420,16 +421,16 @@ export function CreateQuestionDialog({
             size: f.size,
             name: f.name,
           })),
-        });
+        }}`);
 
         if (realFiles.length > 0) {
-          console.log("📤 Case 1: Has REAL files - will upload");
+          logger.info("📤 Case 1: Has REAL files - will upload");
           const uploadedUrls = await onSubmitAttachments();
-          console.log("📥 Upload result:", uploadedUrls);
+          logger.info(`📥 Upload result: ${uploadedUrls}`);
 
           if (uploadedUrls && uploadedUrls.length > 0) {
             mediaUrl = uploadedUrls[0];
-            console.log("✅ Upload successful:", mediaUrl);
+            logger.info(`✅ Upload successful: ${mediaUrl}`);
           } else {
             console.error("❌ Upload failed");
             toast.error("Error al subir el archivo");
@@ -437,30 +438,32 @@ export function CreateQuestionDialog({
             return;
           }
         } else if (fileUrls.length > 0) {
-          console.log("📸 Case 2: No real files, has fileUrls");
+          logger.info("📸 Case 2: No real files, has fileUrls");
           const currentFileUrl = fileUrls[0];
           const isRemoteUrl =
             currentFileUrl.startsWith("https://") ||
             currentFileUrl.startsWith("http://");
 
-          console.log("🔍 URL check:", { currentFileUrl, isRemoteUrl });
+          logger.info(
+            `🔍 URL check: ${JSON.stringify({ currentFileUrl, isRemoteUrl })}`,
+          );
 
           if (isRemoteUrl) {
-            console.log("✅ Case 2a: Using existing remote URL");
+            logger.info("✅ Case 2a: Using existing remote URL");
             mediaUrl = currentFileUrl;
           } else {
-            console.warn("⚠️ Case 2b: Strange URL format");
+            logger.warn("⚠️ Case 2b: Strange URL format");
             mediaUrl = currentFileUrl;
           }
         } else {
-          console.log("🗑️ Case 3: No files, no URLs - empty media");
+          logger.info("🗑️ Case 3: No files, no URLs - empty media");
           mediaUrl = "";
         }
       } else {
-        console.log("⏭️ Not FillInTheBlanks type, skipping media processing");
+        logger.info("⏭️ Not FillInTheBlanks type, skipping media processing");
       }
 
-      console.log("💾 Final media value:", mediaUrl);
+      logger.info(`💾 Final media value: ${mediaUrl}`);
 
       const input: UpdateQuestionInput = {
         questionOrder: updatedQuestion.order,
@@ -485,7 +488,7 @@ export function CreateQuestionDialog({
         input.media = mediaUrl;
       }
 
-      console.log("🔍 Mutation input:", input);
+      logger.info(`🔍 Mutation input: ${input}`);
 
       const result = await updateQuestionMutation({
         questionId: updatedQuestion.id,
@@ -500,7 +503,7 @@ export function CreateQuestionDialog({
         return;
       }
 
-      console.log("✅ Mutation successful");
+      logger.info("✅ Mutation successful");
 
       setQuestions((prev: Question[]) =>
         prev.map((q) =>
@@ -537,7 +540,7 @@ export function CreateQuestionDialog({
 
   const updateQuestion = useCallback(
     (id: string, updates: Partial<Question>): void => {
-      console.log("📝 Updating question", id, "with", updates);
+      logger.info(`📝 Updating question: ${id}, with: ${updates}`);
       setQuestions((prevQuestions: Question[]) =>
         prevQuestions.map((q: Question) =>
           q.id === id ? { ...q, ...updates } : q

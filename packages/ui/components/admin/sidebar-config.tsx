@@ -4,7 +4,6 @@ import {
   BarChart,
   BookOpen,
   BuildingIcon,
-  CreditCard,
   Frame,
   GraduationCap,
   LayersIcon,
@@ -13,6 +12,7 @@ import {
   MapIcon,
   MessageSquareTextIcon,
   PieChart,
+  RouteIcon,
   Send,
   Settings,
   Users,
@@ -43,6 +43,11 @@ export const sidebarConfig: SidebarConfig = {
             url: "/courses/enrollments",
           },
         ],
+      },
+      {
+        title: "Learning Paths",
+        url: "/learning-paths",
+        icon: RouteIcon,
       },
       {
         title: "Bundles",
@@ -88,7 +93,7 @@ export const sidebarConfig: SidebarConfig = {
         items: [
           {
             title: "Resumen",
-            url: "/licenses",  
+            url: "/licenses",
           },
           {
             title: "Ordenar Licencias",
@@ -134,21 +139,22 @@ export const sidebarConfig: SidebarConfig = {
           },
         ],
       },
-      {
-        title: "Facturación",
-        url: "/billing",
-        icon: CreditCard,
-        items: [
-          {
-            title: "Métodos de Pago",
-            url: "/billing/methods",
-          },
-          {
-            title: "Facturas",
-            url: "/billing/invoices",
-          },
-        ],
-      },
+      // TODO: Q3 — Billing section (payment methods + invoices via Stripe integration)
+      // {
+      //   title: "Facturación",
+      //   url: "/billing",
+      //   icon: CreditCard,
+      //   items: [
+      //     {
+      //       title: "Métodos de Pago",
+      //       url: "/billing/methods",
+      //     },
+      //     {
+      //       title: "Facturas",
+      //       url: "/billing/invoices",
+      //     },
+      //   ],
+      // },
       {
         title: "Ajustes",
         url: "/settings",

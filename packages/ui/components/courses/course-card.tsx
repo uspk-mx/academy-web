@@ -8,11 +8,12 @@ import type {
 import { Button } from "ui/components/button";
 import { Card, CardContent, CardFooter, CardHeader } from "ui/components/card";
 import { Progress } from "ui/components/progress";
-import { formatCourseDuration } from "ui/lib/utils";
-import { Award, CheckCircle2, Clock } from "lucide-react";
+import { cn, formatCourseDuration } from "ui/lib/utils";
+import { Award, CheckCircle2, Clock, InfoIcon, LockIcon } from "lucide-react";
 import { useMutation } from "urql";
 import { StartCourseProgressDocument } from "gql-generated/gql/graphql";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../tooltip";
 
 export function CourseCard({ course }: { course: Course }): ReactNode {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ export function CourseCard({ course }: { course: Course }): ReactNode {
   const isCompleted = progress === 100;
   const isStarted = course.progress?.startedAt !== "";
   const hasCertificate = course.certificates && course.certificates.length > 0;
+  const isUnlocked = course.isUnlocked;
 
   // Determine border color based on status
 const getBorderColor = useMemo(() => {
@@ -84,28 +86,64 @@ const getBorderColor = useMemo(() => {
   const getCTAText = () => {
     if (isCompleted) return "Revisar curso";
     if (isStarted) return "Continuar aprendiendo";
+    if (!isUnlocked) return "Curso deshabilitado";
     return "Iniciar curso";
   };
 
   return (
     <Card
-      className={`group flex flex-col overflow-hidden border-4 transition-all hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] ${getBorderColor}`}
+      className={cn(
+        `group flex flex-col overflow-hidden border-4 transition-all ${getBorderColor}`,
+        {
+          "hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]":
+            isUnlocked,
+        },
+      )}
     >
       <CardHeader className="relative p-0">
         <div className="relative aspect-video overflow-hidden rounded-t-lg">
           <img
             alt={course.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className={
+              cn("h-full w-full object-cover transition-transform duration-300", {
+                "group-hover:scale-105": isUnlocked
+              })
+            }
             src={
               course.featuredImage ||
               "https://res.cloudinary.com/uspk/image/upload/v1737397211/web_assets/e023e32c-069c-4212-8bfa-c418692f54cf.png"
             }
           />
-          
+
           {/* Status Badge - Top Left */}
           {getStatusBadge() && (
+            <div className="absolute left-3 top-3">{getStatusBadge()}</div>
+          )}
+
+          {!isUnlocked && (
             <div className="absolute left-3 top-3">
-              {getStatusBadge()}
+              <span className="inline-flex items-center gap-1.5 rounded-full border-2 border-black bg-gray-200 p-2 text-xs font-bold">
+                <LockIcon className="size-5" />
+              </span>
+            </div>
+          )}
+
+          {!isUnlocked && (
+            <div className="absolute right-3 top-3">
+              <div className="flex items-center justify-center rounded-full border-2 border-black bg-white p-2">
+                <Tooltip>
+                  <TooltipTrigger>
+                    <InfoIcon className="size-5" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Se necesita completar el curso:{" "}
+                    {course.prerequisites?.map((item) => (
+                      <span key={item.id}>{item.title}</span>
+                    ))}
+                    para poder desbloquear este curso
+                  </TooltipContent>
+                </Tooltip>
+              </div>
             </div>
           )}
 
@@ -176,6 +214,7 @@ const getBorderColor = useMemo(() => {
             type="button"
             variant="noShadow"
             className="w-full"
+            disabled={!isUnlocked}
             onClick={async () =>
               isStarted
                 ? navigate(getCourseUrl(course))

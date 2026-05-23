@@ -157,7 +157,7 @@ export default function CalendarPage() {
 
   const handleBookClass = async () => {
     // TODO: integrate with Cal.com API
-    console.log("Booking class:", {
+    console.warn("Booking class:", {
       date: selectedDate,
       course: selectedCourse,
       instructor: selectedInstructor,

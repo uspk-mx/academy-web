@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { Button, Input } from "ui/components/index";
 import type { QuestionTypesProps } from "./types";
+import pino from "pino";
 
 export function MatrixSortingQuestion({
   question,
@@ -11,6 +12,8 @@ export function MatrixSortingQuestion({
   const [options, setOptions] = useState(
     question.settings?.sortableItems || []
   );
+
+  const logger = pino()
 
   // This method will generate the correct_answer array based on the matrix matches
   const matrixMatches = options.map((option) => {
@@ -91,7 +94,7 @@ export function MatrixSortingQuestion({
         type="hidden"
         value={JSON.stringify(matrixMatches)}
         onChange={(e) => {
-          console.log("matrix_matches: ", e.target.value);
+          logger.info(`matrix_matches: ${e.target.value}`);
         }}
       />
       <input
@@ -99,7 +102,7 @@ export function MatrixSortingQuestion({
         type="hidden"
         value={JSON.stringify(correctAnswers)}
         onChange={(e) => {
-          console.log("correctAnswer: ", e.target.value);
+          logger.info(`correctAnswer: ${e.target.value}`);
         }}
       />
       <Button className="mt-2" onClick={handleAddPair} type="button">

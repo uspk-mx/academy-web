@@ -1,0 +1,117 @@
+query LearningPaths {
+  learningPaths {
+    id
+    name
+    description
+    featuredImage
+    createdAt
+    updatedAt
+    courses {
+      position
+      course {
+        id
+        title
+        featuredImage
+        level {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+
+query LearningPath($id: ID!) {
+  learningPath(id: $id) {
+    id
+    name
+    description
+    featuredImage
+    createdAt
+    updatedAt
+    courses {
+      position
+      course {
+        id
+        title
+        featuredImage
+        level {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+
+mutation CreateLearningPath($input: CreateLearningPathInput!) {
+  createLearningPath(input: $input) {
+    id
+    name
+    description
+    featuredImage
+    createdAt
+    updatedAt
+    courses {
+      position
+      course {
+        id
+        title
+        featuredImage
+        level {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+
+mutation UpdateLearningPath(
+  $learningPathId: ID!
+  $input: UpdateLearningPathInput!
+) {
+  updateLearningPath(learningPathId: $learningPathId, input: $input) {
+    id
+    name
+    description
+    featuredImage
+    createdAt
+    updatedAt
+    courses {
+      position
+      course {
+        id
+        title
+        featuredImage
+        level {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+
+mutation DeleteLearningPath($learningPathId: ID!) {
+  deleteLearningPath(learningPathId: $learningPathId) {
+    id
+    name
+    description
+    featuredImage
+    createdAt
+    updatedAt
+    courses {
+      position
+      course {
+        id
+        title
+        featuredImage
+        level {
+          id
+          name
+        }
+      }
+    }
+  }
+}

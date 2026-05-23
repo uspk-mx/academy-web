@@ -21,8 +21,6 @@ const stripePromise = loadStripe(import.meta.env.VITE_PUBLISHABLE_KEY || "", {
   locale: "es",
 });
 
-console.log("PK", import.meta.env.VITE_PUBLISHABLE_KEY);
-
 
 export default function OrdersPage() {
   const [{ data: meData }] = useQuery<MeQuery, MeQueryVariables>({

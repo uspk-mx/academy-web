@@ -352,6 +352,10 @@ query GetProfile {
           background
         }
       }
+      extraSettings {
+        key
+        value
+      }
       createdAt
       updatedAt
       reviews {
@@ -558,6 +562,8 @@ query GetProfile {
       isActive
       taxId
       taxName
+      logo
+      icon
       stripeId
       setupIntentClientSecret
       address

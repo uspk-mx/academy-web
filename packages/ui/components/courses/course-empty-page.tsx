@@ -28,7 +28,7 @@ export const CourseEmptyPage = ({
         <p className="mt-2 text-sm text-gray-500 dark:text-gray-500">
           {description}
         </p>
-        <Button className="mt-6 gap-1" type="button" onClick={action}>
+        <Button className="mt-6 gap-1 cursor-pointer" type="button" variant="noShadow" onClick={action}>
           <Plus className="-ml-1 size-5 shrink-0" aria-hidden={true} />
           {buttonLabel}
         </Button>
