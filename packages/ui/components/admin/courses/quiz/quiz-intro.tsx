@@ -36,7 +36,7 @@ export default function QuizIntro({ quiz, attemptsUsed, maxAttempts, onStart }: 
   const [showDetails, setShowDetails] = useState(false)
 
   return (
-    <div className="p-6 max-w-full">
+    <div className="max-w-full">
       <Card className="overflow-hidden">
         <CardHeader className="pb-0 pt-6 px-6">
           <div className="flex flex-col gap-2">

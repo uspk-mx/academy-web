@@ -1,17 +1,3 @@
-import { useMemo } from "react";
-import { useNavigate, useParams } from "react-router";
-import { useQuery } from "urql";
-import { PageLoader } from "ui/components/admin";
-import { ContentTabs } from "ui/components/admin/courses/content-tabs";
-import { CourseCompletionScreen } from "ui/components/admin/courses/course-completion-screen";
-import { CourseHeader } from "ui/components/admin/courses/course-header";
-import { CourseSideNavigation } from "ui/components/admin/courses/course-sidenav";
-import { Quiz } from "ui/components/admin/courses/quiz/quiz";
-import { ScrollArea } from "ui/components/scroll-area";
-import { useCustomerContextProvider } from "ui/context/customer-context";
-import { useProgress } from "ui/context/progress-context";
-import { getNextCourse } from "ui/lib/course-progression";
-import { CourseDocument, GetCourseProgressDocument, TopicsByCourseDocument } from "gql-generated/gql/graphql";
 import type {
   CourseQuery,
   CourseQueryVariables,
@@ -20,81 +6,39 @@ import type {
   TopicsByCourseQuery,
   TopicsByCourseQueryVariables,
 } from "gql-generated/gql/graphql";
+import {
+  CourseDocument,
+  GetCourseProgressDocument,
+  TopicsByCourseDocument,
+} from "gql-generated/gql/graphql";
+import {
+  HelpCircle,
+  LayoutDashboard,
+  LogOutIcon,
+  UserIcon,
+} from "lucide-react";
+import { useMemo } from "react";
+import { useLoaderData, useNavigate, useParams } from "react-router";
+import {
+  CourseViewer,
+  CourseViewerSkeleton,
+} from "ui/components/academy-components";
+import { useCourseNavigation } from "ui/components/academy-components/course-viewer/hooks/use-course-navigation";
+import { PageLoader } from "ui/components/admin";
+import { ContentTabs } from "ui/components/admin/courses/content-tabs";
+import { CourseCompletionScreen } from "ui/components/admin/courses/course-completion-screen";
+import { CourseHeader } from "ui/components/admin/courses/course-header";
+import { CourseSideNavigation } from "ui/components/admin/courses/course-sidenav";
+import { Quiz } from "ui/components/admin/courses/quiz/quiz";
+import { useQuizStore } from "ui/components/admin/courses/quiz/store/quiz.store";
+import { ScrollArea } from "ui/components/scroll-area";
+import { useCustomerContextProvider } from "ui/context/customer-context";
+import { useProgress } from "ui/context/progress-context";
+import { getNextCourse } from "ui/lib/course-progression";
+import { useQuery } from "urql";
+import { flagsClient } from "~/lib/flags";
 import type { Route } from "./+types/quiz";
-
-type CourseItem = {
-  type: "lesson" | "quiz";
-  id: string;
-  title: string;
-  completed: boolean;
-};
-
-type NextAction = {
-  label: string;
-  target: { type: "lesson" | "quiz"; id: string } | null;
-};
-
-function getCourseItemsList(
-  topics: TopicsByCourseQuery["topicsByCourseId"],
-): CourseItem[] {
-  const sortedTopics = [...(topics ?? [])].sort(
-    (a, b) => (a.position ?? 0) - (b.position ?? 0),
-  );
-
-  const items: CourseItem[] = [];
-
-  for (const topic of sortedTopics) {
-    const topicItems = [
-      ...(topic.lessons ?? []).map((lesson) => ({
-        type: "lesson" as const,
-        id: lesson.id,
-        title: lesson.title,
-        position: lesson.position ?? 0,
-        completed: !!lesson.progress?.completed,
-      })),
-      ...(topic.quizzes ?? []).map((quiz) => ({
-        type: "quiz" as const,
-        id: quiz.id,
-        title: quiz.title,
-        position: quiz.position ?? 0,
-        completed: !!quiz.progress?.completed,
-      })),
-    ];
-    topicItems.sort((a, b) => a.position - b.position);
-    items.push(...topicItems);
-  }
-
-  return items;
-}
-
-function getNextAction(items: CourseItem[], currentId?: string): NextAction {
-  const currentIndex = items.findIndex((item) => item.id === currentId);
-
-  // Priority 1: Next item after current
-  if (currentIndex >= 0 && currentIndex < items.length - 1) {
-    const next = items[currentIndex + 1];
-    const label =
-      next.type === "lesson" ? "Siguiente lección" : "Siguiente quiz";
-    return { label, target: { type: next.type, id: next.id } };
-  }
-
-  // Priority 2: First incomplete lesson before current
-  const incompleteBeforeCurrent = items.find(
-    (item, i) => i < currentIndex && !item.completed && item.type === "lesson",
-  );
-  if (incompleteBeforeCurrent) {
-    return {
-      label: `Continuar: ${incompleteBeforeCurrent.title}`,
-      target: {
-        type: "lesson",
-        id: incompleteBeforeCurrent.id,
-      },
-    };
-  }
-
-  // Priority 3: All done
-  return { label: "Volver al dashboard", target: null };
-}
+import { getCourseItemsList, getNextAction } from "~/lib/course-utils";
 
 export function meta({ params }: Route.MetaArgs) {
   return [
@@ -103,13 +47,28 @@ export function meta({ params }: Route.MetaArgs) {
   ];
 }
 
+export async function loader() {
+  const isNewViewer = await flagsClient.evaluate<boolean>(
+    "new-course-viewer",
+    true,
+  );
+
+  return {
+    flags: { isNewViewer: isNewViewer.value },
+  };
+}
+
 export default function QuizPage() {
   const { cid: courseId, quizId } = useParams();
   const navigate = useNavigate();
   const { customerData } = useCustomerContextProvider();
   const { progressPercentage } = useProgress();
+  const quizState = useQuizStore((state) => state.quizState);
+  const { flags } = useLoaderData<typeof loader>();
 
-  const courseData = customerData?.courses?.find((item) => item?.id === courseId);
+  const courseData = customerData?.courses?.find(
+    (item) => item?.id === courseId,
+  );
 
   const [{ data, fetching }] = useQuery<
     TopicsByCourseQuery,
@@ -119,6 +78,12 @@ export default function QuizPage() {
     variables: {
       courseId: courseId as string,
     },
+  });
+
+  const { navigateToNext, navigateToPrevious } = useCourseNavigation({
+    courseId: courseId || "",
+    courseItems: getCourseItemsList(data?.topicsByCourseId ?? []),
+    currentItemId: quizId || "",
   });
 
   const course = data?.topicsByCourseId?.find((item) => item?.course);
@@ -205,6 +170,100 @@ export default function QuizPage() {
           <CourseSideNavigation topics={data?.topicsByCourseId} />
         </div>
       </div>
+    );
+  }
+
+  const isNewViewer = flags.isNewViewer;
+
+  // While the customer data is still loading (e.g. on a hard refresh) the
+  // course/lesson are undefined, which would render the viewer with empty data
+  // (blank sidebar, lone video spinner, misleading "no materials" text). Show a
+  // skeleton that mirrors the real layout instead.
+  const isViewerLoading = fetching || !course || !activeQuiz;
+
+  if (isNewViewer && isViewerLoading) {
+    return <CourseViewerSkeleton />;
+  }
+
+  if (isNewViewer) {
+    return (
+      <CourseViewer
+        sidebarData={{
+          courseTitle: course?.course.title ?? "",
+          courseData:
+            data?.topicsByCourseId?.map((topic) => ({
+              title: topic?.title ?? "",
+              url: "#",
+              items: [
+                ...(topic?.lessons?.map((lesson) => ({
+                  title: lesson?.title ?? "",
+                  url: `/courses/${courseId}/lesson/${lesson?.id}`,
+                  isCompleted: !!lesson?.progress?.completed,
+                  isActive: false,
+                })) ?? []),
+                ...(topic?.quizzes?.map((quiz) => ({
+                  title: quiz?.title ?? "",
+                  url: `/courses/${courseId}/quiz/${quiz?.id}`,
+                  isCompleted: !!quiz?.progress?.completed,
+                  isActive: quiz?.id === quizId,
+                })) ?? []),
+              ],
+            })) ?? [],
+        }}
+        navigateToNext={navigateToNext}
+        navigateToPrevious={navigateToPrevious}
+        headerData={{
+          moduleTitle: activeQuiz?.title ?? "",
+          userMenuData: {
+            menuItems: [
+              {
+                label: "Dashboard",
+                href: "/",
+                icon: <LayoutDashboard className="h-4 w-4" />,
+              },
+              {
+                label: "Mi Perfil",
+                href: "/profile",
+                icon: <UserIcon className="h-4 w-4" />,
+              },
+              {
+                label: "Ayuda",
+                href: "https://uspk.com.mx/contact",
+                icon: <HelpCircle className="h-4 w-4" />,
+              },
+              {
+                label: "Cerrar sesion",
+                icon: <LogOutIcon className="h-4 w-4" />,
+                onClick: () => {},
+              },
+            ],
+            userData: {
+              fullName: customerData?.fullName ?? "",
+              avatarUrl: customerData?.profilePicture ?? "",
+            },
+          },
+        }}
+        quizContent={
+          <div className="pb-6 xl:pb-0">
+            <div className="relative h-full w-full flex flex-col">
+              <div className="relative flex-1 min-w-px h-full flex flex-col justify-center z-0">
+                {!activeQuiz ? (
+                  <PageLoader />
+                ) : (
+                  <Quiz
+                    quiz={activeQuiz}
+                    navigateToNextCourseItem={navigateToNextElement}
+                    nextItemLabel={nextAction?.label}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        }
+        renderCompleteButton={false}
+        lessonContent={(quizState === "intro" && activeQuiz?.content) || ""}
+        shouldShowFooterActions={quizState === "intro"}
+      />
     );
   }
 

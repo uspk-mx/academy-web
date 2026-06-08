@@ -14,6 +14,7 @@
     "@react-router/serve": "7.12.0",
     "@stripe/react-stripe-js": "^3.1.1",
     "@stripe/stripe-js": "^5.10.0",
+    "@vercel/flags-core": "^1.5.0",
     "@vercel/react-router": "^1.2.5",
     "cookie": "^1.1.1",
     "gql-generated": "workspace:*",
@@ -29,7 +30,8 @@
     "sonner": "^2.0.7",
     "ui": "workspace:*",
     "urql": "^5.0.1",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@react-router/dev": "7.12.0",

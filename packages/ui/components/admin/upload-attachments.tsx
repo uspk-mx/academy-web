@@ -48,7 +48,7 @@ const SIZE_LIMITS = {
   default: 100 * 1024 * 1024, // 100MB for other files
 };
 
-const formatFileSize = (bytes: number): string => {
+export const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return "0 B";
   const k = 1024;
   const sizes = ["B", "KB", "MB", "GB"];
@@ -56,7 +56,7 @@ const formatFileSize = (bytes: number): string => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
 };
 
-const getFileIcon = (type: string) => {
+export const getFileIcon = (type: string) => {
   if (type.startsWith("image/")) return ImageIcon;
   if (type.startsWith("audio/")) return FileAudioIcon;
   if (type.startsWith("video/")) return FileVideoIcon;

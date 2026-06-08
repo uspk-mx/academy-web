@@ -1,9 +1,10 @@
 packages:
-  - "packages/*"  # For shared libraries
-  - "apps/*"      # For applications
+  - "packages/*" # For shared libraries
+  - "apps/*" # For applications
 
 # Allow these packages to run build scripts during install (pnpm 11+ security feature)
 allowBuilds:
   core-js: true
   esbuild: true
   msw: true
+  sharp: false

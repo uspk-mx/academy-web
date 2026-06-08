@@ -48,6 +48,7 @@ import {
 } from "lucide-react";
 import { Card } from "ui/components/card";
 import pino from "pino";
+import { useQuizStore } from "./store/quiz.store";
 
 interface QuizProps {
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -90,7 +91,9 @@ export function Quiz({
 
   const isValidQuiz = quiz?.questions && quiz.questions.length > 0;
 
-  const [quizState, setQuizState] = useState<QuizState>("intro");
+  const quizState = useQuizStore((state) => state.quizState);
+  const updateQuizState = useQuizStore((state) => state.updateQuizState);
+
   const [attemptsUsed, setAttemptsUsed] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -113,7 +116,7 @@ export function Quiz({
       return;
     }
 
-    setQuizState("in-progress");
+    updateQuizState("in-progress");
     setAttemptsUsed((prev) => prev + 1);
     setCurrentQuestionIndex(0);
     setUserAnswers({});
@@ -128,7 +131,7 @@ export function Quiz({
     if (currentQuestionIndex < quiz.questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
     } else {
-      setQuizState("completed");
+      updateQuizState("completed");
       const score = calculateScore();
       try {
         await submitQuizAttemptMutation({
@@ -250,7 +253,7 @@ export function Quiz({
 
   useEffect(() => {
     if (quiz.progress.completed) {
-      setQuizState("submitted");
+      updateQuizState("submitted");
     }
   }, [quiz.progress.completed]);
 
@@ -268,7 +271,7 @@ export function Quiz({
 
         if (timerValueRef.current <= 0) {
           if (timerRef.current) clearInterval(timerRef.current);
-          setQuizState("timeout");
+          updateQuizState("timeout");
           setDisplayTime("00:00");
         } else {
           setDisplayTime(formatTime(timerValueRef.current));
@@ -359,9 +362,9 @@ export function Quiz({
     <div className="grid h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] relative">
       <div className="bg-white sticky top-0 z-10 border-b">
         <div className="max-w-4xl mx-auto w-full px-4 py-4">
-          <h1 className="text-sm md:text-2xl font-bold mb-4">{quiz.title}</h1>
+          {/* <h1 className="text-sm md:text-2xl font-bold mb-4">{quiz.title}</h1> */}
 
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
+          <div className="flex flex-col w-full gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
             <div className="flex flex-wrap gap-x-6 gap-y-2">
               <div className="flex items-center">
                 <span className="text-sm text-gray-600 mr-2">Pregunta:</span>

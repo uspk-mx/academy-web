@@ -6,6 +6,7 @@ import {
 } from "ui/context/progress-context";
 import { getCookie } from "ui/lib/cookies";
 import type { Route } from "./+types/layout";
+import { ThemeProvider } from "ui/components/academy-components";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const [, sessionToken] = getCookie(request, "session_token");
@@ -26,12 +27,14 @@ export default function CourseLayout({
 
   const courseId = cid || "";
   return (
-    <CustomerContextProvider>
-      <ProgressProvider courseId={courseId}>
-        <TotalItemsSetter courseId={courseId} />
-        {children}
-        <Outlet />
-      </ProgressProvider>
-    </CustomerContextProvider>
+    <ThemeProvider>
+      <CustomerContextProvider>
+        <ProgressProvider courseId={courseId}>
+          <TotalItemsSetter courseId={courseId} />
+          {children}
+          <Outlet />
+        </ProgressProvider>
+      </CustomerContextProvider>
+    </ThemeProvider>
   );
 }
