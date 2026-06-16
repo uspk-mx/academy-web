@@ -1,4 +1,18 @@
 import {
+  type CourseQuery,
+  type CourseQueryVariables,
+  CourseStatus,
+  type DeleteCourseMutation,
+  type DeleteCourseMutationVariables,
+  type UpdateCourseMutation,
+  type UpdateCourseMutationVariables,
+} from "gql-generated/generated/types";
+import {
+  CourseDocument,
+  DeleteCourseDocument,
+  UpdateCourseDocument,
+} from "gql-generated/gql/graphql";
+import {
   CircleAlert,
   Cloud,
   ExternalLinkIcon,
@@ -11,7 +25,7 @@ import {
 import { type ReactNode, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
-import { useMutation, useQuery } from "urql";
+import { ThemeToggle, useTheme } from "ui/components/academy-components";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,27 +54,15 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "ui/components/tooltip";
-import { useBuilderState } from "ui/context";
 import { useBuilderNav } from "ui/context/builder-nav-context";
-import {
-  CourseDocument,
-  DeleteCourseDocument,
-  UpdateCourseDocument,
-} from "gql-generated/gql/graphql";
-import {
-  type CourseQuery,
-  type CourseQueryVariables,
-  CourseStatus,
-  type DeleteCourseMutation,
-  type DeleteCourseMutationVariables,
-  type UpdateCourseMutation,
-  type UpdateCourseMutationVariables,
-} from "gql-generated/generated/types";
-import { cn } from "ui/lib/utils";
 import { logos } from "ui/lib/config/site";
+import { cn } from "ui/lib/utils";
+import { useMutation, useQuery } from "urql";
+import { SectionStep } from "./section-step";
 
 export function BuilderNav(): ReactNode {
   const navigate = useNavigate();
+  const {  theme} = useTheme()
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
   const [openDeleteCourseDialog, setOpenDeleteCourseDialog] = useState(false);
@@ -81,7 +83,7 @@ export function BuilderNav(): ReactNode {
   });
 
   const { isSubmitting, formId } = useBuilderNav();
-  const state = useBuilderState();
+  
   const isPublishDisabled =
     !courseData?.course.title ||
     !courseData?.course.description ||
@@ -152,20 +154,14 @@ export function BuilderNav(): ReactNode {
 
   const previewUrl = `/courses/${courseData?.course.id}/${lessonQuizId}`;
 
+  const isDark = theme === 'dark'
+
   return (
     <header className="top-0 z-10 sticky border-border bg-background border-b">
       <div className="items-center gap-8 grid grid-cols-2 xl:grid-cols-[1fr_1006px_1fr] px-4 sm:px-6 h-16">
         <div className="flex items-center space-x-4">
-          <img
-            alt=""
-            className="xl:flex hidden size-16"
-            src={logos.full}
-          />
-          <img
-            alt=""
-            className="flex xl:hidden size-10"
-            src={logos.icon}
-          />
+          <img alt="" className="xl:flex hidden" src={isDark ? logos.fullWhite : logos.full} />
+          <img alt="" className="flex xl:hidden size-10" src={isDark ? logos.iconWhite : logos.icon} />
         </div>
         <div className="flex items-center gap-4 xl:hidden ml-auto">
           <div
@@ -387,7 +383,7 @@ export function BuilderNav(): ReactNode {
             </DrawerContent>
           </Drawer>
         </div>
-        <div className="xl:flex justify-between items-center gap-8 hidden w-full xl:max-w-[1006px]">
+        <div className="xl:flex justify-between items-center gap-8 hidden w-full xl:max-w-251.5">
           <div className="sm:flex items-center gap-4 hidden text-gray-500 text-sm">
             <span className="xl:block hidden">Course builder</span>
             <Separator className="h-4" orientation="vertical" />
@@ -498,6 +494,7 @@ export function BuilderNav(): ReactNode {
           </div>
         </div>
         <div className="xl:flex justify-end items-center space-x-2 hidden">
+          <ThemeToggle />
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -508,7 +505,7 @@ export function BuilderNav(): ReactNode {
                 <XIcon />
               </Button>
             </TooltipTrigger>
-            <TooltipContent className="px-2 py-1 text-xs">
+            <TooltipContent className="px-2 py-1 text-xs" side="left">
               Salir del builder
             </TooltipContent>
           </Tooltip>
@@ -528,53 +525,6 @@ export function BuilderNav(): ReactNode {
   );
 }
 
-function SectionStep({
-  step,
-  label,
-  isActive,
-  isLast,
-  href,
-  className,
-  onClick,
-}: {
-  step: number;
-  label: string;
-  href: string;
-  isActive: boolean;
-  isLast?: boolean;
-  className?: string;
-  onClick?: () => void;
-}): ReactNode {
-  const navigate = useNavigate();
-  const { cid } = useParams();
-  return (
-    <div className="flex items-center">
-      <Button
-        className={cn(
-          "flex items-center p-1 data-[active=false]:text-gray-400 hover:no-underline",
-          className
-        )}
-        data-active={isActive}
-        onClick={() => {
-          navigate(`/courses/${cid}/${href}`);
-          onClick?.();
-        }}
-        variant="ghost"
-      >
-        <Badge
-          className="data-active justify-center flex size-6"
-          data-active={isActive}
-          variant={isActive ? "dark" : "neutral"}
-          shape="rounded"
-        >
-          {step}
-        </Badge>
-        <span className="ml-2">{label}</span>
-      </Button>
-      {!isLast ? <Minus className="mx-2 w-4 h-4" /> : isLast}
-    </div>
-  );
-}
 
 function DeleteCourseDialog({
   trigger,

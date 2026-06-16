@@ -20,6 +20,7 @@ import {
 } from "urql";
 import { isServerSide } from "ui/lib/ssr-exchange";
 import { logos } from "ui/lib/config/site";
+import { ThemeProvider } from "ui/components/academy-components";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -85,7 +86,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <Provider value={urqlClient}>
-          <TooltipProvider>{children}</TooltipProvider>
+          <ThemeProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </ThemeProvider>
         </Provider>
         <ScrollRestoration />
         <Scripts />

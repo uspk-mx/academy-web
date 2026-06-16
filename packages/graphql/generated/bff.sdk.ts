@@ -2056,6 +2056,339 @@ export const MeDocument = gql`
   }
 }
     `;
+export const CreatePracticeBiteDocument = gql`
+    mutation CreatePracticeBite($input: CreatePracticeBiteInput!) {
+  createPracticeBite(input: $input) {
+    id
+    lesson {
+      id
+      title
+    }
+    title
+    description
+    position
+    items {
+      id
+      media
+      position
+      prompt
+      type
+      updatedAt
+      createdAt
+      answerExplanation
+    }
+    progress {
+      id
+      user {
+        id
+      }
+      practiceBite {
+        id
+        description
+      }
+      completed
+      attempts
+      lastScore
+      startedAt
+      completedAt
+    }
+    createdAt
+    updatedAt
+    solutionRevealThreshold
+  }
+}
+    `;
+export const CreatePracticeBiteItemDocument = gql`
+    mutation CreatePracticeBiteItem($input: CreatePracticeBiteItemInput!) {
+  createPracticeBiteItem(input: $input) {
+    id
+    practiceBite {
+      id
+      description
+      position
+      title
+      createdAt
+      updatedAt
+    }
+    type
+    prompt
+    media
+    settings {
+      matchingRows {
+        columns
+      }
+      correctBoolean
+      acceptedAnswers
+      caseSensitive
+      options
+      blanks
+    }
+    answerExplanation
+    position
+    createdAt
+    updatedAt
+    solution {
+      acceptedAnswers
+      blanks
+      caseSensitive
+      correctBoolean
+      matchingColumns {
+        items
+      }
+      matchingRows {
+        columns
+      }
+      options
+    }
+  }
+}
+    `;
+export const PracticeBitesByLessonIdDocument = gql`
+    query PracticeBitesByLessonId($lessonId: ID!) {
+  practiceBitesByLessonId(lessonId: $lessonId) {
+    id
+    lesson {
+      id
+    }
+    title
+    description
+    position
+    solutionRevealThreshold
+    items {
+      id
+      type
+      prompt
+      media
+      settings {
+        matchingRows {
+          columns
+        }
+        matchingColumns {
+          items
+        }
+        correctBoolean
+        acceptedAnswers
+        caseSensitive
+        options
+        blanks
+      }
+      solution {
+        matchingRows {
+          columns
+        }
+        matchingColumns {
+          items
+        }
+        correctBoolean
+        acceptedAnswers
+        caseSensitive
+        options
+        blanks
+      }
+      answerExplanation
+      position
+      createdAt
+      updatedAt
+    }
+    progress {
+      id
+      user {
+        id
+        fullName
+        email
+      }
+      startedAt
+      lastScore
+      completedAt
+      completed
+      attempts
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export const UpdatePracticeBiteDocument = gql`
+    mutation UpdatePracticeBite($updatePracticeBiteId: ID!, $input: UpdatePracticeBiteInput!) {
+  updatePracticeBite(id: $updatePracticeBiteId, input: $input) {
+    id
+    title
+    description
+    position
+    solutionRevealThreshold
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export const DeletePracticeBiteDocument = gql`
+    mutation DeletePracticeBite($deletePracticeBiteId: ID!) {
+  deletePracticeBite(id: $deletePracticeBiteId)
+}
+    `;
+export const UpdatePracticeBiteItemDocument = gql`
+    mutation UpdatePracticeBiteItem($updatePracticeBiteItemId: ID!, $input: UpdatePracticeBiteItemInput!) {
+  updatePracticeBiteItem(id: $updatePracticeBiteItemId, input: $input) {
+    id
+    type
+    prompt
+    media
+    answerExplanation
+    position
+    createdAt
+    updatedAt
+    settings {
+      matchingRows {
+        columns
+      }
+      matchingColumns {
+        items
+      }
+      correctBoolean
+      acceptedAnswers
+      caseSensitive
+      options
+      blanks
+    }
+    solution {
+      matchingRows {
+        columns
+      }
+      matchingColumns {
+        items
+      }
+      correctBoolean
+      acceptedAnswers
+      caseSensitive
+      options
+      blanks
+    }
+  }
+}
+    `;
+export const DeletePracticeBiteItemDocument = gql`
+    mutation DeletePracticeBiteItem($deletePracticeBiteItemId: ID!) {
+  deletePracticeBiteItem(id: $deletePracticeBiteItemId)
+}
+    `;
+export const SubmitPracticeBiteDocument = gql`
+    mutation SubmitPracticeBite($input: SubmitPracticeBiteInput!) {
+  submitPracticeBite(input: $input) {
+    practiceBiteId
+    completed
+    score
+    correctCount
+    totalCount
+    attempts
+    isPerfect
+    isFirstAttempt
+    message
+    itemResults {
+      itemId
+      correct
+      feedback
+      answerExplanation
+      solutionRevealed
+      solution {
+        matchingRows {
+          columns
+        }
+        matchingColumns {
+          items
+        }
+        correctBoolean
+        acceptedAnswers
+        caseSensitive
+        options
+        blanks
+      }
+    }
+  }
+}
+    `;
+export const GetPracticeBiteProgressDocument = gql`
+    query GetPracticeBiteProgress($practiceBiteId: ID!) {
+  getPracticeBiteProgress(practiceBiteId: $practiceBiteId) {
+    id
+    completed
+    attempts
+    lastScore
+    startedAt
+    completedAt
+    user {
+      id
+    }
+    practiceBite {
+      id
+    }
+  }
+}
+    `;
+export const PracticeBiteDocument = gql`
+    query PracticeBite($practiceBiteId: ID!) {
+  practiceBite(id: $practiceBiteId) {
+    id
+    lesson {
+      id
+    }
+    title
+    description
+    position
+    solutionRevealThreshold
+    items {
+      id
+      type
+      prompt
+      media
+      settings {
+        matchingRows {
+          columns
+        }
+        matchingColumns {
+          items
+        }
+        correctBoolean
+        acceptedAnswers
+        caseSensitive
+        options
+        blanks
+      }
+      solution {
+        matchingRows {
+          columns
+        }
+        matchingColumns {
+          items
+        }
+        correctBoolean
+        acceptedAnswers
+        caseSensitive
+        options
+        blanks
+      }
+      answerExplanation
+      position
+      createdAt
+      updatedAt
+    }
+    progress {
+      id
+      user {
+        id
+        fullName
+        email
+      }
+      startedAt
+      lastScore
+      completedAt
+      completed
+      attempts
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
 export const MarkLessonCompletedDocument = gql`
     mutation MarkLessonCompleted($input: MarkLessonCompletedInput!) {
   markLessonCompleted(input: $input) {
@@ -3722,6 +4055,36 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     Me(variables?: Types.MeQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.MeQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<Types.MeQuery>({ document: MeDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'Me', 'query', variables);
+    },
+    CreatePracticeBite(variables: Types.CreatePracticeBiteMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.CreatePracticeBiteMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.CreatePracticeBiteMutation>({ document: CreatePracticeBiteDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'CreatePracticeBite', 'mutation', variables);
+    },
+    CreatePracticeBiteItem(variables: Types.CreatePracticeBiteItemMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.CreatePracticeBiteItemMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.CreatePracticeBiteItemMutation>({ document: CreatePracticeBiteItemDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'CreatePracticeBiteItem', 'mutation', variables);
+    },
+    PracticeBitesByLessonId(variables: Types.PracticeBitesByLessonIdQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.PracticeBitesByLessonIdQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.PracticeBitesByLessonIdQuery>({ document: PracticeBitesByLessonIdDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'PracticeBitesByLessonId', 'query', variables);
+    },
+    UpdatePracticeBite(variables: Types.UpdatePracticeBiteMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.UpdatePracticeBiteMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.UpdatePracticeBiteMutation>({ document: UpdatePracticeBiteDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'UpdatePracticeBite', 'mutation', variables);
+    },
+    DeletePracticeBite(variables: Types.DeletePracticeBiteMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.DeletePracticeBiteMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.DeletePracticeBiteMutation>({ document: DeletePracticeBiteDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeletePracticeBite', 'mutation', variables);
+    },
+    UpdatePracticeBiteItem(variables: Types.UpdatePracticeBiteItemMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.UpdatePracticeBiteItemMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.UpdatePracticeBiteItemMutation>({ document: UpdatePracticeBiteItemDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'UpdatePracticeBiteItem', 'mutation', variables);
+    },
+    DeletePracticeBiteItem(variables: Types.DeletePracticeBiteItemMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.DeletePracticeBiteItemMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.DeletePracticeBiteItemMutation>({ document: DeletePracticeBiteItemDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeletePracticeBiteItem', 'mutation', variables);
+    },
+    SubmitPracticeBite(variables: Types.SubmitPracticeBiteMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.SubmitPracticeBiteMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.SubmitPracticeBiteMutation>({ document: SubmitPracticeBiteDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SubmitPracticeBite', 'mutation', variables);
+    },
+    GetPracticeBiteProgress(variables: Types.GetPracticeBiteProgressQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.GetPracticeBiteProgressQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.GetPracticeBiteProgressQuery>({ document: GetPracticeBiteProgressDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetPracticeBiteProgress', 'query', variables);
+    },
+    PracticeBite(variables: Types.PracticeBiteQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.PracticeBiteQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Types.PracticeBiteQuery>({ document: PracticeBiteDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'PracticeBite', 'query', variables);
     },
     MarkLessonCompleted(variables: Types.MarkLessonCompletedMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<Types.MarkLessonCompletedMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<Types.MarkLessonCompletedMutation>({ document: MarkLessonCompletedDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'MarkLessonCompleted', 'mutation', variables);

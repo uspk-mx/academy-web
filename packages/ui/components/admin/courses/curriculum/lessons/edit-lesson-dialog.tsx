@@ -167,6 +167,7 @@ export function EditLessonDialog({ lesson }: { lesson: Lesson }): ReactNode {
         formData.append("folder", "attachments");
 
         const response = await fetch(
+          // @ts-ignore -- no harmful
           `${import.meta.env.VITE_API_TARGET}/api/files/upload`,
           {
             method: "POST",

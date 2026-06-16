@@ -1,4 +1,4 @@
-import * as React from "react";
+  import * as React from "react";
 import { cn } from "ui/lib/utils";
 import { Label } from "./label";
 
@@ -21,7 +21,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label ? <Label htmlFor={label}>{label}</Label> : null}
         <textarea
           className={cn(
-            "flex min-h-[80px] w-full rounded-base border-2 text-foreground font-base selection:bg-main selection:text-main-foreground border-border bg-background px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+            "flex min-h-20 w-full rounded-base border-2 dark:border-gray-200 text-foreground font-base selection:bg-main selection:text-main-foreground border-border bg-background px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
             "aria-invalid:border-destructive/80 aria-invalid:text-destructive aria-invalid:focus-visible:border-destructive/80 aria-invalid:focus-visible:ring-destructive/20",
             className
           )}

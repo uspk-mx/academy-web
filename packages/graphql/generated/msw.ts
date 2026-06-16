@@ -424,6 +424,24 @@ export type CreateLiveClassInput = {
   startTime: Scalars['String']['input'];
 };
 
+export type CreatePracticeBiteInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  lessonId: Scalars['ID']['input'];
+  position?: InputMaybe<Scalars['Int']['input']>;
+  solutionRevealThreshold?: InputMaybe<Scalars['Int']['input']>;
+  title: Scalars['String']['input'];
+};
+
+export type CreatePracticeBiteItemInput = {
+  answerExplanation?: InputMaybe<Scalars['String']['input']>;
+  media?: InputMaybe<Scalars['String']['input']>;
+  position?: InputMaybe<Scalars['Int']['input']>;
+  practiceBiteId: Scalars['ID']['input'];
+  prompt: Scalars['String']['input'];
+  settings?: InputMaybe<PracticeBiteItemSettingsInput>;
+  type: PracticeBiteItemType;
+};
+
 export type CreateQuestionInput = {
   answerExplanation?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -611,6 +629,7 @@ export type Lesson = {
   featuredImage?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   position?: Maybe<Scalars['Int']['output']>;
+  practiceBites?: Maybe<Array<PracticeBite>>;
   progress?: Maybe<LessonProgress>;
   showPreview?: Maybe<Scalars['Boolean']['output']>;
   title: Scalars['String']['output'];
@@ -659,6 +678,20 @@ export type Login = {
 
 export type MarkLessonCompletedInput = {
   lessonId: Scalars['ID']['input'];
+};
+
+export type MatchingColumn = {
+  __typename?: 'MatchingColumn';
+  items: Array<Scalars['String']['output']>;
+};
+
+export type MatchingRow = {
+  __typename?: 'MatchingRow';
+  columns: Array<Scalars['String']['output']>;
+};
+
+export type MatchingRowInput = {
+  columns: Array<Scalars['String']['input']>;
 };
 
 export type MatrixMatch = {
@@ -720,6 +753,8 @@ export type Mutation = {
   createLesson: Lesson;
   createLevel: Level;
   createLiveClass: LiveClass;
+  createPracticeBite: PracticeBite;
+  createPracticeBiteItem: PracticeBiteItem;
   createQuestion: Question;
   createQuiz: Quiz;
   createRole: Roles;
@@ -737,6 +772,8 @@ export type Mutation = {
   deleteLesson?: Maybe<Scalars['Boolean']['output']>;
   deleteLevel?: Maybe<Scalars['Boolean']['output']>;
   deleteLiveClass?: Maybe<Scalars['Boolean']['output']>;
+  deletePracticeBite?: Maybe<Scalars['Boolean']['output']>;
+  deletePracticeBiteItem?: Maybe<Scalars['Boolean']['output']>;
   deleteQuestion?: Maybe<Scalars['Boolean']['output']>;
   deleteQuiz?: Maybe<Scalars['Boolean']['output']>;
   deleteRole?: Maybe<Scalars['Boolean']['output']>;
@@ -758,6 +795,7 @@ export type Mutation = {
   revertLessonProgress: Scalars['Boolean']['output'];
   setCoursePrerequisites: Course;
   startCourseProgress?: Maybe<CourseProgress>;
+  submitPracticeBite: PracticeBiteSubmissionResult;
   submitQuizAttempt?: Maybe<QuizProgress>;
   subscribeUser: UserSubscription;
   toggleSubscriptionStatus: UserSubscription;
@@ -774,6 +812,8 @@ export type Mutation = {
   updateLesson: Lesson;
   updateLevel: Level;
   updateLiveClass: LiveClass;
+  updatePracticeBite: PracticeBite;
+  updatePracticeBiteItem: PracticeBiteItem;
   updateQuestion: Question;
   updateQuiz: Quiz;
   updateQuizProgress?: Maybe<QuizProgress>;
@@ -894,6 +934,16 @@ export type MutationCreateLiveClassArgs = {
 };
 
 
+export type MutationCreatePracticeBiteArgs = {
+  input: CreatePracticeBiteInput;
+};
+
+
+export type MutationCreatePracticeBiteItemArgs = {
+  input: CreatePracticeBiteItemInput;
+};
+
+
 export type MutationCreateQuestionArgs = {
   input: CreateQuestionInput;
 };
@@ -975,6 +1025,16 @@ export type MutationDeleteLevelArgs = {
 
 
 export type MutationDeleteLiveClassArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeletePracticeBiteArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeletePracticeBiteItemArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -1083,6 +1143,11 @@ export type MutationStartCourseProgressArgs = {
 };
 
 
+export type MutationSubmitPracticeBiteArgs = {
+  input: SubmitPracticeBiteInput;
+};
+
+
 export type MutationSubmitQuizAttemptArgs = {
   input: SubmitQuizAttemptInput;
 };
@@ -1175,6 +1240,18 @@ export type MutationUpdateLiveClassArgs = {
 };
 
 
+export type MutationUpdatePracticeBiteArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdatePracticeBiteInput;
+};
+
+
+export type MutationUpdatePracticeBiteItemArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdatePracticeBiteItemInput;
+};
+
+
 export type MutationUpdateQuestionArgs = {
   id: Scalars['ID']['input'];
   input: UpdateQuestionInput;
@@ -1253,6 +1330,106 @@ export type PaginatedCourse = {
 
 export type PayCompanySubscriptionResult = CompanySubscription | SetupIntentRequired;
 
+export type PracticeBite = {
+  __typename?: 'PracticeBite';
+  createdAt: Scalars['String']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  items?: Maybe<Array<PracticeBiteItem>>;
+  lesson: Lesson;
+  position?: Maybe<Scalars['Int']['output']>;
+  progress?: Maybe<PracticeBiteProgress>;
+  solutionRevealThreshold: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+};
+
+export type PracticeBiteItem = {
+  __typename?: 'PracticeBiteItem';
+  answerExplanation?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  media?: Maybe<Scalars['String']['output']>;
+  position: Scalars['Int']['output'];
+  practiceBite?: Maybe<PracticeBite>;
+  prompt: Scalars['String']['output'];
+  settings?: Maybe<PracticeBiteItemSettings>;
+  solution?: Maybe<PracticeBiteItemSettings>;
+  type: PracticeBiteItemType;
+  updatedAt: Scalars['String']['output'];
+};
+
+export type PracticeBiteItemAnswerInput = {
+  booleanAnswer?: InputMaybe<Scalars['Boolean']['input']>;
+  itemId: Scalars['ID']['input'];
+  matchingRows?: InputMaybe<Array<MatchingRowInput>>;
+  selectedOptions?: InputMaybe<Array<Scalars['String']['input']>>;
+  textAnswer?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type PracticeBiteItemResult = {
+  __typename?: 'PracticeBiteItemResult';
+  answerExplanation?: Maybe<Scalars['String']['output']>;
+  correct: Scalars['Boolean']['output'];
+  feedback: Scalars['String']['output'];
+  itemId: Scalars['ID']['output'];
+  solution?: Maybe<PracticeBiteItemSettings>;
+  solutionRevealed: Scalars['Boolean']['output'];
+};
+
+export type PracticeBiteItemSettings = {
+  __typename?: 'PracticeBiteItemSettings';
+  acceptedAnswers?: Maybe<Array<Scalars['String']['output']>>;
+  blanks?: Maybe<Array<Scalars['String']['output']>>;
+  caseSensitive?: Maybe<Scalars['Boolean']['output']>;
+  correctBoolean?: Maybe<Scalars['Boolean']['output']>;
+  matchingColumns?: Maybe<Array<MatchingColumn>>;
+  matchingRows?: Maybe<Array<MatchingRow>>;
+  options?: Maybe<Array<Scalars['String']['output']>>;
+};
+
+export type PracticeBiteItemSettingsInput = {
+  acceptedAnswers?: InputMaybe<Array<Scalars['String']['input']>>;
+  blanks?: InputMaybe<Array<Scalars['String']['input']>>;
+  caseSensitive?: InputMaybe<Scalars['Boolean']['input']>;
+  correctBoolean?: InputMaybe<Scalars['Boolean']['input']>;
+  matchingRows?: InputMaybe<Array<MatchingRowInput>>;
+  options?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+export enum PracticeBiteItemType {
+  FillInTheBlanks = 'FILL_IN_THE_BLANKS',
+  ImageShortPhrase = 'IMAGE_SHORT_PHRASE',
+  Matching_4Column = 'MATCHING_4_COLUMN',
+  TrueFalse = 'TRUE_FALSE'
+}
+
+export type PracticeBiteProgress = {
+  __typename?: 'PracticeBiteProgress';
+  attempts: Scalars['Int']['output'];
+  completed: Scalars['Boolean']['output'];
+  completedAt?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  lastScore?: Maybe<Scalars['Float']['output']>;
+  practiceBite: PracticeBite;
+  startedAt: Scalars['String']['output'];
+  user: User;
+};
+
+export type PracticeBiteSubmissionResult = {
+  __typename?: 'PracticeBiteSubmissionResult';
+  attempts: Scalars['Int']['output'];
+  completed: Scalars['Boolean']['output'];
+  correctCount: Scalars['Int']['output'];
+  isFirstAttempt: Scalars['Boolean']['output'];
+  isPerfect: Scalars['Boolean']['output'];
+  itemResults: Array<PracticeBiteItemResult>;
+  message: Scalars['String']['output'];
+  practiceBiteId: Scalars['ID']['output'];
+  score: Scalars['Float']['output'];
+  totalCount: Scalars['Int']['output'];
+};
+
 export enum PricingType {
   Custom = 'CUSTOM',
   Free = 'FREE',
@@ -1298,6 +1475,7 @@ export type Query = {
   getLessonProgress?: Maybe<LessonProgress>;
   getLevel?: Maybe<Level>;
   getLevels: Array<Level>;
+  getPracticeBiteProgress?: Maybe<PracticeBiteProgress>;
   getProfile?: Maybe<Me>;
   getQuizProgress?: Maybe<QuizProgress>;
   getRole?: Maybe<Roles>;
@@ -1315,6 +1493,8 @@ export type Query = {
   lessonsByTopicId: Array<Lesson>;
   listRoles?: Maybe<Array<Maybe<Roles>>>;
   me?: Maybe<Me>;
+  practiceBite: PracticeBite;
+  practiceBitesByLessonId: Array<PracticeBite>;
   question: Question;
   questions: Array<Question>;
   questionsByQuizId: Array<Question>;
@@ -1494,6 +1674,11 @@ export type QueryGetLevelArgs = {
 };
 
 
+export type QueryGetPracticeBiteProgressArgs = {
+  practiceBiteId: Scalars['ID']['input'];
+};
+
+
 export type QueryGetQuizProgressArgs = {
   quizId: Scalars['ID']['input'];
 };
@@ -1539,6 +1724,16 @@ export type QueryLessonArgs = {
 
 export type QueryLessonsByTopicIdArgs = {
   topicId: Scalars['ID']['input'];
+};
+
+
+export type QueryPracticeBiteArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryPracticeBitesByLessonIdArgs = {
+  lessonId: Scalars['ID']['input'];
 };
 
 
@@ -1723,6 +1918,11 @@ export type SetupIntentRequired = {
 
 export type StartCourseProgressInput = {
   courseId: Scalars['ID']['input'];
+};
+
+export type SubmitPracticeBiteInput = {
+  answers: Array<PracticeBiteItemAnswerInput>;
+  practiceBiteId: Scalars['ID']['input'];
 };
 
 export type SubmitQuizAttemptInput = {
@@ -1918,6 +2118,22 @@ export type UpdateLiveClassInput = {
   instructorId?: InputMaybe<Scalars['String']['input']>;
   meetingLink?: InputMaybe<Scalars['String']['input']>;
   startTime?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdatePracticeBiteInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  position?: InputMaybe<Scalars['Int']['input']>;
+  solutionRevealThreshold?: InputMaybe<Scalars['Int']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdatePracticeBiteItemInput = {
+  answerExplanation?: InputMaybe<Scalars['String']['input']>;
+  media?: InputMaybe<Scalars['String']['input']>;
+  position?: InputMaybe<Scalars['Int']['input']>;
+  prompt?: InputMaybe<Scalars['String']['input']>;
+  settings?: InputMaybe<PracticeBiteItemSettingsInput>;
+  type?: InputMaybe<PracticeBiteItemType>;
 };
 
 export type UpdateQuestionInput = {
@@ -2522,6 +2738,78 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'Me', customerId: string, fullName: string, userName: string, email: string, role?: string | null, authProvider?: string | null, socialId?: string | null, phoneNumber?: string | null, isVerified?: boolean | null, profilePicture?: string | null, interests?: Array<string | null> | null, major?: string | null, occupation?: string | null, isActive?: boolean | null, stripeId?: string | null, updatedAt?: string | null, createdAt?: string | null, carts: { __typename?: 'Cart', id: string, subtotal: number, tax: number, total: number, updatedAt: string, expiresAt: string, createdAt: string, items: Array<{ __typename?: 'CartItem', id: string, inStock: boolean, cartId: string, itemId: string, itemType: ItemType, notes?: string | null, quantity: number, unitPrice: number, item: { __typename?: 'Course', id: string, featuredImage: string, duration: number, discountedPrice?: number | null, description?: string | null, price: number, requirements?: string | null, status?: CourseStatus | null, title: string, tags?: Array<string> | null, category?: { __typename?: 'Category', id: string, name: string, description?: string | null } | null, level?: { __typename?: 'Level', id: string, name: string, description?: string | null } | null, video?: { __typename?: 'Video', id: string, videoURL?: string | null, source?: string | null, type?: string | null, duration?: number | null, description?: string | null, tags?: Array<string> | null, width?: number | null, height?: number | null, format?: string | null, createdAt: string, updatedAt: string } | null } | { __typename?: 'CourseBundle', id: string, price: number, title: string, subtotalRegularPrice?: number | null, updatedAt: string, featuredImage: string, discountValue?: number | null, discountType?: DiscountType | null, description?: string | null, createdAt: string, courses: Array<{ __typename?: 'Course', id: string, title: string, price: number, description?: string | null } | null> } | { __typename?: 'SubscriptionPlan', id: string, planName: string, planDescription?: string | null, price: number, duration: number, createdAt: string, updatedAt: string } }> }, subscription?: { __typename?: 'UserSubscription', id: string, startDate: string, endDate: string, user: { __typename?: 'User', id: string, fullName: string, email: string }, plan: { __typename?: 'SubscriptionPlan', id: string, planName: string, planDescription?: string | null, price: number, duration: number, createdAt: string, updatedAt: string } } | null, courses: Array<{ __typename?: 'Course', id: string, title: string, description?: string | null, tags?: Array<string> | null, featuredImage: string, price: number, discountedPrice?: number | null, promotionDuration?: number | null, duration: number, requirements?: string | null, status?: CourseStatus | null, creatorID?: string | null, createdAt: string, updatedAt: string, instructors?: Array<{ __typename?: 'User', id: string, fullName: string, email: string }> | null, metadata?: { __typename?: 'CourseMetadata', id?: string | null, learnings?: string | null, benefits?: string | null, targetAudience?: string | null, materialsIncluded?: string | null, requirements?: string | null } | null, video?: { __typename?: 'Video', id: string, videoURL?: string | null, source?: string | null, type?: string | null, duration?: number | null, description?: string | null, tags?: Array<string> | null, width?: number | null, height?: number | null, format?: string | null, createdAt: string, updatedAt: string } | null, level?: { __typename?: 'Level', id: string, name: string, description?: string | null, createdAt: string, updatedAt: string } | null, category?: { __typename?: 'Category', id: string, name: string, description?: string | null, createdAt: string, updatedAt: string } | null, creator?: { __typename?: 'User', id: string, fullName: string, email: string } | null, progress?: { __typename?: 'CourseProgress', id: string, updatedAt: string, totalQuizzes?: number | null, totalLessons?: number | null, totalAssignments?: number | null, startedAt: string, progressPercentage: number, createdAt: string, completedQuizzes?: number | null, completedLessons?: number | null, completedAt?: string | null, completed?: boolean | null, averageScore?: number | null, averageCompletionTime?: number | null } | null, topics?: Array<{ __typename?: 'Topic', id: string, title?: string | null, description?: string | null, position?: number | null, createdAt: string, updatedAt: string, course: { __typename?: 'Course', id: string, title: string }, lessons?: Array<{ __typename?: 'Lesson', id: string, title: string, position?: number | null, featuredImage?: string | null, content?: string | null, attachments?: Array<string> | null, video?: { __typename?: 'Video', id: string, source?: string | null, videoURL?: string | null, type?: string | null, tags?: Array<string> | null, width?: number | null, height?: number | null, format?: string | null, duration?: number | null, description?: string | null } | null, progress?: { __typename?: 'LessonProgress', id: string, completed: boolean, completedAt?: string | null, startedAt?: string | null } | null }> | null, quizzes?: Array<{ __typename?: 'Quiz', id: string, title: string, content?: string | null, timer?: number | null, timeUnit?: string | null, passingGrade: number, position?: number | null, maxAttempts?: number | null, questions?: Array<{ __typename?: 'Question', id: string, media?: string | null, mark: number, order: number, title: string, type: QuestionType, description?: string | null, answerExplanation?: string | null, settings?: { __typename?: 'QuestionSettings', questionMark?: number | null, questionType?: QuestionType | null, answerRequired?: boolean | null, showQuestionMark?: boolean | null, randomizeQuestion?: boolean | null, sortableItems?: Array<string> | null, correctAnswers?: Array<string> | null, matrixMatches?: Array<{ __typename?: 'MatrixMatch', columnA: string, columnB: string }> | null } | null }> | null, progress?: { __typename?: 'QuizProgress', id: string, completed: boolean, score: number, startedAt: string, completedAt?: string | null } | null }> | null }> | null, certificates?: Array<{ __typename?: 'Certificate', id: string, issuedAt: string, template: { __typename?: 'CertificateTemplate', id: string, name: string, logoUrl?: string | null, content: string, background?: string | null } }> | null, reviews?: Array<{ __typename?: 'Review', id: string, comment?: string | null, rating?: number | null, likes?: number | null, createdAt?: string | null, updatedAt?: string | null, course?: { __typename?: 'Course', id: string, title: string } | null }> | null } | null>, bundles?: Array<{ __typename?: 'CourseBundle', id: string, title: string, description?: string | null, featuredImage: string, price: number, subtotalRegularPrice?: number | null, discountType?: DiscountType | null, discountValue?: number | null, createdAt: string, updatedAt: string, courses: Array<{ __typename?: 'Course', id: string, title: string, description?: string | null, tags?: Array<string> | null, featuredImage: string, price: number, discountedPrice?: number | null, promotionDuration?: number | null, duration: number, requirements?: string | null, status?: CourseStatus | null, creatorID?: string | null, createdAt: string, updatedAt: string, instructors?: Array<{ __typename?: 'User', id: string, fullName: string, email: string }> | null, metadata?: { __typename?: 'CourseMetadata', id?: string | null, learnings?: string | null, benefits?: string | null, targetAudience?: string | null, materialsIncluded?: string | null, requirements?: string | null } | null, video?: { __typename?: 'Video', id: string, videoURL?: string | null, source?: string | null, type?: string | null, duration?: number | null, description?: string | null, tags?: Array<string> | null, width?: number | null, height?: number | null, format?: string | null, createdAt: string, updatedAt: string } | null, level?: { __typename?: 'Level', id: string, name: string, description?: string | null, createdAt: string, updatedAt: string } | null, category?: { __typename?: 'Category', id: string, name: string, description?: string | null, createdAt: string, updatedAt: string } | null, creator?: { __typename?: 'User', id: string, fullName: string, email: string } | null, progress?: { __typename?: 'CourseProgress', id: string, updatedAt: string, totalQuizzes?: number | null, totalLessons?: number | null, totalAssignments?: number | null, startedAt: string, progressPercentage: number, createdAt: string, completedQuizzes?: number | null, completedLessons?: number | null, completedAt?: string | null, completed?: boolean | null, averageScore?: number | null, averageCompletionTime?: number | null } | null, reviews?: Array<{ __typename?: 'Review', id: string, comment?: string | null, rating?: number | null, likes?: number | null, createdAt?: string | null, updatedAt?: string | null, course?: { __typename?: 'Course', id: string, title: string } | null }> | null, topics?: Array<{ __typename?: 'Topic', id: string, title?: string | null, position?: number | null, description?: string | null, lessons?: Array<{ __typename?: 'Lesson', id: string, title: string, position?: number | null, featuredImage?: string | null, content?: string | null, attachments?: Array<string> | null, video?: { __typename?: 'Video', id: string, source?: string | null, videoURL?: string | null, type?: string | null, tags?: Array<string> | null, width?: number | null, height?: number | null, format?: string | null, duration?: number | null, description?: string | null } | null, progress?: { __typename?: 'LessonProgress', id: string, completed: boolean, completedAt?: string | null, startedAt?: string | null } | null }> | null, quizzes?: Array<{ __typename?: 'Quiz', id: string, title: string, content?: string | null, timer?: number | null, timeUnit?: string | null, passingGrade: number, position?: number | null, maxAttempts?: number | null, questions?: Array<{ __typename?: 'Question', id: string, mark: number, order: number, title: string, type: QuestionType, description?: string | null, answerExplanation?: string | null, settings?: { __typename?: 'QuestionSettings', questionMark?: number | null, questionType?: QuestionType | null, answerRequired?: boolean | null, showQuestionMark?: boolean | null, randomizeQuestion?: boolean | null, sortableItems?: Array<string> | null, correctAnswers?: Array<string> | null, matrixMatches?: Array<{ __typename?: 'MatrixMatch', columnA: string, columnB: string }> | null } | null }> | null, progress?: { __typename?: 'QuizProgress', id: string, completed: boolean, score: number, startedAt: string, completedAt?: string | null } | null }> | null }> | null, certificates?: Array<{ __typename?: 'Certificate', id: string, issuedAt: string, template: { __typename?: 'CertificateTemplate', id: string, name: string, logoUrl?: string | null, content: string, background?: string | null } }> | null } | null> }> | null, company?: { __typename?: 'Company', id: string, email: string, name: string, isActive?: boolean | null, taxId?: string | null, taxName?: string | null, logo?: string | null, icon?: string | null, stripeId?: string | null, setupIntentClientSecret?: string | null, address?: string | null } | null } | null };
+
+export type CreatePracticeBiteMutationVariables = Exact<{
+  input: CreatePracticeBiteInput;
+}>;
+
+
+export type CreatePracticeBiteMutation = { __typename?: 'Mutation', createPracticeBite: { __typename?: 'PracticeBite', id: string, title: string, description?: string | null, position?: number | null, createdAt: string, updatedAt: string, solutionRevealThreshold: number, lesson: { __typename?: 'Lesson', id: string, title: string }, items?: Array<{ __typename?: 'PracticeBiteItem', id: string, media?: string | null, position: number, prompt: string, type: PracticeBiteItemType, updatedAt: string, createdAt: string, answerExplanation?: string | null }> | null, progress?: { __typename?: 'PracticeBiteProgress', id: string, completed: boolean, attempts: number, lastScore?: number | null, startedAt: string, completedAt?: string | null, user: { __typename?: 'User', id: string }, practiceBite: { __typename?: 'PracticeBite', id: string, description?: string | null } } | null } };
+
+export type CreatePracticeBiteItemMutationVariables = Exact<{
+  input: CreatePracticeBiteItemInput;
+}>;
+
+
+export type CreatePracticeBiteItemMutation = { __typename?: 'Mutation', createPracticeBiteItem: { __typename?: 'PracticeBiteItem', id: string, type: PracticeBiteItemType, prompt: string, media?: string | null, answerExplanation?: string | null, position: number, createdAt: string, updatedAt: string, practiceBite?: { __typename?: 'PracticeBite', id: string, description?: string | null, position?: number | null, title: string, createdAt: string, updatedAt: string } | null, settings?: { __typename?: 'PracticeBiteItemSettings', correctBoolean?: boolean | null, acceptedAnswers?: Array<string> | null, caseSensitive?: boolean | null, options?: Array<string> | null, blanks?: Array<string> | null, matchingRows?: Array<{ __typename?: 'MatchingRow', columns: Array<string> }> | null } | null, solution?: { __typename?: 'PracticeBiteItemSettings', acceptedAnswers?: Array<string> | null, blanks?: Array<string> | null, caseSensitive?: boolean | null, correctBoolean?: boolean | null, options?: Array<string> | null, matchingColumns?: Array<{ __typename?: 'MatchingColumn', items: Array<string> }> | null, matchingRows?: Array<{ __typename?: 'MatchingRow', columns: Array<string> }> | null } | null } };
+
+export type PracticeBitesByLessonIdQueryVariables = Exact<{
+  lessonId: Scalars['ID']['input'];
+}>;
+
+
+export type PracticeBitesByLessonIdQuery = { __typename?: 'Query', practiceBitesByLessonId: Array<{ __typename?: 'PracticeBite', id: string, title: string, description?: string | null, position?: number | null, solutionRevealThreshold: number, createdAt: string, updatedAt: string, lesson: { __typename?: 'Lesson', id: string }, items?: Array<{ __typename?: 'PracticeBiteItem', id: string, type: PracticeBiteItemType, prompt: string, media?: string | null, answerExplanation?: string | null, position: number, createdAt: string, updatedAt: string, settings?: { __typename?: 'PracticeBiteItemSettings', correctBoolean?: boolean | null, acceptedAnswers?: Array<string> | null, caseSensitive?: boolean | null, options?: Array<string> | null, blanks?: Array<string> | null, matchingRows?: Array<{ __typename?: 'MatchingRow', columns: Array<string> }> | null, matchingColumns?: Array<{ __typename?: 'MatchingColumn', items: Array<string> }> | null } | null, solution?: { __typename?: 'PracticeBiteItemSettings', correctBoolean?: boolean | null, acceptedAnswers?: Array<string> | null, caseSensitive?: boolean | null, options?: Array<string> | null, blanks?: Array<string> | null, matchingRows?: Array<{ __typename?: 'MatchingRow', columns: Array<string> }> | null, matchingColumns?: Array<{ __typename?: 'MatchingColumn', items: Array<string> }> | null } | null }> | null, progress?: { __typename?: 'PracticeBiteProgress', id: string, startedAt: string, lastScore?: number | null, completedAt?: string | null, completed: boolean, attempts: number, user: { __typename?: 'User', id: string, fullName: string, email: string } } | null }> };
+
+export type UpdatePracticeBiteMutationVariables = Exact<{
+  updatePracticeBiteId: Scalars['ID']['input'];
+  input: UpdatePracticeBiteInput;
+}>;
+
+
+export type UpdatePracticeBiteMutation = { __typename?: 'Mutation', updatePracticeBite: { __typename?: 'PracticeBite', id: string, title: string, description?: string | null, position?: number | null, solutionRevealThreshold: number, createdAt: string, updatedAt: string } };
+
+export type DeletePracticeBiteMutationVariables = Exact<{
+  deletePracticeBiteId: Scalars['ID']['input'];
+}>;
+
+
+export type DeletePracticeBiteMutation = { __typename?: 'Mutation', deletePracticeBite?: boolean | null };
+
+export type UpdatePracticeBiteItemMutationVariables = Exact<{
+  updatePracticeBiteItemId: Scalars['ID']['input'];
+  input: UpdatePracticeBiteItemInput;
+}>;
+
+
+export type UpdatePracticeBiteItemMutation = { __typename?: 'Mutation', updatePracticeBiteItem: { __typename?: 'PracticeBiteItem', id: string, type: PracticeBiteItemType, prompt: string, media?: string | null, answerExplanation?: string | null, position: number, createdAt: string, updatedAt: string, settings?: { __typename?: 'PracticeBiteItemSettings', correctBoolean?: boolean | null, acceptedAnswers?: Array<string> | null, caseSensitive?: boolean | null, options?: Array<string> | null, blanks?: Array<string> | null, matchingRows?: Array<{ __typename?: 'MatchingRow', columns: Array<string> }> | null, matchingColumns?: Array<{ __typename?: 'MatchingColumn', items: Array<string> }> | null } | null, solution?: { __typename?: 'PracticeBiteItemSettings', correctBoolean?: boolean | null, acceptedAnswers?: Array<string> | null, caseSensitive?: boolean | null, options?: Array<string> | null, blanks?: Array<string> | null, matchingRows?: Array<{ __typename?: 'MatchingRow', columns: Array<string> }> | null, matchingColumns?: Array<{ __typename?: 'MatchingColumn', items: Array<string> }> | null } | null } };
+
+export type DeletePracticeBiteItemMutationVariables = Exact<{
+  deletePracticeBiteItemId: Scalars['ID']['input'];
+}>;
+
+
+export type DeletePracticeBiteItemMutation = { __typename?: 'Mutation', deletePracticeBiteItem?: boolean | null };
+
+export type SubmitPracticeBiteMutationVariables = Exact<{
+  input: SubmitPracticeBiteInput;
+}>;
+
+
+export type SubmitPracticeBiteMutation = { __typename?: 'Mutation', submitPracticeBite: { __typename?: 'PracticeBiteSubmissionResult', practiceBiteId: string, completed: boolean, score: number, correctCount: number, totalCount: number, attempts: number, isPerfect: boolean, isFirstAttempt: boolean, message: string, itemResults: Array<{ __typename?: 'PracticeBiteItemResult', itemId: string, correct: boolean, feedback: string, answerExplanation?: string | null, solutionRevealed: boolean, solution?: { __typename?: 'PracticeBiteItemSettings', correctBoolean?: boolean | null, acceptedAnswers?: Array<string> | null, caseSensitive?: boolean | null, options?: Array<string> | null, blanks?: Array<string> | null, matchingRows?: Array<{ __typename?: 'MatchingRow', columns: Array<string> }> | null, matchingColumns?: Array<{ __typename?: 'MatchingColumn', items: Array<string> }> | null } | null }> } };
+
+export type GetPracticeBiteProgressQueryVariables = Exact<{
+  practiceBiteId: Scalars['ID']['input'];
+}>;
+
+
+export type GetPracticeBiteProgressQuery = { __typename?: 'Query', getPracticeBiteProgress?: { __typename?: 'PracticeBiteProgress', id: string, completed: boolean, attempts: number, lastScore?: number | null, startedAt: string, completedAt?: string | null, user: { __typename?: 'User', id: string }, practiceBite: { __typename?: 'PracticeBite', id: string } } | null };
+
+export type PracticeBiteQueryVariables = Exact<{
+  practiceBiteId: Scalars['ID']['input'];
+}>;
+
+
+export type PracticeBiteQuery = { __typename?: 'Query', practiceBite: { __typename?: 'PracticeBite', id: string, title: string, description?: string | null, position?: number | null, solutionRevealThreshold: number, createdAt: string, updatedAt: string, lesson: { __typename?: 'Lesson', id: string }, items?: Array<{ __typename?: 'PracticeBiteItem', id: string, type: PracticeBiteItemType, prompt: string, media?: string | null, answerExplanation?: string | null, position: number, createdAt: string, updatedAt: string, settings?: { __typename?: 'PracticeBiteItemSettings', correctBoolean?: boolean | null, acceptedAnswers?: Array<string> | null, caseSensitive?: boolean | null, options?: Array<string> | null, blanks?: Array<string> | null, matchingRows?: Array<{ __typename?: 'MatchingRow', columns: Array<string> }> | null, matchingColumns?: Array<{ __typename?: 'MatchingColumn', items: Array<string> }> | null } | null, solution?: { __typename?: 'PracticeBiteItemSettings', correctBoolean?: boolean | null, acceptedAnswers?: Array<string> | null, caseSensitive?: boolean | null, options?: Array<string> | null, blanks?: Array<string> | null, matchingRows?: Array<{ __typename?: 'MatchingRow', columns: Array<string> }> | null, matchingColumns?: Array<{ __typename?: 'MatchingColumn', items: Array<string> }> | null } | null }> | null, progress?: { __typename?: 'PracticeBiteProgress', id: string, startedAt: string, lastScore?: number | null, completedAt?: string | null, completed: boolean, attempts: number, user: { __typename?: 'User', id: string, fullName: string, email: string } } | null } };
 
 export type MarkLessonCompletedMutationVariables = Exact<{
   input: MarkLessonCompletedInput;
@@ -4075,6 +4363,226 @@ export const mockDeleteLevelMutation = (resolver: GraphQLResponseResolver<Delete
 export const mockMeQuery = (resolver: GraphQLResponseResolver<MeQuery, MeQueryVariables>, options?: RequestHandlerOptions) =>
   graphql.query<MeQuery, MeQueryVariables>(
     'Me',
+    resolver,
+    options
+  )
+
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockCreatePracticeBiteMutation(
+ *   ({ query, variables }) => {
+ *     const { input } = variables;
+ *     return HttpResponse.json({
+ *       data: { createPracticeBite }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+export const mockCreatePracticeBiteMutation = (resolver: GraphQLResponseResolver<CreatePracticeBiteMutation, CreatePracticeBiteMutationVariables>, options?: RequestHandlerOptions) =>
+  graphql.mutation<CreatePracticeBiteMutation, CreatePracticeBiteMutationVariables>(
+    'CreatePracticeBite',
+    resolver,
+    options
+  )
+
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockCreatePracticeBiteItemMutation(
+ *   ({ query, variables }) => {
+ *     const { input } = variables;
+ *     return HttpResponse.json({
+ *       data: { createPracticeBiteItem }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+export const mockCreatePracticeBiteItemMutation = (resolver: GraphQLResponseResolver<CreatePracticeBiteItemMutation, CreatePracticeBiteItemMutationVariables>, options?: RequestHandlerOptions) =>
+  graphql.mutation<CreatePracticeBiteItemMutation, CreatePracticeBiteItemMutationVariables>(
+    'CreatePracticeBiteItem',
+    resolver,
+    options
+  )
+
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockPracticeBitesByLessonIdQuery(
+ *   ({ query, variables }) => {
+ *     const { lessonId } = variables;
+ *     return HttpResponse.json({
+ *       data: { practiceBitesByLessonId }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+export const mockPracticeBitesByLessonIdQuery = (resolver: GraphQLResponseResolver<PracticeBitesByLessonIdQuery, PracticeBitesByLessonIdQueryVariables>, options?: RequestHandlerOptions) =>
+  graphql.query<PracticeBitesByLessonIdQuery, PracticeBitesByLessonIdQueryVariables>(
+    'PracticeBitesByLessonId',
+    resolver,
+    options
+  )
+
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockUpdatePracticeBiteMutation(
+ *   ({ query, variables }) => {
+ *     const { updatePracticeBiteId, input } = variables;
+ *     return HttpResponse.json({
+ *       data: { updatePracticeBite }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+export const mockUpdatePracticeBiteMutation = (resolver: GraphQLResponseResolver<UpdatePracticeBiteMutation, UpdatePracticeBiteMutationVariables>, options?: RequestHandlerOptions) =>
+  graphql.mutation<UpdatePracticeBiteMutation, UpdatePracticeBiteMutationVariables>(
+    'UpdatePracticeBite',
+    resolver,
+    options
+  )
+
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockDeletePracticeBiteMutation(
+ *   ({ query, variables }) => {
+ *     const { deletePracticeBiteId } = variables;
+ *     return HttpResponse.json({
+ *       data: { deletePracticeBite }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+export const mockDeletePracticeBiteMutation = (resolver: GraphQLResponseResolver<DeletePracticeBiteMutation, DeletePracticeBiteMutationVariables>, options?: RequestHandlerOptions) =>
+  graphql.mutation<DeletePracticeBiteMutation, DeletePracticeBiteMutationVariables>(
+    'DeletePracticeBite',
+    resolver,
+    options
+  )
+
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockUpdatePracticeBiteItemMutation(
+ *   ({ query, variables }) => {
+ *     const { updatePracticeBiteItemId, input } = variables;
+ *     return HttpResponse.json({
+ *       data: { updatePracticeBiteItem }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+export const mockUpdatePracticeBiteItemMutation = (resolver: GraphQLResponseResolver<UpdatePracticeBiteItemMutation, UpdatePracticeBiteItemMutationVariables>, options?: RequestHandlerOptions) =>
+  graphql.mutation<UpdatePracticeBiteItemMutation, UpdatePracticeBiteItemMutationVariables>(
+    'UpdatePracticeBiteItem',
+    resolver,
+    options
+  )
+
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockDeletePracticeBiteItemMutation(
+ *   ({ query, variables }) => {
+ *     const { deletePracticeBiteItemId } = variables;
+ *     return HttpResponse.json({
+ *       data: { deletePracticeBiteItem }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+export const mockDeletePracticeBiteItemMutation = (resolver: GraphQLResponseResolver<DeletePracticeBiteItemMutation, DeletePracticeBiteItemMutationVariables>, options?: RequestHandlerOptions) =>
+  graphql.mutation<DeletePracticeBiteItemMutation, DeletePracticeBiteItemMutationVariables>(
+    'DeletePracticeBiteItem',
+    resolver,
+    options
+  )
+
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockSubmitPracticeBiteMutation(
+ *   ({ query, variables }) => {
+ *     const { input } = variables;
+ *     return HttpResponse.json({
+ *       data: { submitPracticeBite }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+export const mockSubmitPracticeBiteMutation = (resolver: GraphQLResponseResolver<SubmitPracticeBiteMutation, SubmitPracticeBiteMutationVariables>, options?: RequestHandlerOptions) =>
+  graphql.mutation<SubmitPracticeBiteMutation, SubmitPracticeBiteMutationVariables>(
+    'SubmitPracticeBite',
+    resolver,
+    options
+  )
+
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockGetPracticeBiteProgressQuery(
+ *   ({ query, variables }) => {
+ *     const { practiceBiteId } = variables;
+ *     return HttpResponse.json({
+ *       data: { getPracticeBiteProgress }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+export const mockGetPracticeBiteProgressQuery = (resolver: GraphQLResponseResolver<GetPracticeBiteProgressQuery, GetPracticeBiteProgressQueryVariables>, options?: RequestHandlerOptions) =>
+  graphql.query<GetPracticeBiteProgressQuery, GetPracticeBiteProgressQueryVariables>(
+    'GetPracticeBiteProgress',
+    resolver,
+    options
+  )
+
+/**
+ * @param resolver A function that accepts [resolver arguments](https://mswjs.io/docs/api/graphql#resolver-argument) and must always return the instruction on what to do with the intercepted request. ([see more](https://mswjs.io/docs/concepts/response-resolver#resolver-instructions))
+ * @param options Options object to customize the behavior of the mock. ([see more](https://mswjs.io/docs/api/graphql#handler-options))
+ * @see https://mswjs.io/docs/basics/response-resolver
+ * @example
+ * mockPracticeBiteQuery(
+ *   ({ query, variables }) => {
+ *     const { practiceBiteId } = variables;
+ *     return HttpResponse.json({
+ *       data: { practiceBite }
+ *     })
+ *   },
+ *   requestOptions
+ * )
+ */
+export const mockPracticeBiteQuery = (resolver: GraphQLResponseResolver<PracticeBiteQuery, PracticeBiteQueryVariables>, options?: RequestHandlerOptions) =>
+  graphql.query<PracticeBiteQuery, PracticeBiteQueryVariables>(
+    'PracticeBite',
     resolver,
     options
   )

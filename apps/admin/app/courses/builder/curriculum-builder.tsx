@@ -41,7 +41,6 @@ export default function CurriculumBuilder() {
   return (
     <FileUploaderProvider>
       <Curriculum
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         initialTopicsData={data?.course.topics as any}
         courseId={courseId || ""}
       />

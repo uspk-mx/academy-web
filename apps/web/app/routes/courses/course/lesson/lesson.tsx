@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import {
   CourseViewer,
   CourseViewerSkeleton,
+  PracticeBitesPlayer,
 } from "ui/components/academy-components";
 import { ContentTabs } from "ui/components/admin/courses/content-tabs";
 import { CourseCompletionScreen } from "ui/components/admin/courses/course-completion-screen";
@@ -449,6 +450,9 @@ export default function LessonPage() {
             ) : (
               <p>No hay materiales adicionales para esta lección.</p>
             )}
+            {activeLesson?.id ? (
+              <PracticeBitesPlayer lessonId={activeLesson.id} />
+            ) : null}
           </>
         }
       />

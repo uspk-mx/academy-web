@@ -53,7 +53,7 @@ export function LessonList({
       activationConstraint: {
         distance: 8,
       },
-    })
+    }),
   );
 
   const handleDragStart = (event: DragStartEvent): void => {
@@ -70,7 +70,7 @@ export function LessonList({
         (item, index) => ({
           ...item,
           position: index + 1,
-        })
+        }),
       );
 
       setLessons(newLessons);
@@ -79,7 +79,7 @@ export function LessonList({
         updateLessonMutation({
           lessonId: item.id,
           input: { position: item.position },
-        })
+        }),
       );
 
       const responses = await Promise.all(updatePromises);
@@ -97,7 +97,6 @@ export function LessonList({
   return (
     <DndContext
       collisionDetection={closestCenter}
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises -- not required to throw void :thinking:
       onDragEnd={handleDragEnd}
       onDragStart={handleDragStart}
       sensors={sensors}
@@ -108,7 +107,6 @@ export function LessonList({
       >
         <div>
           {lessons
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- expected to be always defined
             .sort((lessonA, lessonB) => lessonA.position! - lessonB.position!)
             .map((lesson) => (
               <LessonItem
@@ -124,11 +122,9 @@ export function LessonList({
       <DragOverlay>
         {activeId ? (
           <LessonItem
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Not harmful
             {...lessons.find((lesson) => lesson.id === activeId)!}
             isDragging
             isVisible
-            // eslint-disable-next-line @typescript-eslint/no-empty-function -- not harmful bro
             onDelete={async () => {}}
           />
         ) : null}

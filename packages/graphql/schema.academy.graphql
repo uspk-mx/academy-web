@@ -9,11 +9,6 @@ directive @defer(
   label: String
 ) on FRAGMENT_SPREAD | INLINE_FRAGMENT
 
-"""
-Indicates exactly one field must be supplied and this field must not be `null`.
-"""
-directive @oneOf on INPUT_OBJECT
-
 input AddToCartInput {
   itemId: ID!
   quantity: Int = 1
@@ -401,6 +396,24 @@ input CreateLiveClassInput {
   description: String
 }
 
+input CreatePracticeBiteInput {
+  lessonId: ID!
+  title: String!
+  description: String
+  position: Int
+  solutionRevealThreshold: Int
+}
+
+input CreatePracticeBiteItemInput {
+  practiceBiteId: ID!
+  type: PracticeBiteItemType!
+  prompt: String!
+  media: String
+  settings: PracticeBiteItemSettingsInput
+  answerExplanation: String
+  position: Int
+}
+
 input CreateQuestionInput {
   quizID: ID!
   title: String!
@@ -583,6 +596,7 @@ type Lesson {
   showPreview: Boolean
   video: Video
   progress: LessonProgress
+  practiceBites: [PracticeBite!]
 }
 
 type LessonProgress {
@@ -622,6 +636,18 @@ input Login {
 
 input MarkLessonCompletedInput {
   lessonId: ID!
+}
+
+type MatchingColumn {
+  items: [String!]!
+}
+
+type MatchingRow {
+  columns: [String!]!
+}
+
+input MatchingRowInput {
+  columns: [String!]!
 }
 
 type MatrixMatch {
@@ -698,6 +724,13 @@ type Mutation {
   createQuestion(input: CreateQuestionInput!): Question!
   updateQuestion(id: ID!, input: UpdateQuestionInput!): Question!
   deleteQuestion(id: ID!): Boolean
+  createPracticeBite(input: CreatePracticeBiteInput!): PracticeBite!
+  updatePracticeBite(id: ID!, input: UpdatePracticeBiteInput!): PracticeBite!
+  deletePracticeBite(id: ID!): Boolean
+  createPracticeBiteItem(input: CreatePracticeBiteItemInput!): PracticeBiteItem!
+  updatePracticeBiteItem(id: ID!, input: UpdatePracticeBiteItemInput!): PracticeBiteItem!
+  deletePracticeBiteItem(id: ID!): Boolean
+  submitPracticeBite(input: SubmitPracticeBiteInput!): PracticeBiteSubmissionResult!
   assignInstructor(userId: ID!, courseId: ID!): Instructor!
   unassignInstructor(userId: ID!, courseId: ID!): Boolean!
   createCompany(input: CreateCompanyInput): Company!
@@ -767,6 +800,100 @@ type PaginatedCourse {
 
 union PayCompanySubscriptionResult = CompanySubscription | SetupIntentRequired
 
+type PracticeBite {
+  id: ID!
+  lesson: Lesson!
+  title: String!
+  description: String
+  position: Int
+  solutionRevealThreshold: Int!
+  items: [PracticeBiteItem!]
+  progress: PracticeBiteProgress
+  createdAt: String!
+  updatedAt: String!
+}
+
+type PracticeBiteItem {
+  id: ID!
+  practiceBite: PracticeBite
+  type: PracticeBiteItemType!
+  prompt: String!
+  media: String
+  settings: PracticeBiteItemSettings
+  solution: PracticeBiteItemSettings
+  answerExplanation: String
+  position: Int!
+  createdAt: String!
+  updatedAt: String!
+}
+
+input PracticeBiteItemAnswerInput {
+  itemId: ID!
+  selectedOptions: [String!]
+  booleanAnswer: Boolean
+  textAnswer: String
+  matchingRows: [MatchingRowInput!]
+}
+
+type PracticeBiteItemResult {
+  itemId: ID!
+  correct: Boolean!
+  feedback: String!
+  answerExplanation: String
+  solutionRevealed: Boolean!
+  solution: PracticeBiteItemSettings
+}
+
+type PracticeBiteItemSettings {
+  matchingRows: [MatchingRow!]
+  matchingColumns: [MatchingColumn!]
+  correctBoolean: Boolean
+  acceptedAnswers: [String!]
+  caseSensitive: Boolean
+  options: [String!]
+  blanks: [String!]
+}
+
+input PracticeBiteItemSettingsInput {
+  matchingRows: [MatchingRowInput!]
+  correctBoolean: Boolean
+  acceptedAnswers: [String!]
+  caseSensitive: Boolean
+  options: [String!]
+  blanks: [String!]
+}
+
+enum PracticeBiteItemType {
+  MATCHING_4_COLUMN
+  TRUE_FALSE
+  IMAGE_SHORT_PHRASE
+  FILL_IN_THE_BLANKS
+}
+
+type PracticeBiteProgress {
+  id: ID!
+  user: User!
+  practiceBite: PracticeBite!
+  completed: Boolean!
+  attempts: Int!
+  lastScore: Float
+  startedAt: String!
+  completedAt: String
+}
+
+type PracticeBiteSubmissionResult {
+  practiceBiteId: ID!
+  completed: Boolean!
+  score: Float!
+  correctCount: Int!
+  totalCount: Int!
+  attempts: Int!
+  isPerfect: Boolean!
+  isFirstAttempt: Boolean!
+  message: String!
+  itemResults: [PracticeBiteItemResult!]!
+}
+
 enum PricingType {
   FREE
   PAID
@@ -812,6 +939,8 @@ type Query {
   questions: [Question!]!
   questionsByQuizId(quizId: ID!): [Question!]!
   question(id: ID!): Question!
+  practiceBitesByLessonId(lessonId: ID!): [PracticeBite!]!
+  practiceBite(id: ID!): PracticeBite!
   getEnrollments: [Enrollment!]
   getEnrollmentById(enrollmentId: ID!): Enrollment
   getUserEnrollments: [Enrollment!]
@@ -825,6 +954,7 @@ type Query {
   getCertificateTemplatesByCourse(courseId: ID!): [CertificateTemplate!]
   getLessonProgress(lessonId: ID!): LessonProgress
   getQuizProgress(quizId: ID!): QuizProgress
+  getPracticeBiteProgress(practiceBiteId: ID!): PracticeBiteProgress
   getCourseProgress(userId: ID!, courseId: ID!): CourseProgress
   subscriptionPlans: [SubscriptionPlan!]!
   userSubscriptions(userId: ID!): [UserSubscription!]!
@@ -971,6 +1101,11 @@ type SetupIntentRequired {
 
 input StartCourseProgressInput {
   courseId: ID!
+}
+
+input SubmitPracticeBiteInput {
+  practiceBiteId: ID!
+  answers: [PracticeBiteItemAnswerInput!]!
 }
 
 input SubmitQuizAttemptInput {
@@ -1160,6 +1295,22 @@ input UpdateLiveClassInput {
   startTime: String
   endTime: String
   description: String
+}
+
+input UpdatePracticeBiteInput {
+  title: String
+  description: String
+  position: Int
+  solutionRevealThreshold: Int
+}
+
+input UpdatePracticeBiteItemInput {
+  type: PracticeBiteItemType
+  prompt: String
+  media: String
+  settings: PracticeBiteItemSettingsInput
+  answerExplanation: String
+  position: Int
 }
 
 input UpdateQuestionInput {

@@ -41,6 +41,7 @@ import { EditLessonDialog } from "./lessons/edit-lesson-dialog";
 import { EditQuizDialog } from "./quizzes/edit-quiz-dialog";
 import { CreateQuestionDialog } from "./quizzes/questions/create-question-dialog";
 import { TopicItem } from "./topic-item";
+import { PracticeBitesDialog } from "./practice-bites/practice-bites-dialog";
 
 interface TopicContentProps {
   actions: ReactNode;
@@ -247,11 +248,14 @@ function TopicItemActions({
 }): ReactNode {
   const [openLessonDeleteDialog, setOpenLessonDeleteDialog] = useState(false);
   const [openQuizDeleteDialog, setOpenQuizDeleteDialog] = useState(false);
+  const [isPracticeBitesOpen, setIsPracticeBitesOpen] = useState(false)
 
   return (
     <>
       {data.__typename === "Lesson" ? (
         <>
+          <PracticeBitesDialog key={data.id} lessonId={data.id} />
+
           <EditLessonDialog
             lesson={{
               attachments: data.attachments,

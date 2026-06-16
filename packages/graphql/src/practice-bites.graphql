@@ -1,0 +1,322 @@
+mutation CreatePracticeBite($input: CreatePracticeBiteInput!) {
+  createPracticeBite(input: $input) {
+    id
+    lesson {
+      id
+      title
+    }
+    title
+    description
+    position
+    items {
+      id
+      media
+      position
+      prompt
+      type
+      updatedAt
+      createdAt
+      answerExplanation
+    }
+    progress {
+      id
+      user {
+        id
+      }
+      practiceBite {
+        id
+        description
+      }
+      completed
+      attempts
+      lastScore
+      startedAt
+      completedAt
+    }
+    createdAt
+    updatedAt
+    solutionRevealThreshold
+  }
+}
+
+mutation CreatePracticeBiteItem($input: CreatePracticeBiteItemInput!) {
+  createPracticeBiteItem(input: $input) {
+    id
+    practiceBite {
+      id
+      description
+      position
+      title
+      createdAt
+      updatedAt
+    }
+    type
+    prompt
+    media
+    settings {
+      matchingRows {
+        columns
+      }
+      correctBoolean
+      acceptedAnswers
+      caseSensitive
+      options
+      blanks
+    }
+    answerExplanation
+    position
+    createdAt
+    updatedAt
+    solution {
+      acceptedAnswers
+      blanks
+      caseSensitive
+      correctBoolean
+      matchingColumns {
+        items
+      }
+      matchingRows {
+        columns
+      }
+      options
+    }
+  }
+}
+
+query PracticeBitesByLessonId($lessonId: ID!) {
+  practiceBitesByLessonId(lessonId: $lessonId) {
+    id
+    lesson {
+      id
+    }
+    title
+    description
+    position
+    solutionRevealThreshold
+    items {
+      id
+      type
+      prompt
+      media
+      settings {
+        matchingRows {
+          columns
+        }
+        matchingColumns {
+          items
+        }
+        correctBoolean
+        acceptedAnswers
+        caseSensitive
+        options
+        blanks
+      }
+      solution {
+        matchingRows {
+          columns
+        }
+        matchingColumns {
+          items
+        }
+        correctBoolean
+        acceptedAnswers
+        caseSensitive
+        options
+        blanks
+      }
+      answerExplanation
+      position
+      createdAt
+      updatedAt
+    }
+    progress {
+      id
+      user {
+        id
+        fullName
+        email
+      }
+      startedAt
+      lastScore
+      completedAt
+      completed
+      attempts
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdatePracticeBite($updatePracticeBiteId: ID!, $input: UpdatePracticeBiteInput!) {
+  updatePracticeBite(id: $updatePracticeBiteId, input: $input) {
+    id
+    title
+    description
+    position
+    solutionRevealThreshold
+    createdAt
+    updatedAt
+  }
+}
+
+mutation DeletePracticeBite($deletePracticeBiteId: ID!) {
+  deletePracticeBite(id: $deletePracticeBiteId)
+}
+
+mutation UpdatePracticeBiteItem($updatePracticeBiteItemId: ID!, $input: UpdatePracticeBiteItemInput!) {
+  updatePracticeBiteItem(id: $updatePracticeBiteItemId, input: $input) {
+    id
+    type
+    prompt
+    media
+    answerExplanation
+    position
+    createdAt
+    updatedAt
+    settings {
+      matchingRows {
+        columns
+      }
+      matchingColumns {
+        items
+      }
+      correctBoolean
+      acceptedAnswers
+      caseSensitive
+      options
+      blanks
+    }
+    solution {
+      matchingRows {
+        columns
+      }
+      matchingColumns {
+        items
+      }
+      correctBoolean
+      acceptedAnswers
+      caseSensitive
+      options
+      blanks
+    }
+  }
+}
+
+mutation DeletePracticeBiteItem($deletePracticeBiteItemId: ID!) {
+  deletePracticeBiteItem(id: $deletePracticeBiteItemId)
+}
+
+mutation SubmitPracticeBite($input: SubmitPracticeBiteInput!) {
+  submitPracticeBite(input: $input) {
+    practiceBiteId
+    completed
+    score
+    correctCount
+    totalCount
+    attempts
+    isPerfect
+    isFirstAttempt
+    message
+    itemResults {
+      itemId
+      correct
+      feedback
+      answerExplanation
+      solutionRevealed
+      solution {
+        matchingRows {
+          columns
+        }
+        matchingColumns {
+          items
+        }
+        correctBoolean
+        acceptedAnswers
+        caseSensitive
+        options
+        blanks
+      }
+    }
+  }
+}
+
+query GetPracticeBiteProgress($practiceBiteId: ID!) {
+  getPracticeBiteProgress(practiceBiteId: $practiceBiteId) {
+    id
+    completed
+    attempts
+    lastScore
+    startedAt
+    completedAt
+    user {
+      id
+    }
+    practiceBite {
+      id
+    }
+  }
+}
+
+query PracticeBite($practiceBiteId: ID!) {
+  practiceBite(id: $practiceBiteId) {
+    id
+    lesson {
+      id
+    }
+    title
+    description
+    position
+    solutionRevealThreshold
+    items {
+      id
+      type
+      prompt
+      media
+      settings {
+        matchingRows {
+          columns
+        }
+        matchingColumns {
+          items
+        }
+        correctBoolean
+        acceptedAnswers
+        caseSensitive
+        options
+        blanks
+      }
+      solution {
+        matchingRows {
+          columns
+        }
+        matchingColumns {
+          items
+        }
+        correctBoolean
+        acceptedAnswers
+        caseSensitive
+        options
+        blanks
+      }
+      answerExplanation
+      position
+      createdAt
+      updatedAt
+    }
+    progress {
+      id
+      user {
+        id
+        fullName
+        email
+      }
+      startedAt
+      lastScore
+      completedAt
+      completed
+      attempts
+    }
+    createdAt
+    updatedAt
+  }
+}

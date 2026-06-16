@@ -6,6 +6,7 @@ import {
   GripVertical,
   MenuIcon,
   PencilIcon,
+  PlusIcon,
   Trash2,
 } from "lucide-react";
 import type { Lesson } from "gql-generated/generated/types";
@@ -86,6 +87,7 @@ export function LessonItem({
         </div>
 
         <div className="flex gap-2">
+dude
           <EditLessonDialog lesson={lesson!} />
 
           <DeleteDialog
