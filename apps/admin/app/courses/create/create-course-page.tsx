@@ -191,9 +191,7 @@ export default function CreateCoursePage() {
           position: "top-right",
         });
         clearFormData();
-        navigate(
-          `/admin/courses/${result.data?.createInitialCourse.id}/builder`
-        );
+        navigate(`/courses/${result.data?.createInitialCourse.id}/builder`);
       } else if (result.error) {
         toast.error("Error al crear el curso", {
           description: result.error.message,
