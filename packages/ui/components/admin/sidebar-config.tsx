@@ -42,6 +42,10 @@ export const sidebarConfig: SidebarConfig = {
             title: "Inscripciones",
             url: "/courses/enrollments",
           },
+          {
+            title: "Accesos demo",
+            url: "/courses/demo-access",
+          },
         ],
       },
       {
