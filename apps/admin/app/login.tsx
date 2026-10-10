@@ -17,14 +17,33 @@ export const loader = async ({ request }: { request: Request }) => {
   );
 
   const sessionToken = cookies.session_token;
-  const host = request.headers.get("host") ?? "";
-  const hostname = host.split(":")[0];
-  const isAdminSubdomain = hostname.startsWith("admin.");
 
-  if (sessionToken) {
+  // The session cookie is shared with the student site, so having one isn't
+  // enough: only an admin session skips the form. Anyone else (a student who
+  // is signed in on the site) stays here to sign in with an admin account;
+  // sending them to "/" bounced back here forever.
+  if (sessionToken && (await isAdminSession(sessionToken))) {
     return redirect("/");
   }
 };
+
+async function isAdminSession(sessionToken: string): Promise<boolean> {
+  try {
+    const response = await fetch(`${process.env.VITE_API_TARGET}/query`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `session_token=${sessionToken}`,
+      },
+      body: JSON.stringify({ query: "query AdminLoginRole { me { role } }" }),
+    });
+    if (!response.ok) return false;
+    const { data } = await response.json();
+    return data?.me?.role === "admin";
+  } catch {
+    return false;
+  }
+}
 
 export default function Login() {
   return <LoginPage />;
