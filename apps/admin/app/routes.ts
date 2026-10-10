@@ -20,6 +20,7 @@ export default [
       route("levels", "./courses/levels.tsx"),
       route("categories", "./courses/categories.tsx"),
       route("enrollments", "./enrollments/enrollments.tsx"),
+      route("demo-access", "./demo-access/demo-access.tsx"),
     ]),
     route("bundles", "./bundles/bundles.tsx"),
     route("learning-paths", "./learning-paths/learning-paths.tsx"),
